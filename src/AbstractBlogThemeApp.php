@@ -17,6 +17,7 @@ use Pimple\Container;
 use RZ\Roadiz\CMS\Controllers\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Themes\AbstractBlogTheme\Twig\BlogExtension;
 
 /**
  * AbstractBlogThemeApp class
@@ -71,5 +72,11 @@ class AbstractBlogThemeApp extends FrontendController
         $container['blog_theme.post_entity'] = function () {
             return false;
         };
+
+        $container->extend('twig.extensions', function ($extensions, $c) {
+            $extensions->add(new BlogExtension($c['em'], $c['blog_theme.post_entity']));
+
+            return $extensions;
+        });
     }
 }
