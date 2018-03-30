@@ -35,9 +35,12 @@ to provide your posts, filters and available tags to build your template.
 IndexAction will assign:
 
 - `posts`: found `NodesSources` array according to your criteria
-- `currentTag`: tag or `null`
 - `filters`: pagination information array
 - `tags`: available filtering `Tag` array
+- `currentTag`: `Tag` or `null`
+- `archives`: available *years* and *months* of post archives
+- `currentArchive`: `string` or `not defined`
+- `currentArchiveDateTime`: `\DateTime` or `not defined`
 
 ### Usage
 
