@@ -1,0 +1,21 @@
+{
+    "name": "roadiz/abstract-blog-theme",
+    "description": "AbstractBlogTheme",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ambroise Maupate",
+            "email": "ambroise@rezo-zero.com"
+        }
+    ],
+    "require": {
+        "php": "^7.0",
+        "roadiz/roadiz": "0.22.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Themes\\AbstractBlogTheme\\": "src/"
+        }
+    }
+}
