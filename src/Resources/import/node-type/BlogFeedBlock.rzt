@@ -1,0 +1,30 @@
+{
+    "name": "BlogFeedBlock",
+    "displayName": "Bloc de remontée d'actualités",
+    "description": null,
+    "visible": true,
+    "newsletterType": false,
+    "hidingNodes": false,
+    "color": "#209180",
+    "reachable": false,
+    "publishable": false,
+    "fields": [
+        {
+            "name": "over_title",
+            "label": "Sur-titre",
+            "description": null,
+            "visible": true,
+            "type": 0,
+            "indexed": false,
+            "virtual": false,
+            "universal": false,
+            "default_values": null,
+            "group_name": null,
+            "group_name_canonical": null,
+            "expanded": false,
+            "placeholder": null,
+            "min_length": null,
+            "max_length": null
+        }
+    ]
+}

@@ -10,9 +10,10 @@ versionRequire: "0.22.0"
 importFiles:
     roles: []
     groups: []
-    settings:
-        - "Resources/import/settings.rzt"
+    settings: []
     nodetypes:
-        - "Resources/import/node-type/Link.rzt"
+        - Resources/import/node-type/BlogFeedBlock.rzt
+        - Resources/import/node-type/BlogPost.rzt
+        - Resources/import/node-type/BlogPostContainer.rzt
     tags: []
     nodes: []

@@ -27,6 +27,20 @@ public static function setupDependencyInjection(Container $container)
 }
 ```
 
+## Add node-types
+
+Abstract Blog theme declare 3 node-types to create your blog website:
+
+- BlogFeedBlock: to create an automatic feed preview on any page
+- BlogPost: the main blog post entity
+- BlogPostContainer: the blog container to host every blog post
+
+```bash
+bin/roadiz themes:install --data Themes/AbstractBlogTheme/AbstractBlogThemeApp
+bin/roadiz generate:nsentities
+bin/roadiz orm:schema-tool:update --dump-sql --force
+```
+
 ## PostContainerTrait
 
 `PostContainerTrait` will implement your `indexAction` by handling all request data
