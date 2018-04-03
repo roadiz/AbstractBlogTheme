@@ -2,6 +2,16 @@
 
 **Abstract Blog middleware for your Roadiz theme.**
 
+## Dependency injection
+
+Edit your `app/conf/config.yml` file to register additional blog theme services.
+
+```yaml
+additionalServiceProviders: 
+    - \Themes\AbstractBlogTheme\Services\BlogServiceProvider
+
+```
+
 You must override these services:
 
 - blog_theme.post_container_entity
@@ -76,3 +86,8 @@ class BlogPostContainerController extends MyThemeThemeApp implements Configurabl
     use PostContainerControllerTrait;
 }
 ```
+
+## Twig extension
+
+- `get_latest_posts`
+- `get_latest_posts_for_tag`
