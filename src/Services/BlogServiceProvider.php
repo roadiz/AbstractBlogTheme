@@ -13,6 +13,8 @@ class BlogServiceProvider implements ServiceProviderInterface
     {
         $container->extend('twig.extensions', function ($extensions, $c) {
             $extensions->add(new BlogExtension($c['em'], $c['blog_theme.post_entity']));
+            $extensions->add(new \RZ\SocialLinks\Twig\SocialLinksExtension());
+            
             return $extensions;
         });
 
