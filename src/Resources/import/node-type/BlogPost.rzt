@@ -59,6 +59,40 @@
             "placeholder": null,
             "min_length": null,
             "max_length": null
+        },
+        {
+            "name": "file",
+            "label": "Fichier à télécharger",
+            "description": null,
+            "visible": true,
+            "type": 9,
+            "indexed": false,
+            "virtual": true,
+            "universal": false,
+            "default_values": null,
+            "group_name": null,
+            "group_name_canonical": null,
+            "expanded": false,
+            "placeholder": null,
+            "min_length": null,
+            "max_length": null
+        },
+        {
+            "name": "location",
+            "label": "Lieu",
+            "description": null,
+            "visible": true,
+            "type": 0,
+            "indexed": false,
+            "virtual": false,
+            "universal": false,
+            "default_values": null,
+            "group_name": null,
+            "group_name_canonical": null,
+            "expanded": false,
+            "placeholder": null,
+            "min_length": null,
+            "max_length": null
         }
     ]
 }
