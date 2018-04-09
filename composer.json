@@ -11,7 +11,8 @@
     ],
     "require": {
         "php": "^7.0",
-        "roadiz/roadiz": "0.22.*"
+        "roadiz/roadiz": "0.22.*",
+        "rezozero/social-links": "^1.1.0"
     },
     "autoload": {
         "psr-4": {
