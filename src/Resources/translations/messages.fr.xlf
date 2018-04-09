@@ -34,6 +34,10 @@
         <source>previous_post</source>
         <target>Article précédent</target>
       </trans-unit>
+      <trans-unit id="read_more">
+        <source>read_more</source>
+        <target>Lire la suite…</target>
+      </trans-unit>
       <trans-unit id="share_on">
         <source>share_on</source>
         <target>Partager sur :</target>
