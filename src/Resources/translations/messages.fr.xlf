@@ -18,9 +18,21 @@
         <source>next</source>
         <target>Suivant</target>
       </trans-unit>
+      <trans-unit id="next_post">
+        <source>next_post</source>
+        <target>Article suivant</target>
+      </trans-unit>
       <trans-unit id="previous">
         <source>previous</source>
         <target>Précédent</target>
+      </trans-unit>
+      <trans-unit id="previous_post">
+        <source>previous_post</source>
+        <target>Article précédent</target>
+      </trans-unit>
+      <trans-unit id="share_on">
+        <source>share_on</source>
+        <target>Partager sur :</target>
       </trans-unit>
     </body>
   </file>

@@ -3,6 +3,7 @@
 namespace Themes\AbstractBlogTheme\Twig;
 
 use Doctrine\ORM\EntityManagerInterface;
+use RZ\Roadiz\Core\Entities\NodesSources;
 use RZ\Roadiz\Core\Entities\Tag;
 use RZ\Roadiz\Core\Entities\Translation;
 
@@ -34,6 +35,8 @@ class BlogExtension extends \Twig_Extension
     {
         return [
             'get_latest_posts' => new \Twig_Function_Method($this, 'getLatestPosts'),
+            'get_previous_post' => new \Twig_Function_Method($this, 'getPreviousPost'),
+            'get_next_post' => new \Twig_Function_Method($this, 'getNextPost'),
             'get_latest_posts_for_tag' => new \Twig_Function_Method($this, 'getLatestPostsForTag'),
         ];
     }
@@ -44,6 +47,40 @@ class BlogExtension extends \Twig_Extension
     public function getName()
     {
         return 'blog';
+    }
+
+    /**
+     * @param NodesSources $post
+     *
+     * @return null|NodesSources
+     */
+    public function getPreviousPost(NodesSources $post)
+    {
+        return $this->entityManager->getRepository($this->postEntityClass)->findOneBy([
+            'id' => ['!=', $post->getId()],
+            'publishedAt' => ['<', $post->getPublishedAt()],
+            'node.visible' => true,
+            'translation' => $post->getTranslation(),
+        ], [
+            'publishedAt' => 'DESC'
+        ]);
+    }
+
+    /**
+     * @param NodesSources $post
+     *
+     * @return null|NodesSources
+     */
+    public function getNextPost(NodesSources $post)
+    {
+        return $this->entityManager->getRepository($this->postEntityClass)->findOneBy([
+            'id' => ['!=', $post->getId()],
+            'publishedAt' => ['>', $post->getPublishedAt()],
+            'node.visible' => true,
+            'translation' => $post->getTranslation(),
+        ], [
+            'publishedAt' => 'ASC'
+        ]);
     }
 
     /**
