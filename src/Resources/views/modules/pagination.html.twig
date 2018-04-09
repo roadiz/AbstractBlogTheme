@@ -22,7 +22,7 @@
         {# the number of pages that are displayed around the active page #}
         {% set nearbyPagesLimit = 2 %}
 
-        <nav itemprop="pagination" class="pagination">
+        <nav class="pagination">
             {% if currentPage > 1 %}
                 <a rel="prev" class="pagination-prev" href="{{ path(paginationPath, currentFilters|merge({page: currentPage-1})) }}">
                     {% include themePrefix ~ '/svg/use.svg.twig' with {
