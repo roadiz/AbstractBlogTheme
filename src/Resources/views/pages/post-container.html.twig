@@ -1,0 +1,79 @@
+{% extends 'pages/page.html.twig' %}
+
+{% block header_title %}
+    <h1 class="page-title">
+        {{ nodeSource.title }}
+        {% if currentArchiveDateTime %}
+            - {{ currentArchiveDateTime|localizeddate('none','none', null, null, 'MMMM Y') }}
+        {% endif %}
+        {% if currentTag %}
+            - {{ currentTag.translatedTags.first.name }}
+        {% endif %}
+    </h1>
+{% endblock %}
+
+{% block inner_content %}
+    <div id="blogpost-nav">
+        <div class="container">
+            <nav class="blogpost-group-nav">
+                <ul>
+                    <li {% if not currentTag %}class="active"{% endif %}>
+                        <a {% if not currentTag %}class="active"{% endif %} href="{{ path(nodeSource) }}">{% trans %}all{% endtrans %}</a>
+                    </li>
+                    {% for tag in tags %}
+                        <li {% if currentTag and currentTag.tagName == tag.tagName %}class="active"{% endif %}>
+                            <a {% if currentTag and currentTag.tagName == tag.tagName %}class="active"{% endif %}
+                               href="{{ path(nodeSource, {tag: tag.tagName}) }}">{{ tag.translatedTags.first.name }}</a>
+                        </li>
+                    {% endfor %}
+                    <li class="hidden-xs hidden-sm">
+                        <span class="archives-label">{% trans %}archives{% endtrans %}</span>
+                        <ul class="sub-menu">
+                            {% for year, months in archives %}
+                                {#<a href="{{ path(nodeSource, {archive: year}) }}">{{ year }}</a>#}
+                                {% for month, monthDate in months %}
+                                    <li class="{% if currentArchive and currentArchive == month %}active{% endif %}">
+                                        <a class="{% if currentArchive and currentArchive == month %}active{% endif %}"
+                                           href="{{ path(nodeSource, {archive: month}) }}">{{ monthDate|localizeddate('none','none', null, null, 'MMMM Y') }}</a>
+                                    </li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <div class="blogpostcontainer-listing">
+        <div class="container">
+            {% for post in posts %}
+                {#
+                 # Page blocks pattern implementation
+                 #}
+                {% include '@AbstractBlogTheme/blocks/blogpost.html.twig' ignore missing with {
+                    'nodeSource': post,
+                    'request': request,
+                    'parentNodeSource': (post|parent),
+                    'themeServices': themeServices,
+                    'head': head,
+                    'node': post.node,
+                    'nodeType': post.node.nodeType,
+                    'loop': loop,
+                } only %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="container">
+        {% include '@AbstractBlogTheme/modules/pagination.html.twig' with {
+            'currentFilters': {
+                page: filters.currentPage,
+                tag: currentTag.tagName,
+                archive: currentArchive
+            },
+            'currentPage': filters.currentPage,
+            'paginationPath': nodeSource,
+            'showAlwaysFirstAndLast': true,
+            'lastPage': filters.pageCount
+        } only %}
+    </div>
+{% endblock %}

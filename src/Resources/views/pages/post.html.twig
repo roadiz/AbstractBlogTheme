@@ -1,0 +1,119 @@
+{% extends 'pages/page.html.twig' %}
+
+{% set social_data = {
+    'url': url(nodeSource),
+    'title': pageMetaTitle|default(nodeSource.title),
+} %}
+
+{% set postContainer = nodeSource|parent %}
+{% set headerImage = postContainer.headerImage[0] %}
+{% set blockClassPrefix = 'basicblock' %}
+{% set blockClasses = [
+    'page-block',
+    blockClassPrefix
+] %}
+
+{% if loop.index is odd %}
+    {% set blockClasses = blockClasses|merge(['odd']) %}
+{% else %}
+    {% set blockClasses = blockClasses|merge(['even']) %}
+{% endif %}
+
+{% block header_title %}
+    <p class="page-title">
+        {{ postContainer.title }}
+    </p>
+{% endblock %}
+
+{% block return_link %}
+    <div>
+        <div class="container">
+            <div class="row">
+                <a href="{{ path(postContainer) }}">
+                    <span class="link">
+                        <span class="arrow"></span>
+                        {% trans %}back_to_news{% endtrans %}
+                    </span>
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block inner_content %}
+<div class="{{ blockClassPrefix }} blogpost-wrapper" itemscope itemtype="http://schema.org/Article">
+    <meta itemprop="url" content="{{ url(nodeSource) }}">
+    <meta itemprop="headline" content="{{ nodeSource.title }}">
+    <meta itemprop="author" content="{{ head.siteName }}">
+    <meta itemprop="publisher" content="{{ head.siteName }}">
+    <div class="container">
+        <div class="row">
+            {% if nodeSource.image[0] %}
+                <meta itemprop="image" content="{{ nodeSource.image[0]|url({ 'width': 800, 'absolute': true }) }}">
+                {% set media = nodeSource.image[0] %}
+                <div class="{{ imageClasses }}">
+                    {{ media|display({
+                        'width': 800
+                    }) }}
+                </div>
+            {% endif %}
+            <div class="{{ titlesClasses }} block-titles-content">
+                <time itemprop="datePublished"
+                    datetime="{{ nodeSource.publishedAt|date('Y-m-d H:i:s') }}"
+                    class="{{ blockClassPrefix }}-over-title">{{ nodeSource.publishedAt|localizeddate('medium','none') }}</time>
+                <h2 class="{{ blockClassPrefix }}-title" itemprop="name">{{ nodeSource.title }}</h2>
+                {% if nodeSource.location %}
+                    <p><strong itemprop="location">{{ nodeSource.location|striptags }}</strong></p>
+                {% endif %}
+
+                <div class="{{ blockClassPrefix }}-content">
+                    <div class="page-block-content-inner" itemprop="articleBody">{{ nodeSource.content|markdown }}</div>
+                    {% if nodeSource.file|length > 0 %}
+                        <ul class="download-list">
+                            {% for file in nodeSource.file %}
+                                <li class="download-item">
+                                    <a href="{{ file|url }}" target="_blank">
+                                        {% set fileMeta = file.documentTranslations.first %}
+                                        <span class="file-text">
+                                            {{ fileMeta.name | default(file.fileName) }}
+                                        </span>
+                                        <span class="download-item-type">{{ file.shortType }}</span>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+
+                    <nav class="social-links">
+                        <span class="social-links-title">{% trans %}share_on{% endtrans %}</span>
+                        {{ social_data|svg_social_links(['facebook', 'twitter', 'linked-in'], 'icon', 'social-icon', 'social-link') }}
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% set nextPost = get_next_post(nodeSource) %}
+{% set previousPost = get_previous_post(nodeSource) %}
+{% if nextPost or previousPost %}
+    <nav class="contextual-nav">
+        <div class="container">
+            {% if previousPost %}
+                <a rel="prev" class="contextual-nav-prev" href="{{ path(previousPost) }}">
+                    {% include 'svg/use.svg.twig' with { icon: 'icon-angle-left'} %}
+                    <span class="contextual-nav-label">{% trans %}previous_post{% endtrans %}</span>
+                    {{ previousPost.title }}
+                </a>
+            {% endif %}
+            {% if nextPost %}
+                <a rel="next" class="contextual-nav-next" href="{{ path(nextPost) }}">
+                    {{ nextPost.title }}
+                    <span class="contextual-nav-label">{% trans %}next_post{% endtrans %}</span>
+                    {% include 'svg/use.svg.twig' with { icon: 'icon-angle-right'} %}
+                </a>
+            {% endif %}
+        </div>
+    </nav>
+{% endif %}
+{% endblock %}
+

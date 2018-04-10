@@ -1,0 +1,36 @@
+{% set blockClassPrefix = nodeType.name|lower %}
+
+{% set blockClasses = [
+    'page-block',
+    blockClassPrefix
+] %}
+
+{% set posts = get_latest_posts(nodeSource.translation, 3) %}
+
+<div class="{{ blockClasses|join(' ') }}"
+     id="block-{{ node.nodeName }}"
+     data-index="{{ loop.index0 }}"
+     data-node-type="{{ nodeType.name|lower }}">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-offset-1 col-sm-11 {{ blockClassPrefix }}-titles-content block-titles-content">
+                {% if nodeSource.overTitle %}
+                    <div class="block-over-title {{ blockClassPrefix }}-over-title">{{ nodeSource.overTitle }}</div>
+                {% endif %}
+                <h2 class="block-main-title {{ blockClassPrefix }}-title">{{ nodeSource.title }}</h2>
+            </div>
+        </div>
+        {% for post in posts %}
+            {% include '@AbstractBlogTheme/blocks/blogpost.html.twig' ignore missing with {
+                'nodeSource': post,
+                'request': request,
+                'parentNodeSource': post|parent,
+                'themeServices': themeServices,
+                'head': head,
+                'node': post.node,
+                'nodeType': post.node.nodeType,
+                'loop': loop,
+            } only %}
+        {% endfor %}
+    </div>
+</div>

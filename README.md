@@ -41,9 +41,9 @@ public static function setupDependencyInjection(Container $container)
 
 Abstract Blog theme declare 3 node-types to create your blog website:
 
-- BlogFeedBlock: to create an automatic feed preview on any page
-- BlogPost: the main blog post entity
-- BlogPostContainer: the blog container to host every blog post
+- `BlogFeedBlock`: to create an automatic feed preview on any page
+- `BlogPost`: the main blog post entity
+- `BlogPostContainer`: the blog container to host every blog post
 
 ```bash
 bin/roadiz themes:install --data Themes/AbstractBlogTheme/AbstractBlogThemeApp
@@ -87,7 +87,14 @@ class BlogPostContainerController extends MyThemeThemeApp implements Configurabl
 }
 ```
 
+### Template examples
+
+`Resources/views/` folder contains useful templates for creating your own blog. Feel free to include
+them directly in your theme or duplicated them.
+
 ## Twig extension
 
 - `get_latest_posts`
 - `get_latest_posts_for_tag`
+- `get_previous_post`
+- `get_next_post`
