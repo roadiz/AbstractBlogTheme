@@ -2,6 +2,19 @@
 
 **Abstract Blog middleware for your Roadiz theme.**
 
+## Inheritance
+
+Your own theme entry class must **extend** `AbstractBlogThemeApp` instead of `FrontendController` to provide essential methods:
+
+```php
+use Themes\AbstractBlogTheme\AbstractBlogThemeApp;
+
+class MyThemeApp extends AbstractBlogThemeApp
+{
+    //…
+}
+```
+
 ## Dependency injection
 
 Edit your `app/conf/config.yml` file to register additional blog theme services.
