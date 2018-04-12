@@ -19,7 +19,7 @@
             {{ nodeSource.excerpt|markdown }}
             <p class="ellipsis">{% trans %}read_more{% endtrans %}</p>
         </div>
-        <div class="{{ blockClassPrefix }}-element-image>
+        <div class="{{ blockClassPrefix }}-element-image">
             {% if nodeSource.image[0] %}
                 <meta itemprop="image" content="{{ nodeSource.image[0]|url({ width: 800, absolute: true }) }}">
                 {{ nodeSource.image[0]|display({
