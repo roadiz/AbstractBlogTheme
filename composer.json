@@ -1,6 +1,6 @@
 {
     "name": "roadiz/abstract-blog-theme",
-    "description": "AbstractBlogTheme",
+    "description": "Abstract Blog middleware for your Roadiz theme.",
     "type": "library",
     "license": "MIT",
     "authors": [
