@@ -84,6 +84,7 @@ class BlogExtension extends \Twig_Extension
     }
 
     /**
+     * @param Translation $translation
      * @param int $count
      *
      * @return array
@@ -100,6 +101,8 @@ class BlogExtension extends \Twig_Extension
     }
 
     /**
+     * @param Tag $tag
+     * @param Translation $translation
      * @param int $count
      *
      * @return array

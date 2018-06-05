@@ -1,16 +1,5 @@
 <?php
-/**
- * Copyright (c) 2018. Rezo Zero
- *
- * This file is part of Events API Theme.
- *
- * Events API Theme can not be copied and/or distributed without
- * the express permission of Rezo Zero.
- *
- * @file AbstractBlogThemeApp.php
- * @author Ambroise Maupate <ambroise@rezo-zero.com>
- * @copyright Rezo Zero 2018
- */
+
 namespace Themes\AbstractBlogTheme;
 
 use Pimple\Container;
@@ -23,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AbstractBlogThemeApp extends FrontendController
 {
-    const VERSION = '1.0.0';
+    const VERSION = '1.0.4';
     const ITEM_PER_PAGE = 15;
 
     protected static $themeName = 'Blog Theme';
