@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AbstractBlogThemeApp extends FrontendController
 {
-    const VERSION = '1.0.4';
+    const VERSION = '1.0.5';
     const ITEM_PER_PAGE = 15;
 
     protected static $themeName = 'Blog Theme';
@@ -20,6 +20,10 @@ class AbstractBlogThemeApp extends FrontendController
     protected static $themeCopyright = 'REZO ZERO';
     protected static $themeDir = 'AbstractBlogTheme';
     protected static $backendTheme = false;
+    /**
+     * {@inheritdoc}
+     */
+    public static $priority = 5;
 
     /**
      * @param Request $request
