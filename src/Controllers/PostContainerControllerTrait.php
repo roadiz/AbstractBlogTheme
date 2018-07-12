@@ -77,6 +77,10 @@ trait PostContainerControllerTrait
     }
 
     /**
+     * @param Translation $translation
+     * @param string $tagName
+     * @param string $archive
+     *
      * @return array
      */
     protected function getDefaultCriteria(Translation $translation, $tagName = '', $archive = '')
@@ -121,7 +125,9 @@ trait PostContainerControllerTrait
     }
 
     /**
+     * @param Translation $translation
      * @param Tag $parentTag Parent tag
+     *
      * @return array
      */
     protected function getAvailableTags(Translation $translation, Tag $parentTag = null)
@@ -152,6 +158,14 @@ trait PostContainerControllerTrait
             }
 
             $this->alterTagQueryOrderBy($qb);
+            /*
+             * Enforce tags nodes status not to display Tags which are linked to draft posts.
+             */
+            if ($this->get('kernel')->isPreview()) {
+                $qb->andWhere($qb->expr()->lte('n.status', Node::PUBLISHED));
+            } else {
+                $qb->andWhere($qb->expr()->eq('n.status', Node::PUBLISHED));
+            }
 
             return $qb->getQuery()->getResult();
         } catch (NoResultException $e) {
@@ -219,7 +233,6 @@ trait PostContainerControllerTrait
     protected function getArchives(Translation $translation)
     {
         $array = [];
-        $years = [];
         $datetimes = $this->getPostPublicationDates($translation);
 
         foreach ($datetimes as $datetime) {
