@@ -6,8 +6,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use RZ\Roadiz\Core\Entities\NodesSources;
 use RZ\Roadiz\Core\Entities\Tag;
 use RZ\Roadiz\Core\Entities\Translation;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class BlogExtension extends \Twig_Extension
+class BlogExtension extends AbstractExtension
 {
     /**
      * @var EntityManagerInterface
@@ -34,25 +36,17 @@ class BlogExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            'get_latest_posts' => new \Twig_Function_Method($this, 'getLatestPosts'),
-            'get_previous_post' => new \Twig_Function_Method($this, 'getPreviousPost'),
-            'get_next_post' => new \Twig_Function_Method($this, 'getNextPost'),
-            'get_latest_posts_for_tag' => new \Twig_Function_Method($this, 'getLatestPostsForTag'),
+            'get_latest_posts' => new TwigFunction($this, 'getLatestPosts'),
+            'get_previous_post' => new TwigFunction($this, 'getPreviousPost'),
+            'get_next_post' => new TwigFunction($this, 'getNextPost'),
+            'get_latest_posts_for_tag' => new TwigFunction($this, 'getLatestPostsForTag'),
         ];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getName()
-    {
-        return 'blog';
     }
 
     /**
      * @param NodesSources $post
      *
-     * @return null|NodesSources
+     * @return null|object|NodesSources
      */
     public function getPreviousPost(NodesSources $post)
     {
@@ -69,7 +63,7 @@ class BlogExtension extends \Twig_Extension
     /**
      * @param NodesSources $post
      *
-     * @return null|NodesSources
+     * @return null|object|NodesSources
      */
     public function getNextPost(NodesSources $post)
     {
