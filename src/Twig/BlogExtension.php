@@ -36,10 +36,10 @@ class BlogExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            'get_latest_posts' => new TwigFunction('get_latest_posts', [$this, 'getLatestPosts']),
-            'get_previous_post' => new TwigFunction('get_previous_post', [$this, 'getPreviousPost']),
-            'get_next_post' => new TwigFunction('get_next_post', [$this, 'getNextPost']),
-            'get_latest_posts_for_tag' => new TwigFunction('get_latest_posts_for_tag', [$this, 'getLatestPostsForTag']),
+            new TwigFunction('get_latest_posts', [$this, 'getLatestPosts']),
+            new TwigFunction('get_previous_post', [$this, 'getPreviousPost']),
+            new TwigFunction('get_next_post', [$this, 'getNextPost']),
+            new TwigFunction('get_latest_posts_for_tag', [$this, 'getLatestPostsForTag']),
         ];
     }
 

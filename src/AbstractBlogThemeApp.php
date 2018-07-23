@@ -64,7 +64,5 @@ class AbstractBlogThemeApp extends FrontendController
         $container['blog_theme.post_entity'] = function () {
             return false;
         };
-
-
     }
 }
