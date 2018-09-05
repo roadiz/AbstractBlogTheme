@@ -49,6 +49,5 @@ class BlogServiceProvider implements ServiceProviderInterface
             );
             return $translator;
         });
-
     }
 }

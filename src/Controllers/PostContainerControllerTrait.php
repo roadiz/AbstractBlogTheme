@@ -212,6 +212,7 @@ trait PostContainerControllerTrait
         $publicationField = 'p.' . $this->getPublicationField();
 
         $qb->select($publicationField)
+            ->innerJoin('p.node', 'n')
             ->andWhere($qb->expr()->eq('p.translation', ':translation'))
             ->andWhere($qb->expr()->lte($publicationField, ':datetime'))
             ->addGroupBy($publicationField)
@@ -221,6 +222,14 @@ trait PostContainerControllerTrait
                 'datetime' => new \Datetime('now'),
             ])
         ;
+        /*
+         * Enforce post nodes status not to display Archives which are linked to draft posts.
+         */
+        if ($this->get('kernel')->isPreview()) {
+            $qb->andWhere($qb->expr()->lte('n.status', Node::PUBLISHED));
+        } else {
+            $qb->andWhere($qb->expr()->eq('n.status', Node::PUBLISHED));
+        }
 
         return $qb->getQuery()->getResult();
     }

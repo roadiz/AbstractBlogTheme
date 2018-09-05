@@ -19,8 +19,7 @@ trait PostControllerTrait
         Request $request,
         Node $node = null,
         Translation $translation = null
-    )
-    {
+    ) {
         $this->prepareThemeAssignation($node, $translation);
 
         if ($this->get('blog_theme.post_entity') === false) {
