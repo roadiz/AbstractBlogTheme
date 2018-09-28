@@ -100,6 +100,22 @@ class BlogPostContainerController extends MyThemeThemeApp implements Configurabl
 }
 ```
 
+#### Override PostContainerControllerTrait behaviour
+
+Those methods can be overriden to customize your `PostContainerControllerTrait` behaviour.
+
+- `isScopedToCurrentContainer`: By default it returns `false`, `PostContainerControllerTrait` will fetch **all** blog-post no matter where
+there are. If your overriden `isScopedToCurrentContainer` method returns `true`, all blog post will be fetched only from your 
+current container allowing you to create many blog containers.
+- `getPublicationField`: By default this method returns `publishedAt` field name. You can return whatever name unless field
+exists in your BlogPost node-type.
+- `getDefaultOrder`: By default this method returns an array :
+```php
+[
+    $this->getPublicationField() => 'DESC'
+]
+```
+
 ### Template examples
 
 `Resources/views/` folder contains useful templates for creating your own blog. Feel free to include

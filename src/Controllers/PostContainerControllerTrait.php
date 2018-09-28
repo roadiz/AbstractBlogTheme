@@ -14,6 +14,17 @@ use Symfony\Component\HttpFoundation\Response;
 trait PostContainerControllerTrait
 {
     /**
+     * Override this method if you want to fetch blog-posts only
+     * from current post-container.
+     *
+     * @return bool
+     */
+    protected function isScopedToCurrentContainer()
+    {
+        return false;
+    }
+
+    /**
      * @param Request $request
      * @param Node|null $node
      * @param Translation|null $translation
@@ -121,6 +132,10 @@ trait PostContainerControllerTrait
             }
         }
 
+        if ($this->isScopedToCurrentContainer()) {
+            $criteria['node.parent'] = $this->node;
+        }
+
         return $criteria;
     }
 
@@ -165,6 +180,11 @@ trait PostContainerControllerTrait
                 $qb->andWhere($qb->expr()->lte('n.status', Node::PUBLISHED));
             } else {
                 $qb->andWhere($qb->expr()->eq('n.status', Node::PUBLISHED));
+            }
+
+            if ($this->isScopedToCurrentContainer()) {
+                $qb->andWhere($qb->expr()->eq('n.parent', ':parentNode'))
+                    ->setParameter(':parentNode', $this->node);
             }
 
             return $qb->getQuery()->getResult();
@@ -229,6 +249,11 @@ trait PostContainerControllerTrait
             $qb->andWhere($qb->expr()->lte('n.status', Node::PUBLISHED));
         } else {
             $qb->andWhere($qb->expr()->eq('n.status', Node::PUBLISHED));
+        }
+
+        if ($this->isScopedToCurrentContainer()) {
+            $qb->andWhere($qb->expr()->eq('n.parent', ':parentNode'))
+                ->setParameter(':parentNode', $this->node);
         }
 
         return $qb->getQuery()->getResult();
