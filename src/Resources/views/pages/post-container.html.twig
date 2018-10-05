@@ -50,7 +50,7 @@
                 {#
                  # Page blocks pattern implementation
                  #}
-                {% include '@AbstractBlogTheme/blocks/blogpost.html.twig' ignore missing with {
+                {% include 'blocks/blogpost.html.twig' ignore missing with {
                     'nodeSource': post,
                     'request': request,
                     'parentNodeSource': (post|parent),
@@ -65,7 +65,7 @@
         </div>
     </div>
     <div class="container">
-        {% include '@AbstractBlogTheme/modules/pagination.html.twig' with {
+        {% include 'modules/blog-pagination.html.twig' with {
             'currentFilters': {
                 page: filters.currentPage,
                 tag: currentTag.tagName,

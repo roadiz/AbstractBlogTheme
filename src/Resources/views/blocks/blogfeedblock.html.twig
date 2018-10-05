@@ -21,7 +21,7 @@
             </div>
         </div>
         {% for post in posts %}
-            {% include '@AbstractBlogTheme/blocks/blogpost.html.twig' ignore missing with {
+            {% include 'blocks/blogpost.html.twig' ignore missing with {
                 'nodeSource': post,
                 'request': request,
                 'parentNodeSource': post|parent,

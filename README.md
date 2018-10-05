@@ -116,10 +116,13 @@ exists in your BlogPost node-type.
 ]
 ```
 
-### Template examples
+### Template
 
 `Resources/views/` folder contains useful templates for creating your own blog. Feel free to include
 them directly in your theme or duplicated them.
+
+By default, your Roadiz website will directly use *AbstractBlogTheme* templates. 
+You can override them in your inheriting Theme using the exact same path and name.
 
 ## Twig extension
 
