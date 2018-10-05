@@ -26,7 +26,7 @@ trait PostControllerTrait
             throw new \RuntimeException('blog_theme.post_entity must be configured with your own BlogPost node-type class');
         }
 
-        return $this->render($this->getTemplate(), $this->assignation);
+        return $this->render($this->getTemplate(), $this->assignation, null, '/');
     }
 
     /**

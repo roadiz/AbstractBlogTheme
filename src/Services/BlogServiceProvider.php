@@ -20,6 +20,7 @@ class BlogServiceProvider implements ServiceProviderInterface
 
         $container->extend('twig.loaderFileSystem', function (\Twig_Loader_Filesystem $loader, $c) {
             $loader->prependPath(dirname(__DIR__) . '/Resources/views', 'AbstractBlogTheme');
+            $loader->prependPath(dirname(__DIR__) . '/Resources/views');
 
             return $loader;
         });

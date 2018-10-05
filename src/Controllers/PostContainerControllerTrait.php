@@ -62,7 +62,7 @@ trait PostContainerControllerTrait
         $this->assignation['tags'] = $this->getAvailableTags($translation);
         $this->assignation['archives'] = $this->getArchives($translation);
 
-        return $this->render($this->getTemplate(), $this->assignation);
+        return $this->render($this->getTemplate(), $this->assignation, null, '/');
     }
 
     /**

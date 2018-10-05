@@ -20,6 +20,7 @@ class AbstractBlogThemeApp extends FrontendController
     protected static $themeCopyright = 'REZO ZERO';
     protected static $themeDir = 'AbstractBlogTheme';
     protected static $backendTheme = false;
+
     /**
      * {@inheritdoc}
      */
