@@ -79,6 +79,14 @@ IndexAction will assign:
 - `currentArchive`: `string` or `not defined`
 - `currentArchiveDateTime`: `\DateTime` or `not defined`
 
+### Filtering
+
+You can filter your post-container entities using `Request` attributes or query params :
+
+- `tag`: Filter by a tag’ name
+- `archive`: Filter by month and year, or just year
+- `related`: Filter by a related node’ name
+
 ### Usage
 
 All you need to do is creating your node-source `Controller` in your theme and 
@@ -104,6 +112,8 @@ class BlogPostContainerController extends MyThemeThemeApp implements Configurabl
 
 Those methods can be overriden to customize your `PostContainerControllerTrait` behaviour.
 
+- `throwExceptionOnEmptyResult`: By default it returns `true`. It throws a 404 when no posts found. 
+- `getPostEntity`: By default it returns `$this->get('blog_theme.post_entity')` as classname string. You can customize it to list other nodes.
 - `isScopedToCurrentContainer`: By default it returns `false`, `PostContainerControllerTrait` will fetch **all** blog-post no matter where
 there are. If your overriden `isScopedToCurrentContainer` method returns `true`, all blog post will be fetched only from your 
 current container allowing you to create many blog containers.

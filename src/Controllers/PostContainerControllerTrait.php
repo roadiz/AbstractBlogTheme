@@ -14,6 +14,13 @@ use Symfony\Component\HttpFoundation\Response;
 trait PostContainerControllerTrait
 {
     /**
+     * @return bool
+     */
+    protected function throwExceptionOnEmptyResult()
+    {
+        return true;
+    }
+    /**
      * Override this method if you want to fetch blog-posts only
      * from current post-container.
      *
@@ -22,6 +29,14 @@ trait PostContainerControllerTrait
     protected function isScopedToCurrentContainer()
     {
         return false;
+    }
+
+    /**
+     * @return string|boolean
+     */
+    protected function getPostEntity()
+    {
+        return $this->get('blog_theme.post_entity');
     }
 
     /**
@@ -37,27 +52,34 @@ trait PostContainerControllerTrait
     ) {
         $this->prepareThemeAssignation($node, $translation);
 
-        if ($this->get('blog_theme.post_entity') === false) {
+        if ($this->getPostEntity() === false) {
             throw new \RuntimeException('blog_theme.post_entity must be configured with your own BlogPost node-type class');
         }
 
         /** @var EntityListManager $elm */
         $elm = $this->createEntityListManager(
-            $this->get('blog_theme.post_entity'),
-            $this->getDefaultCriteria($translation, $request->query->get('tag'), $request->query->get('archive')),
+            $this->getPostEntity(),
+            $this->getDefaultCriteria(
+                $translation,
+                $request->get('tag', ''),
+                $request->get('archive', ''),
+                $request->get('related', '')
+            ),
             $this->getDefaultOrder()
         );
         $elm->setItemPerPage($this->getItemsPerPage());
         $elm->handle();
+        $elm->setPage($request->get('page', 1));
 
         $posts = $elm->getEntities();
 
-        if (count($posts) === 0) {
+        if (count($posts) === 0 && $this->throwExceptionOnEmptyResult()) {
             throw $this->createNotFoundException('No post found for given criteria.');
         }
 
         $this->assignation['posts'] = $posts;
-        $this->assignation['currentTag'] = $this->getTag($request->query->get('tag'));
+        $this->assignation['currentTag'] = $this->getTag($request->get('tag', ''));
+        $this->assignation['currentRelation'] = $this->getNode($request->get('related', ''));
         $this->assignation['filters'] = $elm->getAssignation();
         $this->assignation['tags'] = $this->getAvailableTags($translation);
         $this->assignation['archives'] = $this->getArchives($translation);
@@ -82,6 +104,23 @@ trait PostContainerControllerTrait
     {
         if ($tagName != '') {
             return $this->get('em')->getRepository(Tag::class)->findOneByTagName($tagName);
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $nodeName
+     *
+     * @return Node|null
+     */
+    protected function getNode($nodeName = '')
+    {
+        if ($nodeName != '') {
+            return $this->get('nodeApi')->getOneBy([
+                'nodeName' => $nodeName,
+                'translation' => $this->translation,
+            ]);
         }
 
         return null;
@@ -218,7 +257,7 @@ trait PostContainerControllerTrait
      */
     protected function getPostRepository()
     {
-        return $this->get('em')->getRepository($this->get('blog_theme.post_entity'));
+        return $this->get('em')->getRepository($this->getPostEntity());
     }
 
     /**
