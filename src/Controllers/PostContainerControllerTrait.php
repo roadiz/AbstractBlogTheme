@@ -78,8 +78,8 @@ trait PostContainerControllerTrait
         }
 
         $this->assignation['posts'] = $posts;
-        $this->assignation['currentTag'] = $this->getTag($request->get('tag', ''));
-        $this->assignation['currentRelation'] = $this->getNode($request->get('related', ''));
+        $this->assignation['currentTag'] = $this->getTag($request->get('tag', null));
+        $this->assignation['currentRelation'] = $this->getNode($request->get('related', null));
         $this->assignation['filters'] = $elm->getAssignation();
         $this->assignation['tags'] = $this->getAvailableTags($translation);
         $this->assignation['archives'] = $this->getArchives($translation);
@@ -173,8 +173,8 @@ trait PostContainerControllerTrait
         }
 
         if ($related != '' && null !== $relatedNode = $this->getNode($related)) {
-            $this->assignation['relatedNode'] = $relatedNode;
-            $this->assignation['relatedNodeSource'] = $relatedNode->getNodeSources()->first();
+            $this->assignation['currentRelation'] = $relatedNode;
+            $this->assignation['currentRelationSource'] = $relatedNode->getNodeSources()->first();
 
             /*
              * Use bNode from NodesToNodes without field specification.
