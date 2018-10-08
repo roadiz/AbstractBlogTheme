@@ -130,10 +130,11 @@ trait PostContainerControllerTrait
      * @param Translation $translation
      * @param string $tagName
      * @param string $archive
+     * @param string $related
      *
      * @return array
      */
-    protected function getDefaultCriteria(Translation $translation, $tagName = '', $archive = '')
+    protected function getDefaultCriteria(Translation $translation, $tagName = '', $archive = '', $related = '')
     {
         $criteria = [
             'node.visible' => true,
@@ -169,6 +170,16 @@ trait PostContainerControllerTrait
             } else {
                 throw $this->createNotFoundException('Archive filter is malformed.');
             }
+        }
+
+        if ($related != '' && null !== $relatedNode = $this->getNode($related)) {
+            $this->assignation['relatedNode'] = $relatedNode;
+            $this->assignation['relatedNodeSource'] = $relatedNode->getNodeSources()->first();
+
+            /*
+             * Use bNode from NodesToNodes without field specification.
+             */
+            $criteria['node.bNodes.nodeB'] = $relatedNode;
         }
 
         if ($this->isScopedToCurrentContainer()) {

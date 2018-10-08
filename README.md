@@ -83,9 +83,9 @@ IndexAction will assign:
 
 You can filter your post-container entities using `Request` attributes or query params :
 
-- `tag`: Filter by a tag’ name
-- `archive`: Filter by month and year, or just year
-- `related`: Filter by a related node’ name
+- `tag`: Filter by a tag’ name  using Roadiz nodes’s `tags` field
+- `archive`: Filter by month and year, or just year on `publishedAt` field, or the one defined by `getPublicationField` method.
+- `related`: Filter by a related node’ name using Roadiz nodes’s `bNodes` field
 
 ### Usage
 
