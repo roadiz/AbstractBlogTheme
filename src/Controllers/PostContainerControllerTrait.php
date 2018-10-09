@@ -369,6 +369,6 @@ trait PostContainerControllerTrait
      */
     public function getResponseTtl()
     {
-        return 5;
+        return 2;
     }
 }

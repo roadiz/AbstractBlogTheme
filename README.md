@@ -125,6 +125,7 @@ exists in your BlogPost node-type.
     $this->getPublicationField() => 'DESC'
 ]
 ```
+- `getResponseTtl`: By default this method returns `5` (minutes).
 
 ## Search engine
 
