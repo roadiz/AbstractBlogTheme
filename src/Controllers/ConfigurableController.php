@@ -13,4 +13,9 @@ interface ConfigurableController
      * @return int
      */
     public function getItemsPerPage();
+
+    /**
+     * @return int
+     */
+    public function getResponseTtl();
 }

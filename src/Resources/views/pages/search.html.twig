@@ -1,0 +1,45 @@
+{% extends 'pages/page.html.twig' %}
+
+{% block header_title %}
+    <h1 class="page-title">
+        {{- 'search_results_for_%q%'|trans({
+            '%q%': query
+        }) -}}
+    </h1>
+{% endblock %}
+
+{% block inner_content %}
+    <div class="searchcontainer-listing">
+        <div class="container">
+            {% for result in results %}
+                {{ dump(result) }}
+                {#
+                 # Page blocks pattern implementation
+                 #}
+                {% include 'blocks/search-result.html.twig' ignore missing with {
+                    'nodeSource': result.nodeSource,
+                    'highlighting': result.highlighting,
+                    'request': request,
+                    'parentNodeSource': (result.nodeSource|parent),
+                    'themeServices': themeServices,
+                    'head': head,
+                    'node': result.nodeSource.node,
+                    'nodeType': result.nodeSource.node.nodeType,
+                    'loop': loop,
+                    'bags': bags,
+                } only %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="container">
+        {% include 'modules/blog-pagination.html.twig' with {
+            'currentFilters': {
+                page: filters.currentPage,
+            },
+            'currentPage': filters.currentPage,
+            'paginationPath': request.attributes.get('_route'),
+            'showAlwaysFirstAndLast': true,
+            'lastPage': filters.pageCount
+        } only %}
+    </div>
+{% endblock %}

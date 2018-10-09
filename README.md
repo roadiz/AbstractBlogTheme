@@ -126,7 +126,39 @@ exists in your BlogPost node-type.
 ]
 ```
 
-### Template
+## Search engine
+
+```php
+<?php
+namespace Themes\MyTheme\Controllers;
+
+use Themes\AbstractBlogTheme\Controllers\ConfigurableController;
+use Themes\AbstractBlogTheme\Controllers\SearchControllerTrait;
+use Themes\MyTheme\MyThemeApp;
+
+class SearchController extends MyThemeApp implements ConfigurableController
+{
+    use SearchControllerTrait;
+}
+```
+
+```yaml
+searchPageLocale:
+    path: /{_locale}/search/{page}
+    defaults:
+        _controller: Themes\MyTheme\Controllers\SearchController::searchAction
+        _locale: en
+        page: 1
+    requirements:
+        # Use every 2 letter codes (quick and dirty)
+        _locale: "en|fr"
+        page: "[0-9]+"
+```
+
+Then create `pages/search.html.twig` template.
+
+
+## Template
 
 `Resources/views/` folder contains useful templates for creating your own blog. Feel free to include
 them directly in your theme or duplicated them.

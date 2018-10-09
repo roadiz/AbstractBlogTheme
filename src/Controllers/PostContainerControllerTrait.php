@@ -84,7 +84,20 @@ trait PostContainerControllerTrait
         $this->assignation['tags'] = $this->getAvailableTags($translation);
         $this->assignation['archives'] = $this->getArchives($translation);
 
-        return $this->render($this->getTemplate(), $this->assignation, null, '/');
+        $response = $this->render($this->getTemplate(), $this->assignation, null, '/');
+
+        if ($this->getResponseTtl() > 0) {
+            /*
+             * Set http cache for current request
+             * only if prod mode.
+             *
+             * Be careful! Do not use cache
+             * if page contains form and user content!
+             */
+            return $this->makeResponseCachable($request, $response, $this->getResponseTtl());
+        }
+
+        return $response;
     }
 
     /**
@@ -349,5 +362,13 @@ trait PostContainerControllerTrait
     public function getItemsPerPage()
     {
         return 15;
+    }
+
+    /**
+     * @return int
+     */
+    public function getResponseTtl()
+    {
+        return 5;
     }
 }

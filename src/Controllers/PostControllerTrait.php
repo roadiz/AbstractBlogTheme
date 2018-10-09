@@ -26,7 +26,20 @@ trait PostControllerTrait
             throw new \RuntimeException('blog_theme.post_entity must be configured with your own BlogPost node-type class');
         }
 
-        return $this->render($this->getTemplate(), $this->assignation, null, '/');
+        $response = $this->render($this->getTemplate(), $this->assignation, null, '/');
+
+        if ($this->getResponseTtl() > 0) {
+            /*
+             * Set http cache for current request
+             * only if prod mode.
+             *
+             * Be careful! Do not use cache
+             * if page contains form and user content!
+             */
+            return $this->makeResponseCachable($request, $response, $this->getResponseTtl());
+        }
+
+        return $response;
     }
 
     /**
@@ -43,5 +56,13 @@ trait PostControllerTrait
     public function getItemsPerPage()
     {
         return 15;
+    }
+
+    /**
+     * @return int
+     */
+    public function getResponseTtl()
+    {
+        return 5;
     }
 }

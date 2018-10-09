@@ -2,45 +2,53 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="none" original="" target-language="en" datatype="plaintext">
     <body>
-      <trans-unit id="all">
+      <trans-unit id="all" xml:space="preserve">
         <source>all</source>
-        <target>All</target>
+        <target xml:lang="en" state="translated">All</target>
       </trans-unit>
-      <trans-unit id="archives">
+      <trans-unit id="archives" xml:space="preserve">
         <source>archives</source>
-        <target>Archives</target>
+        <target xml:lang="en" state="translated">Archives</target>
       </trans-unit>
-      <trans-unit id="back_to_news">
+      <trans-unit id="back_to_news" xml:space="preserve">
         <source>back_to_news</source>
-        <target>Back to news</target>
+        <target xml:lang="en" state="translated">Back to news</target>
       </trans-unit>
-      <trans-unit id="filters">
+      <trans-unit id="filters" xml:space="preserve">
         <source>filters</source>
-        <target>Categories</target>
+        <target xml:lang="en" state="translated">Categories</target>
       </trans-unit>
-      <trans-unit id="next">
+      <trans-unit id="next" xml:space="preserve">
         <source>next</source>
-        <target>Next</target>
+        <target xml:lang="en" state="translated">Next</target>
       </trans-unit>
-      <trans-unit id="next_post">
+      <trans-unit id="next_post" xml:space="preserve">
         <source>next_post</source>
-        <target>Next article</target>
+        <target xml:lang="en" state="translated">Next article</target>
       </trans-unit>
-      <trans-unit id="previous">
+      <trans-unit id="previous" xml:space="preserve">
         <source>previous</source>
-        <target>Previous</target>
+        <target xml:lang="en" state="translated">Previous</target>
       </trans-unit>
-      <trans-unit id="previous_post">
+      <trans-unit id="previous_post" xml:space="preserve">
         <source>previous_post</source>
-        <target>Previous article</target>
+        <target xml:lang="en" state="translated">Previous article</target>
       </trans-unit>
-      <trans-unit id="read_more">
+      <trans-unit id="read_more" xml:space="preserve">
         <source>read_more</source>
-        <target>Read more…</target>
+        <target xml:lang="en" state="translated">Read more…</target>
       </trans-unit>
-      <trans-unit id="share_on">
+      <trans-unit id="search" xml:space="preserve">
+        <source>search</source>
+        <target xml:lang="en" state="translated">Search</target>
+      </trans-unit>
+      <trans-unit id="search_results_for__q_" xml:space="preserve">
+        <source>search_results_for_%q%</source>
+        <target xml:lang="en" state="translated">Search results for "%q%"</target>
+      </trans-unit>
+      <trans-unit id="share_on" xml:space="preserve">
         <source>share_on</source>
-        <target>Share on:</target>
+        <target xml:lang="en" state="translated">Share on:</target>
       </trans-unit>
     </body>
   </file>
