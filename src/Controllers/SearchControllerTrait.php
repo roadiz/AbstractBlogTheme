@@ -10,6 +10,14 @@ trait SearchControllerTrait
 {
 
     /**
+     * @return string
+     */
+    protected function getQuery()
+    {
+        return strip_tags($request->get($this->getSearchParamName()));
+    }
+
+    /**
      * @param Request $request
      * @param $_locale
      *
@@ -27,7 +35,7 @@ trait SearchControllerTrait
         ];
         $numResults = $this->get('solr.search.nodeSource')
             ->count(
-                $request->get($this->getSearchParamName()), # Use ?q query parameter to search with
+                $this->getQuery(), # Use ?q query parameter to search with
                 $criteria, # a simple criteria array to filter search results
                 $this->getItemsPerPage(), # result count
                 true
@@ -35,7 +43,7 @@ trait SearchControllerTrait
         ;
         $results = $this->get('solr.search.nodeSource')
             ->searchWithHighlight(
-                $request->get($this->getSearchParamName()), # Use ?q query parameter to search with
+                $this->getQuery(), # Use ?q query parameter to search with
                 $criteria, # a simple criteria array to filter search results
                 $this->getItemsPerPage(), # result count
                 true, # Search in tags too,
@@ -47,7 +55,7 @@ trait SearchControllerTrait
         $this->assignation['results'] = $results;
         $this->assignation['filters'] =  [
             'description' => '',
-            'search' => $request->get($this->getSearchParamName()),
+            'search' => $this->getQuery(),
             'currentPage' => $page,
             'pageCount' => ceil($numResults/$this->getItemsPerPage()),
             'itemPerPage' => $this->getItemsPerPage(),
@@ -55,7 +63,7 @@ trait SearchControllerTrait
             'nextPageQuery' => null,
             'previousPageQuery' => null,
         ];
-        $this->assignation['query'] = $request->get($this->getSearchParamName());
+        $this->assignation['query'] = $this->getQuery();
         $this->assignation['pageMeta'] = [
             'title' => $this->getTranslator()->trans('search'). ' – ' . $this->get('settingsBag')->get('site_name'),
             'description' => $this->getTranslator()->trans('search'),
