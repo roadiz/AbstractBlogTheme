@@ -5,8 +5,6 @@
     blockClassPrefix
 ] %}
 
-{% set posts = get_latest_posts(nodeSource.translation, 3) %}
-
 <div class="{{ blockClasses|join(' ') }}"
      id="block-{{ node.nodeName }}"
      data-index="{{ loop.index0 }}"
