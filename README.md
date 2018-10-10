@@ -160,8 +160,53 @@ searchPageLocale:
 
 Then create `pages/search.html.twig` template.
 
+### Search result model
 
-## Template
+For JSON search responses, `SearchControllerTrait` uses JMS Serializer with a custom model to decorate your
+node-sources and its highlighted text. By default `SearchControllerTrait` intanciates a `Themes\AbstractBlogTheme\Model\SearchResult`
+object that will be serialized. You can override this model if you want to add custom fields according to your 
+node-sources data.
+
+Create a child class, then override `createSearchResultModel` method:
+
+```php
+/**
+ * @param $searchResult
+ *
+ * @return SearchResult
+ */
+protected function createSearchResultModel($searchResult)
+{
+    return new SearchResult(
+        $searchResult['nodeSource'],
+        $searchResult['highlighting'],
+        $this->get('document.url_generator'),
+        $this->get('router')
+    );
+}
+```
+
+You’ll be able to add new virtual properties in your child `SearchResult` model such as:
+
+```php
+/**
+ * Example property to display a blogpost excerpt already parsed
+ * with Markdown syntax.
+ *
+ * @JMS\VirtualProperty()
+ * @return string
+ */
+public function getExcerpt()
+{
+    if ($this->nodeSource instanceof NSBlogPost) {
+        return \Parsedown::instance()->text($this->nodeSource->getExcerpt());
+    }
+    return null;
+}
+```
+
+
+## Templates
 
 `Resources/views/` folder contains useful templates for creating your own blog. Feel free to include
 them directly in your theme or duplicated them.

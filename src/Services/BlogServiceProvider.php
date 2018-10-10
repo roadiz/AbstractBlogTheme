@@ -35,6 +35,7 @@ class BlogServiceProvider implements ServiceProviderInterface
         };
 
         $container['searchResults.serializer'] = function ($c) {
+            \Doctrine\Common\Annotations\AnnotationRegistry::registerLoader('class_exists');
             $serializer = SerializerBuilder::create()
                 ->setCacheDir($c['kernel']->getCacheDir())
                 ->setDebug($c['kernel']->isDebug())

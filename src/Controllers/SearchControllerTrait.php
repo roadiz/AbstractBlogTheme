@@ -4,6 +4,7 @@ namespace Themes\AbstractBlogTheme\Controllers;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use JMS\Serializer\Serializer;
 use RZ\Roadiz\Core\Entities\Node;
+use RZ\Roadiz\Core\Entities\NodesSources;
 use RZ\Roadiz\Core\Entities\Translation;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,6 +20,22 @@ trait SearchControllerTrait
     protected function getQuery(Request $request)
     {
         return strip_tags($request->get($this->getSearchParamName()));
+    }
+
+    /**
+     * @param $searchResult
+     *
+     * @return SearchResult
+     */
+    protected function createSearchResultModel($searchResult)
+    {
+        return new SearchResult(
+            $searchResult['nodeSource'],
+            $searchResult['highlighting'],
+            $this->get('document.url_generator'),
+            $this->get('router'),
+            $this->get('translator')
+        );
     }
 
     /**
@@ -96,12 +113,7 @@ trait SearchControllerTrait
             /** @var Serializer $serializer */
             $serializer = $this->get('searchResults.serializer');
             $results = array_map(function ($item) {
-                return new SearchResult(
-                    $item['nodeSource'],
-                    $item['highlighting'],
-                    $this->get('document.url_generator'),
-                    $this->get('router')
-                );
+                return $this->createSearchResultModel($item);
             }, $results);
             $response = new JsonResponse([
                 'results' => $serializer->toArray($results),
