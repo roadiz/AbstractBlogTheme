@@ -158,6 +158,20 @@ searchPageLocale:
         _format: html|json
 ```
 
+Add your search form in your website templates (use GET method to enable user history):
+
+```twig
+<form method="get" action="{{ path('searchPageLocale', {
+    '_locale': request.locale
+}) }}" data-json-action="{{ path('searchPageLocale', {
+    '_locale': request.locale,
+    '_format': 'json',
+}) }}" id="search">
+    <input type="search" name="q">
+    <button type="submit">{% trans %}search{% endtrans %}</button>
+</form>
+```
+
 Then create `pages/search.html.twig` template.
 
 ### Search result model
