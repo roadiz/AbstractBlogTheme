@@ -1,10 +1,14 @@
 <?php
 namespace Themes\AbstractBlogTheme\Controllers;
 
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use JMS\Serializer\Serializer;
 use RZ\Roadiz\Core\Entities\Node;
 use RZ\Roadiz\Core\Entities\Translation;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Themes\AbstractBlogTheme\Model\SearchResult;
 
 trait SearchControllerTrait
 {
@@ -23,7 +27,7 @@ trait SearchControllerTrait
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function searchAction(Request $request, $_locale, $page = 1)
+    public function searchAction(Request $request, $_locale, $page = 1, $_format = 'html')
     {
         $translation = $this->bindLocaleFromRoute($request, $_locale);
         $this->prepareThemeAssignation(null, $translation);
@@ -53,24 +57,60 @@ trait SearchControllerTrait
             )
         ;
 
+        $pageCount = ceil($numResults/$this->getItemsPerPage());
         $this->assignation['results'] = $results;
         $this->assignation['filters'] =  [
             'description' => '',
             'search' => $query,
             'currentPage' => $page,
-            'pageCount' => ceil($numResults/$this->getItemsPerPage()),
+            'pageCount' => $pageCount,
             'itemPerPage' => $this->getItemsPerPage(),
             'itemCount' => $numResults,
             'nextPageQuery' => null,
             'previousPageQuery' => null,
         ];
+        if ($pageCount > $page) {
+            $this->assignation['filters']['nextPageQuery'] = $this->generateUrl($request->attributes->get('_route'), [
+                '_locale' => $_locale,
+                'page' => $page + 1,
+                '_format' => $_format,
+                $this->getSearchParamName() => $query,
+            ]);
+        }
+        if ($page > 1) {
+            $this->assignation['filters']['nextPageQuery'] = $this->generateUrl($request->attributes->get('_route'), [
+                '_locale' => $_locale,
+                'page' => $page - 1,
+                '_format' => $_format,
+                $this->getSearchParamName() => $query,
+            ]);
+        }
+
         $this->assignation['query'] = $query;
         $this->assignation['pageMeta'] = [
             'title' => $this->getTranslator()->trans('search'). ' – ' . $this->get('settingsBag')->get('site_name'),
             'description' => $this->getTranslator()->trans('search'),
         ];
 
-        $response = $this->render($this->getTemplate(), $this->assignation, null, '/');
+        if ($_format === 'json') {
+            /** @var Serializer $serializer */
+            $serializer = $this->get('searchResults.serializer');
+            $results = array_map(function ($item) {
+                return new SearchResult(
+                    $item['nodeSource'],
+                    $item['highlighting'],
+                    $this->get('document.url_generator'),
+                    $this->get('router')
+                );
+            }, $results);
+            $response = new JsonResponse([
+                'results' => $serializer->toArray($results),
+                'filters' => $this->assignation['filters']
+            ]);
+        } else {
+            $response = $this->render($this->getTemplate(), $this->assignation, null, '/');
+        }
+
 
         if ($this->getResponseTtl() > 0) {
             /*
@@ -85,6 +125,8 @@ trait SearchControllerTrait
 
         return $response;
     }
+
+
 
     /**
      * @return int

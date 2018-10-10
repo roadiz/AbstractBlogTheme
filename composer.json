@@ -13,7 +13,8 @@
         "php": "^7.0",
         "roadiz/roadiz": "^0.22 || ^1.0 || dev-develop",
         "rezozero/social-links": "^1.1.0",
-        "twig/twig": "1.* || 2.*"
+        "twig/twig": "1.* || 2.*",
+        "jms/serializer": "^1.13"
     },
     "autoload": {
         "psr-4": {

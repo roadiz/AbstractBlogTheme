@@ -127,7 +127,7 @@ exists in your BlogPost node-type.
 ```
 - `getResponseTtl`: By default this method returns `5` (minutes).
 
-## Search engine
+## Search engine with Solr
 
 ```php
 <?php
@@ -145,15 +145,17 @@ class SearchController extends MyThemeApp implements ConfigurableController
 
 ```yaml
 searchPageLocale:
-    path: /{_locale}/search/{page}
+    path: /{_locale}/search.{_format}/{page}
     defaults:
         _controller: Themes\MyTheme\Controllers\SearchController::searchAction
         _locale: en
         page: 1
+        _format: html
     requirements:
         # Use every 2 letter codes (quick and dirty)
         _locale: "en|fr"
         page: "[0-9]+"
+        _format: html|json
 ```
 
 Then create `pages/search.html.twig` template.
