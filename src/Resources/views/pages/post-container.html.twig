@@ -4,7 +4,7 @@
     <h1 class="page-title">
         {{ nodeSource.title }}
         {% if currentArchiveDateTime %}
-            - {{ currentArchiveDateTime|localizeddate('none','none', null, null, 'MMMM Y') }}
+            - {{ currentArchiveDateTime|localizeddate('none','none', null, null, 'MMMM y') }}
         {% endif %}
         {% if currentTag %}
             - {{ currentTag.translatedTags.first.name }}
@@ -34,7 +34,7 @@
                                 {% for month, monthDate in months %}
                                     <li class="{% if currentArchive and currentArchive == month %}active{% endif %}">
                                         <a class="{% if currentArchive and currentArchive == month %}active{% endif %}"
-                                           href="{{ path(nodeSource, {archive: month}) }}">{{ monthDate|localizeddate('none','none', null, null, 'MMMM Y') }}</a>
+                                           href="{{ path(nodeSource, {archive: month}) }}">{{ monthDate|localizeddate('none','none', null, null, 'MMMM y') }}</a>
                                     </li>
                                 {% endfor %}
                             {% endfor %}
