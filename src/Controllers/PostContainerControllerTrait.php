@@ -78,8 +78,8 @@ trait PostContainerControllerTrait
         }
 
         $this->assignation['posts'] = $posts;
-        $this->assignation['currentTag'] = $this->getTag($request->get('tag', null));
-        $this->assignation['currentRelation'] = $this->getNode($request->get('related', null));
+        $this->assignation['currentTag'] = $this->getTag($request->get('tag', ''));
+        $this->assignation['currentRelation'] = $this->getNode($request->get('related', ''));
         $this->assignation['filters'] = $elm->getAssignation();
         $this->assignation['tags'] = $this->getAvailableTags($translation);
         $this->assignation['archives'] = $this->getArchives($translation);
@@ -115,8 +115,11 @@ trait PostContainerControllerTrait
      */
     protected function getTag($tagName = '')
     {
-        if ($tagName != '') {
-            return $this->get('em')->getRepository(Tag::class)->findOneByTagName($tagName);
+        if ($tagName !== '') {
+            return $this->get('em')->getRepository(Tag::class)->findOneBy([
+                'tagName' => $tagName,
+                'translation' => $this->translation,
+            ]);
         }
 
         return null;
@@ -129,7 +132,7 @@ trait PostContainerControllerTrait
      */
     protected function getNode($nodeName = '')
     {
-        if ($nodeName != '') {
+        if ($nodeName !== '') {
             return $this->get('nodeApi')->getOneBy([
                 'nodeName' => $nodeName,
                 'translation' => $this->translation,
@@ -155,7 +158,7 @@ trait PostContainerControllerTrait
             $this->getPublicationField() => ['<=', new \DateTime()],
         ];
 
-        if ($tagName != '') {
+        if ($tagName !== '') {
             $tag = $this->getTag($tagName);
             if (null === $tag) {
                 throw $this->createNotFoundException('Tag does not exist.');
@@ -163,7 +166,7 @@ trait PostContainerControllerTrait
             $criteria['tags'] = $tag;
         }
 
-        if ($archive != '') {
+        if ($archive !== '') {
             if (preg_match('#[0-9]{4}\-[0-9]{2}#', $archive) > 0) {
                 $startDate = new \DateTime($archive . '-01 00:00:00');
                 $endDate = clone $startDate;
@@ -185,7 +188,7 @@ trait PostContainerControllerTrait
             }
         }
 
-        if ($related != '' && null !== $relatedNode = $this->getNode($related)) {
+        if ($related !== '' && null !== $relatedNode = $this->getNode($related)) {
             $this->assignation['currentRelation'] = $relatedNode;
             $this->assignation['currentRelationSource'] = $relatedNode->getNodeSources()->first();
 

@@ -2,18 +2,19 @@
 
 namespace Themes\AbstractBlogTheme\Services;
 
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use GeneratedNodeSources\NSBlogPost;
+use JMS\Serializer\EventDispatcher\EventDispatcher;
+use JMS\Serializer\EventDispatcher\PreSerializeEvent;
+use JMS\Serializer\Handler\HandlerRegistry;
+use JMS\Serializer\Naming\IdenticalPropertyNamingStrategy;
+use JMS\Serializer\Naming\SerializedNameAnnotationStrategy;
+use JMS\Serializer\SerializerBuilder;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
-use RZ\Roadiz\Core\Entities\Document;
 use RZ\Roadiz\Core\Entities\NodesSources;
-use Themes\AbstractBlogTheme\Twig\BlogExtension;
 use Symfony\Component\Translation\Translator;
-use JMS\Serializer\SerializerBuilder;
-use JMS\Serializer\Handler\HandlerRegistry;
-use JMS\Serializer\EventDispatcher\PreSerializeEvent;
-use JMS\Serializer\EventDispatcher\EventDispatcher;
-use Doctrine\Common\Annotations\AnnotationRegistry;
+use Themes\AbstractBlogTheme\Twig\BlogExtension;
 
 class BlogServiceProvider implements ServiceProviderInterface
 {
@@ -35,13 +36,13 @@ class BlogServiceProvider implements ServiceProviderInterface
         };
 
         $container['searchResults.serializer'] = function ($c) {
-            \Doctrine\Common\Annotations\AnnotationRegistry::registerLoader('class_exists');
+            AnnotationRegistry::registerLoader('class_exists');
             $serializer = SerializerBuilder::create()
                 ->setCacheDir($c['kernel']->getCacheDir())
                 ->setDebug($c['kernel']->isDebug())
                 ->setPropertyNamingStrategy(
-                    new \JMS\Serializer\Naming\SerializedNameAnnotationStrategy(
-                        new \JMS\Serializer\Naming\IdenticalPropertyNamingStrategy()
+                    new SerializedNameAnnotationStrategy(
+                        new IdenticalPropertyNamingStrategy()
                     )
                 )
                 ->addDefaultHandlers()
