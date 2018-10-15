@@ -70,6 +70,8 @@
                 {% endif %}
             {% endblock %}
 
+            {%- block article_additional_content -%}{%- endblock -%}
+
             {% block article_content_share %}
                 <div class="social-share">
                     <amp-social-share type="facebook" data-param-app_id="{{ settings.get('facebook_appid') }}"></amp-social-share>
