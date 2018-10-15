@@ -229,11 +229,15 @@ public function getExcerpt()
 ## AMP mobile page support
 
 - Disable `display_debug_panel` setting
-- Add `?amp=1` after your blog-post detail page Url.
+- Add `?amp=1` after your blog-post detail page Url. Or add `?amp=1#development=1` for dev mode.
+- Add amp `link` to your HTML template:
 
-### JsonLD models and schema.org micro-data
-
-
+```twig
+{% block share_metas %}
+    {{ parent() }}
+    <link rel="amphtml" href="{{ url(nodeSource, {'amp': 1}) }}">
+{% endblock %}
+```
 
 ## Templates
 

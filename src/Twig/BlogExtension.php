@@ -53,6 +53,8 @@ class BlogExtension extends AbstractExtension
 
     /**
      * @param string $content
+     *
+     * @return string
      */
     public function getAmpifizedContent($content)
     {

@@ -1,11 +1,4 @@
 <?php
-/**
- * thehopegallery.com - AmpArticle.php
- *
- * Initial version by: ambroisemaupate
- * Initial version created on: 15/10/2018
- */
-
 namespace Themes\AbstractBlogTheme\Model;
 
 use JMS\Serializer\Annotation as JMS;
@@ -57,7 +50,10 @@ class JsonLdArticle
     /**
      * AmpArticle constructor.
      *
-     * @param NodesSources $nodeSource
+     * @param NodesSources          $nodeSource
+     * @param DocumentUrlGenerator  $documentUrlGenerator
+     * @param UrlGeneratorInterface $urlGenerator
+     * @param Settings              $settingsBag
      */
     public function __construct(
         NodesSources $nodeSource,
@@ -73,7 +69,7 @@ class JsonLdArticle
 
     /**
      * @JMS\VirtualProperty()
-     * @var string
+     * @return string
      */
     public function getHeadline()
     {
@@ -83,7 +79,7 @@ class JsonLdArticle
     /**
      * @JMS\VirtualProperty()
      * @JMS\Type("DateTime<'c'>")
-     * @var \DateTime
+     * @return \DateTime
      */
     public function getDatePublished()
     {
@@ -93,7 +89,7 @@ class JsonLdArticle
     /**
      * @JMS\VirtualProperty()
      * @JMS\Type("DateTime<'Y'>")
-     * @var \DateTime
+     * @return \DateTime
      */
     public function getCopyrightYear()
     {
@@ -102,7 +98,7 @@ class JsonLdArticle
 
     /**
      * @JMS\VirtualProperty()
-     * @var array
+     * @return array
      */
     public function getImage()
     {
@@ -122,7 +118,7 @@ class JsonLdArticle
 
     /**
      * @JMS\VirtualProperty()
-     * @return null|JsonLdPerson
+     * @return JsonLdPerson|JsonLdOrganization
      */
     public function getAuthor()
     {

@@ -13,14 +13,14 @@ use JMS\Serializer\Serializer;
 trait PostControllerTrait
 {
     /**
-     * @param NodesSources $nodesSources
+     * @param NodesSources $nodeSource
      *
      * @return JsonLdArticle
      */
-    protected function getJsonLdArticle(NodesSources $nodesSources)
+    protected function getJsonLdArticle(NodesSources $nodeSource)
     {
         return new JsonLdArticle(
-            $this->nodeSource,
+            $nodeSource,
             $this->get('document.url_generator'),
             $this->get('router'),
             $this->get('settingsBag')
