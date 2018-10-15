@@ -20,7 +20,7 @@ class BlogServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $container)
     {
-        $container['searchResults.nodesSourcesSerializerHandler'] = function($c) {
+        $container['searchResults.nodesSourcesSerializerHandler'] = function ($c) {
             return function ($visitor, NodesSources $obj, array $type) {
                 return [
                     'id' => $obj->getId(),
@@ -46,16 +46,17 @@ class BlogServiceProvider implements ServiceProviderInterface
                     )
                 )
                 ->addDefaultHandlers()
-                ->configureListeners(function(EventDispatcher $dispatcher) {
-                    $dispatcher->addListener('serializer.pre_serialize',
+                ->configureListeners(function (EventDispatcher $dispatcher) {
+                    $dispatcher->addListener(
+                        'serializer.pre_serialize',
                         function (PreSerializeEvent $event) {
-                            if ($event->getObject() instanceof NodesSources){
+                            if ($event->getObject() instanceof NodesSources) {
                                 $event->setType(NodesSources::class);
                             }
                         }
                     );
                 })
-                ->configureHandlers(function(HandlerRegistry $registry) use ($c) {
+                ->configureHandlers(function (HandlerRegistry $registry) use ($c) {
                     $registry->registerHandler(
                         'serialization',
                         NodesSources::class,
