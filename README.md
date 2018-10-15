@@ -228,6 +228,8 @@ public function getExcerpt()
 
 ## AMP mobile page support
 
+[AMP](https://www.ampproject.org) format is supported for blog-post detail pages. 
+
 - Disable `display_debug_panel` setting
 - Add `?amp=1` after your blog-post detail page Url. Or add `?amp=1#development=1` for dev mode.
 - Add amp `link` to your HTML template:
@@ -248,8 +250,12 @@ By default, your Roadiz website will directly use *AbstractBlogTheme* templates.
 You can override them in your inheriting Theme using the exact same path and name.
 
 ## Twig extension
+### Functions
 
 - `get_latest_posts`
 - `get_latest_posts_for_tag`
 - `get_previous_post`
 - `get_next_post`
+
+### Filters
+- `ampifize`: Strips unsupported tags in AMP format and convert `img` and `iframe` tags to their *AMP* equivalent.
