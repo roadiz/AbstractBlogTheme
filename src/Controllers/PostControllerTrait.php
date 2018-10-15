@@ -49,8 +49,11 @@ trait PostControllerTrait
         $ampArticle = $this->getJsonLdArticle($this->nodeSource);
         $this->assignation['jsonLdPost'] = $serializer->serialize($ampArticle, 'json');
 
-        if ($request->get('amp', 0) == 1) {
+        if ($request->get('amp', 0) == 1 || $request->getRequestFormat('html') === 'amp') {
             return $this->render($this->getAmpTemplate(), $this->assignation, null, '/');
+        }
+        if ($request->get('json', 0) == 1 || $request->getRequestFormat('html') === 'json') {
+            return new Response($this->assignation['jsonLdPost'], Response::HTTP_OK, ['content-type' => 'application/ld+json']);
         }
 
         $response = $this->render($this->getTemplate(), $this->assignation, null, '/');
