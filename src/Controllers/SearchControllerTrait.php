@@ -1,20 +1,17 @@
 <?php
 namespace Themes\AbstractBlogTheme\Controllers;
 
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use JMS\Serializer\Serializer;
-use RZ\Roadiz\Core\Entities\Node;
-use RZ\Roadiz\Core\Entities\NodesSources;
-use RZ\Roadiz\Core\Entities\Translation;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Themes\AbstractBlogTheme\Model\SearchResult;
 
 trait SearchControllerTrait
 {
 
     /**
+     * @param Request $request
+     *
      * @return string
      */
     protected function getQuery(Request $request)
@@ -40,7 +37,9 @@ trait SearchControllerTrait
 
     /**
      * @param Request $request
-     * @param $_locale
+     * @param string  $_locale
+     * @param int     $page
+     * @param string  $_format
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */

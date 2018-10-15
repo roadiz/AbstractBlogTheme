@@ -1,11 +1,4 @@
 <?php
-/**
- * thehopegallery.com - AmpArticle.php
- *
- * Initial version by: ambroisemaupate
- * Initial version created on: 15/10/2018
- */
-
 namespace Themes\AbstractBlogTheme\Model;
 
 use JMS\Serializer\Annotation as JMS;
