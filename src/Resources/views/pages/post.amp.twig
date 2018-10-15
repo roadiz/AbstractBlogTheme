@@ -4,21 +4,32 @@
     {% if nodeSource.image[0] %}
         {% set media = nodeSource.image[0] %}
         <div class="article-image">
-            <amp-img src="{{ media|url({
-                'fit': '800x400',
-            }) }}" alt="{{ nodeSource.title }}" layout="responsive" height="400" width="800"></amp-img>
+            {% block article_image %}
+                <amp-img src="{{ media|url({
+                    'fit': '800x400',
+                }) }}" alt="{{ nodeSource.title }}" layout="responsive" height="400" width="800">
+                    <noscript>
+                        {{- media|display({
+                            'fit': '800x400',
+                            'alt': nodeSource.title
+                        }) -}}
+                    </noscript>
+                </amp-img>
+            {% endblock %}
         </div>
     {% endif %}
     <div class="article-content">
-        <time datetime="{{ nodeSource.publishedAt|date('Y-m-d H:i:s') }}"
-            class="{{ blockClassPrefix }}-over-title">{{ nodeSource.publishedAt|localizeddate('medium','none') }}</time>
-        <h1 class="{{ blockClassPrefix }}-title" >{{ nodeSource.title }}</h1>
-        {% if nodeSource.location %}
-            <p><strong itemprop="location">{{ nodeSource.location|striptags }}</strong></p>
-        {% endif %}
+        {% block article_content_head %}
+            <time datetime="{{ nodeSource.publishedAt|date('Y-m-d H:i:s') }}"
+                  class="{{ blockClassPrefix }}-over-title">{{ nodeSource.publishedAt|localizeddate('medium','none') }}</time>
+            <h1 class="{{ blockClassPrefix }}-title" >{{ nodeSource.title }}</h1>
+            {% if nodeSource.location %}
+                <p><strong itemprop="location">{{ nodeSource.location|striptags }}</strong></p>
+            {% endif %}
+        {% endblock %}
+
         <div class="{{ blockClassPrefix }}-content">
             <div class="page-block-content-inner">{{ nodeSource.content|markdown|ampifize }}</div>
-
             <div class="page-blocks">
                 {#
                  # Page blocks pattern implementation
@@ -27,8 +38,8 @@
                     'node.nodeType' : ['!=', bags.nodeTypes.get('Page')],
                     'node.visible': true,
                 }) %}
-                {% for singleBlock in blocks %}
-                    {% include 'blocks/' ~ singleBlock.node.nodeType.name|lower ~ '.amp.twig' ignore missing with {
+                {%- for singleBlock in blocks -%}
+                    {%- include 'blocks/' ~ singleBlock.node.nodeType.name|lower ~ '.amp.twig' ignore missing with {
                         'nodeSource': singleBlock,
                         'parentNodeSource': nodeSource,
                         'themeServices': themeServices,
@@ -37,33 +48,37 @@
                         'nodeType': singleBlock.node.nodeType,
                         'loop': loop,
                         'blocksLength':blocks|length
-                    } only %}
-                {% endfor %}
+                    } only -%}
+                {%- endfor -%}
             </div>
 
-            {% if nodeSource.file|length > 0 %}
-                <ul class="download-list">
-                    {% for file in nodeSource.file %}
-                        <li class="download-item">
-                            <a href="{{ file|url }}" target="_blank">
-                                {% set fileMeta = file.documentTranslations.first %}
-                                <span class="file-text">
+            {% block article_content_files %}
+                {% if nodeSource.file|length > 0 %}
+                    <ul class="download-list">
+                        {% for file in nodeSource.file %}
+                            <li class="download-item">
+                                <a href="{{ file|url }}" target="_blank">
+                                    {% set fileMeta = file.documentTranslations.first %}
+                                    <span class="file-text">
                                     {{ fileMeta.name | default(file.fileName) }}
                                 </span>
-                                <span class="download-item-type">{{ file.shortType }}</span>
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
+                                    <span class="download-item-type">{{ file.shortType }}</span>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endblock %}
 
-            <div class="social-share">
-                <amp-social-share type="facebook" data-param-app_id="{{ settings.get('facebook_appid') }}"></amp-social-share>
-                <amp-social-share type="twitter"></amp-social-share>
-                <amp-social-share type="pinterest"></amp-social-share>
-                <amp-social-share type="linkedin"></amp-social-share>
-                <amp-social-share type="email"></amp-social-share>
-            </div>
+            {% block article_content_share %}
+                <div class="social-share">
+                    <amp-social-share type="facebook" data-param-app_id="{{ settings.get('facebook_appid') }}"></amp-social-share>
+                    <amp-social-share type="twitter"></amp-social-share>
+                    <amp-social-share type="pinterest"></amp-social-share>
+                    <amp-social-share type="linkedin"></amp-social-share>
+                    <amp-social-share type="email"></amp-social-share>
+                </div>
+            {% endblock %}
         </div>
     </div>
 {% endblock %}

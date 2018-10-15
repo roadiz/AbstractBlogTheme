@@ -13,7 +13,7 @@
     {% set headerImage = nodeSource.headerImages[0] %}
 {% endif %}
 <!doctype html>
-<html ⚡ lang="en">
+<html ⚡ lang="{{ formattedLocale }}">
 <head>
     <meta charset="utf-8">
     <title>{%- block page_title -%}{{ pageMetaTitle }}{%- endblock page_title -%}</title>
@@ -26,18 +26,87 @@
     <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
     <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
     <script async custom-element="amp-iframe" src="https://cdn.ampproject.org/v0/amp-iframe-0.1.js"></script>
+    <script async custom-element="amp-analytics" src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"></script>
 
     <script type="application/ld+json">{{- jsonLdPost|raw -}}</script>
     <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
-    <style amp-custom>{%- block custom_amp_style -%}{%- endblock custom_amp_style -%}</style>
+    <style amp-custom>{%- block custom_amp_style -%}#main-site-header{display: flex;}{%- endblock custom_amp_style -%}</style>
     <script async src="https://cdn.ampproject.org/v0.js"></script>
     {%- block extensions -%}{%- endblock extensions -%}
 </head>
 <body class="body">
-{%- block sidebar -%}{%- endblock sidebar -%}
+
+{%- block sidebar -%}
+    <amp-sidebar id="main-sidebar" layout="nodisplay" side="left">
+        {%- block sidebar_nav -%}
+            <ul>
+                {% if home %}
+                    {% set homeSource = home.nodeSources.first %}
+                    <li class="nav-item nav-item-home {% if node.isHome %}active{% endif %}" id="nav-item-home">
+                        <a href="{{ path(homeSource) }}"
+                           title="{{ homeSource.title|default(home.nodeName) }}"
+                           class="nav-link-home nav-link {% if node.isHome %}active{% endif %}"
+                           id="nav-home">{{ homeSource.title }}</a>
+                    </li>
+                {% endif %}
+
+                {% if themeServices.navigation and themeServices.navigation|length %}
+                    {% for source in themeServices.navigation %}
+                        {% include 'common/nav-item.html.twig' ignore missing with {
+                            'source' : source,
+                            'active' : node,
+                            'home' : home,
+                            'themeServices':themeServices
+                        } only %}
+                    {% endfor %}
+                {% endif %}
+            </ul>
+        {%- endblock sidebar_nav -%}
+    </amp-sidebar>
+{%- endblock sidebar -%}
+
+{%- block site_header -%}
+<header id="main-site-header">
+    <button on="tap:main-sidebar.toggle"
+            class="ampstart-btn caps m2">{% trans %}toggle_menu{% endtrans %}</button>
+    <p class="site-title">{{ bags.settings.get('site_name') }}</p>
+</header>
+{%- endblock site_header -%}
+
 <div class="content">
 {%- block content -%}{%- endblock content -%}
 </div>
-{%- block analytics -%}{%- endblock analytics -%}
+
+{%- block analytics -%}
+    {% if head.universalAnalyticsId and not head.googleTagManagerId %}
+        <amp-analytics type="googleanalytics">
+            <script type="application/json">
+                {
+                    "vars": {
+                        "account": "{{ head.universalAnalyticsId }}"
+                    },
+                    "triggers": {
+                        "trackPageview": {
+                            "on": "visible",
+                            "request": "pageview"
+                        }
+                    }
+                }
+            </script>
+        </amp-analytics>
+    {% elseif head.googleTagManagerId and head.universalAnalyticsId %}
+        <amp-analytics
+            config="https://www.googletagmanager.com/amp.json?id={{ head.googleTagManagerId }}&amp;gtm.url={{ url(nodeSource)|url_encode }}"
+            data-credentials="include">
+            <script type="application/json">
+                {
+                    "vars": {
+                        "gaTrackingId": "{{ head.universalAnalyticsId }}"
+                    }
+                }
+            </script>
+        </amp-analytics>
+    {% endif %}
+{%- endblock analytics -%}
 </body>
 </html>

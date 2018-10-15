@@ -73,6 +73,28 @@
 
                 <div class="{{ blockClassPrefix }}-content">
                     <div class="page-block-content-inner" itemprop="articleBody">{{ nodeSource.content|markdown }}</div>
+                    <div class="page-blocks">
+                        {#
+                         # Page blocks pattern implementation
+                         #}
+                        {% set blocks = nodeSource|children({
+                            'node.nodeType' : ['!=', bags.nodeTypes.get('Page')],
+                            'node.visible': true,
+                        }) %}
+                        {%- for singleBlock in blocks -%}
+                            {%- include 'blocks/' ~ singleBlock.node.nodeType.name|lower ~ '.html.twig' ignore missing with {
+                                'nodeSource': singleBlock,
+                                'parentNodeSource': nodeSource,
+                                'themeServices': themeServices,
+                                'head': head,
+                                'node': singleBlock.node,
+                                'nodeType': singleBlock.node.nodeType,
+                                'loop': loop,
+                                'blocksLength':blocks|length
+                            } only -%}
+                        {%- endfor -%}
+                    </div>
+
                     {% if nodeSource.file|length > 0 %}
                         <ul class="download-list">
                             {% for file in nodeSource.file %}

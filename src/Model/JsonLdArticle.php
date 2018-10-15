@@ -130,7 +130,7 @@ class JsonLdArticle
             $this->nodeSource->getAuthor() != '') {
             return new JsonLdPerson($this->nodeSource->getAuthor());
         }
-        return null;
+        return $this->getDefaultOrganization();
     }
 
     /**
@@ -159,7 +159,7 @@ class JsonLdArticle
             $this->nodeSource->getCopyrightHolder() != '') {
             return new JsonLdOrganization($this->nodeSource->getCopyrightHolder());
         }
-        return new JsonLdOrganization($this->settingsBag->get('site_name'));
+        return $this->getDefaultOrganization();
     }
 
     /**
@@ -172,7 +172,7 @@ class JsonLdArticle
             $this->nodeSource->getCopyrightHolder() != '') {
             return new JsonLdOrganization($this->nodeSource->getCopyrightHolder());
         }
-        return new JsonLdOrganization($this->settingsBag->get('site_name'));
+        return $this->getDefaultOrganization();
     }
 
     /**
@@ -196,5 +196,36 @@ class JsonLdArticle
         }
 
         return null;
+    }
+
+    /**
+     * @return JsonLdOrganization Create a default Organization using Roadiz site_name and admin_image settings.
+     */
+    protected function getDefaultOrganization()
+    {
+        /** @var Document|null $logoDocument */
+        $logoDocument = $this->getDefaultOrganizationLogo();
+        if (null !== $logoDocument) {
+            $this->documentUrlGenerator->setDocument($logoDocument);
+            $this->documentUrlGenerator->setOptions([
+                'noProcess' => true,
+            ]);
+            $logoDocumentUrl = $this->documentUrlGenerator->getUrl(true);
+        } else {
+            $logoDocumentUrl = '';
+        }
+
+        return new JsonLdOrganization(
+            $this->settingsBag->get('site_name'),
+            $logoDocumentUrl
+        );
+    }
+
+    /**
+     * @return null|Document
+     */
+    protected function getDefaultOrganizationLogo()
+    {
+        return $this->settingsBag->getDocument('admin_image');
     }
 }

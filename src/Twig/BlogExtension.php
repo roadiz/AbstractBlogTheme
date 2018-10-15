@@ -62,7 +62,7 @@ class BlogExtension extends AbstractExtension
         );
 
         $replacements = [
-            '<iframe' => '<amp-iframe layout="responsive" sandbox="allow-scripts allow-same-origin"',
+            '<iframe' => '<amp-iframe layout="responsive" sandbox="allow-scripts allow-same-origin allow-presentation"',
             '</iframe' => '</amp-iframe',
             '<img' => '<amp-img layout="responsive"',
             '</img' => '</amp-img',
