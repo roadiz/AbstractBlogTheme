@@ -28,6 +28,8 @@
             {% endif %}
         {% endblock %}
 
+        {%- block article_before_content -%}{%- endblock -%}
+
         <div class="{{ blockClassPrefix }}-content">
             <div class="page-block-content-inner">{{ nodeSource.content|markdown|ampifize }}</div>
             <div class="page-blocks">
