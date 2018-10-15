@@ -1,0 +1,43 @@
+{#
+ # Main base HTML file.
+ #}
+{% set pageMetaDescription = pageMetaDescription|default(pageMeta.description)|default(meta.siteDescription) %}
+{% set pageMetaTitle = pageMetaTitle|default(pageMeta.title)|default(meta.siteName) %}
+{% set formattedLocale = request.locale|replace({'_': '-'})|lower %}
+{#  #}
+{% set title = title|default(nodeSource.title) %}
+{% set content = content|default(nodeSource.content) %}
+{% if nodeSource and nodeSource.headerImage|length > 0 %}
+    {% set headerImage = nodeSource.headerImage[0] %}
+{% elseif nodeSource and nodeSource.headerImages|length > 0 %}
+    {% set headerImage = nodeSource.headerImages[0] %}
+{% endif %}
+<!doctype html>
+<html ⚡ lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{%- block page_title -%}{{ pageMetaTitle }}{%- endblock page_title -%}</title>
+    <meta name="description" content="{%- block page_description -%}{{ pageMetaDescription }}{%- endblock page_description -%}">
+    <link rel="canonical" href="{%- block canonical_url -%}{{ url(nodeSource) }}{%- endblock canonical_url -%}">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+    <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
+    <script async custom-element="amp-iframe" src="https://cdn.ampproject.org/v0/amp-iframe-0.1.js"></script>
+
+    <script type="application/ld+json">{{- jsonLdPost|raw -}}</script>
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <style amp-custom>{%- block custom_amp_style -%}{%- endblock custom_amp_style -%}</style>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    {%- block extensions -%}{%- endblock extensions -%}
+</head>
+<body class="body">
+{%- block sidebar -%}{%- endblock sidebar -%}
+<div class="content">
+{%- block content -%}{%- endblock content -%}
+</div>
+{%- block analytics -%}{%- endblock analytics -%}
+</body>
+</html>

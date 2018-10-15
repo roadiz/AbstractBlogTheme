@@ -3,12 +3,30 @@
 namespace Themes\AbstractBlogTheme\Controllers;
 
 use RZ\Roadiz\Core\Entities\Node;
+use RZ\Roadiz\Core\Entities\NodesSources;
 use RZ\Roadiz\Core\Entities\Translation;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Themes\AbstractBlogTheme\Model\JsonLdArticle;
+use JMS\Serializer\Serializer;
 
 trait PostControllerTrait
 {
+    /**
+     * @param NodesSources $nodesSources
+     *
+     * @return JsonLdArticle
+     */
+    protected function getJsonLdArticle(NodesSources $nodesSources)
+    {
+        return new JsonLdArticle(
+            $this->nodeSource,
+            $this->get('document.url_generator'),
+            $this->get('router'),
+            $this->get('settingsBag')
+        );
+    }
+
     /**
      * @param Request $request
      * @param Node|null $node
@@ -24,6 +42,15 @@ trait PostControllerTrait
 
         if ($this->get('blog_theme.post_entity') === false) {
             throw new \RuntimeException('blog_theme.post_entity must be configured with your own BlogPost node-type class');
+        }
+
+        /** @var Serializer $serializer */
+        $serializer = $this->get('searchResults.serializer');
+        $ampArticle = $this->getJsonLdArticle($this->nodeSource);
+        $this->assignation['jsonLdPost'] = $serializer->serialize($ampArticle, 'json');
+
+        if ($request->get('amp', 0) == 1) {
+            return $this->render($this->getAmpTemplate(), $this->assignation, null, '/');
         }
 
         $response = $this->render($this->getTemplate(), $this->assignation, null, '/');
@@ -48,6 +75,14 @@ trait PostControllerTrait
     public function getTemplate()
     {
         return 'pages/post.html.twig';
+    }
+
+    /**
+     * @return string
+     */
+    public function getAmpTemplate()
+    {
+        return 'pages/post.amp.twig';
     }
 
     /**

@@ -19,6 +19,11 @@
     {% set blockClasses = blockClasses|merge(['even']) %}
 {% endif %}
 
+{% block share_metas %}
+    {{ parent() }}
+    <link rel="amphtml" href="{{ url(nodeSource, {'amp': 1}) }}">
+{% endblock %}
+
 {% block header_title %}
     <p class="page-title">
         {{ postContainer.title }}
@@ -115,5 +120,7 @@
         </div>
     </nav>
 {% endif %}
+
+    <script type="application/ld+json">{{- jsonLdPost|raw -}}</script>
 {% endblock %}
 

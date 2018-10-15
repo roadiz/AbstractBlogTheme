@@ -174,6 +174,13 @@ Add your search form in your website templates (use GET method to enable user hi
 
 Then create `pages/search.html.twig` template.
 
+#### Override PostControllerTrait behaviour
+
+- `getTemplate()`: string
+- `getAmpTemplate()`: string
+- `getJsonLdArticle()`: JsonLdArticle
+- `getResponseTtl()`: string
+
 ### Search result model
 
 For JSON search responses, `SearchControllerTrait` uses JMS Serializer with a custom model to decorate your
@@ -218,6 +225,14 @@ public function getExcerpt()
     return null;
 }
 ```
+
+## AMP mobile page support
+
+- Disable `display_debug_panel` setting
+- Add `?amp=1` after your blog-post detail page Url.
+
+### JsonLD models and schema.org micro-data
+
 
 
 ## Templates
