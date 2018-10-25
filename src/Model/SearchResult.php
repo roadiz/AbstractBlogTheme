@@ -127,4 +127,20 @@ class SearchResult
 
         return null;
     }
+
+    /**
+     * @return array
+     */
+    public function getHighlighting()
+    {
+        return $this->highlighting;
+    }
+
+    /**
+     * @return NodesSources
+     */
+    public function getNodeSource()
+    {
+        return $this->nodeSource;
+    }
 }
