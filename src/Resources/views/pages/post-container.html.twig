@@ -17,12 +17,12 @@
         <div class="container">
             <nav class="blogpost-group-nav">
                 <ul>
-                    <li {% if not currentTag %}class="active"{% endif %}>
-                        <a {% if not currentTag %}class="active"{% endif %} href="{{ path(nodeSource) }}">{% trans %}all{% endtrans %}</a>
+                    <li {% if not currentTagNames|length %}class="active"{% endif %}>
+                        <a {% if not currentTagNames|length %}class="active"{% endif %} href="{{ path(nodeSource) }}">{% trans %}all{% endtrans %}</a>
                     </li>
                     {% for tag in tags %}
-                        <li {% if currentTag and currentTag.tagName == tag.tagName %}class="active"{% endif %}>
-                            <a {% if currentTag and currentTag.tagName == tag.tagName %}class="active"{% endif %}
+                        <li {% if tag.tagName in currentTagNames %}class="active"{% endif %}>
+                            <a {% if tag.tagName in currentTagNames %}class="active"{% endif %}
                                href="{{ path(nodeSource, {tag: tag.tagName}) }}">{{ tag.translatedTags.first.name }}</a>
                         </li>
                     {% endfor %}

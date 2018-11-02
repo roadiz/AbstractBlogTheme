@@ -3,6 +3,7 @@
 namespace Themes\AbstractBlogTheme\Controllers;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 use RZ\Roadiz\Core\Entities\Node;
 use RZ\Roadiz\Core\Entities\Tag;
@@ -61,9 +62,7 @@ trait PostContainerControllerTrait
             $this->getPostEntity(),
             $this->getDefaultCriteria(
                 $translation,
-                $request->get('tag', ''),
-                $request->get('archive', ''),
-                $request->get('related', '')
+                $request
             ),
             $this->getDefaultOrder()
         );
@@ -78,8 +77,6 @@ trait PostContainerControllerTrait
         }
 
         $this->assignation['posts'] = $posts;
-        $this->assignation['currentTag'] = $this->getTag($request->get('tag', ''));
-        $this->assignation['currentRelation'] = $this->getNode($request->get('related', ''));
         $this->assignation['filters'] = $elm->getAssignation();
         $this->assignation['tags'] = $this->getAvailableTags($translation);
         $this->assignation['archives'] = $this->getArchives($translation);
@@ -144,13 +141,11 @@ trait PostContainerControllerTrait
 
     /**
      * @param Translation $translation
-     * @param string $tagName
-     * @param string $archive
-     * @param string $related
+     * @param Request     $request
      *
      * @return array
      */
-    protected function getDefaultCriteria(Translation $translation, $tagName = '', $archive = '', $related = '')
+    protected function getDefaultCriteria(Translation $translation, Request $request)
     {
         $criteria = [
             'node.visible' => true,
@@ -158,15 +153,34 @@ trait PostContainerControllerTrait
             $this->getPublicationField() => ['<=', new \DateTime()],
         ];
 
-        if ($tagName !== '') {
-            $tag = $this->getTag($tagName);
-            if (null === $tag) {
-                throw $this->createNotFoundException('Tag does not exist.');
+        if ('' != $tagName = $request->get('tag', '')) {
+            if (is_array($tagName)) {
+                $tags = array_map(function ($name) {
+                    $tag = $this->getTag($name);
+                    if (null === $tag) {
+                        throw $this->createNotFoundException('Tag does not exist.');
+                    }
+                    return $tag;
+                }, $tagName);
+                $criteria['tags'] = $tags;
+                $criteria['tagExclusive'] = true;
+                $this->assignation['currentTag'] = $tags;
+                $this->assignation['currentTagNames'] = array_map(function (Tag $tag) {
+                    return $tag->getTagName();
+                }, $tags);
+            } else {
+                $tag = $this->getTag($tagName);
+                if (null === $tag) {
+                    throw $this->createNotFoundException('Tag does not exist.');
+                }
+                $criteria['tags'] = $tag;
+                $criteria['tagExclusive'] = true;
+                $this->assignation['currentTag'] = $tag;
+                $this->assignation['currentTagNames'] = [$tag->getTagName()];
             }
-            $criteria['tags'] = $tag;
         }
 
-        if ($archive !== '') {
+        if ('' != $archive = $request->get('archive', '')) {
             if (preg_match('#[0-9]{4}\-[0-9]{2}#', $archive) > 0) {
                 $startDate = new \DateTime($archive . '-01 00:00:00');
                 $endDate = clone $startDate;
@@ -188,14 +202,16 @@ trait PostContainerControllerTrait
             }
         }
 
-        if ($related !== '' && null !== $relatedNode = $this->getNode($related)) {
-            $this->assignation['currentRelation'] = $relatedNode;
-            $this->assignation['currentRelationSource'] = $relatedNode->getNodeSources()->first();
+        if ('' != $related = $request->get('related', '')) {
+            if (null !== $relatedNode = $this->getNode($related)) {
+                $this->assignation['currentRelation'] = $relatedNode;
+                $this->assignation['currentRelationSource'] = $relatedNode->getNodeSources()->first();
 
-            /*
-             * Use bNode from NodesToNodes without field specification.
-             */
-            $criteria['node.bNodes.nodeB'] = $relatedNode;
+                /*
+                 * Use bNode from NodesToNodes without field specification.
+                 */
+                $criteria['node.bNodes.nodeB'] = $relatedNode;
+            }
         }
 
         if ($this->isScopedToCurrentContainer()) {
@@ -254,6 +270,46 @@ trait PostContainerControllerTrait
             }
 
             return $qb->getQuery()->getResult();
+        } catch (NoResultException $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Return all post values for given field.
+     *
+     * @param Translation $translation
+     * @param string $prefixedFieldName DQL field (prefix with p. for post source, n. for post node or t. for post translation)
+     *
+     * @return array
+     */
+    protected function getAvailableValuesForField(Translation $translation, $prefixedFieldName)
+    {
+        /** @var QueryBuilder $qb */
+        $qb = $this->getPostRepository()->createQueryBuilder('p');
+
+        try {
+            $qb->select($prefixedFieldName)
+                ->innerJoin('p.node', 'n')
+                ->innerJoin('p.translation', 't')
+                ->andWhere($qb->expr()->eq('n.visible', true))
+                ->andWhere($qb->expr()->eq('p.translation', ':translation'))
+                ->setParameter(':translation', $translation);
+            /*
+             * Enforce tags nodes status not to display Tags which are linked to draft posts.
+             */
+            if ($this->get('kernel')->isPreview()) {
+                $qb->andWhere($qb->expr()->lte('n.status', Node::PUBLISHED));
+            } else {
+                $qb->andWhere($qb->expr()->eq('n.status', Node::PUBLISHED));
+            }
+
+            if ($this->isScopedToCurrentContainer()) {
+                $qb->andWhere($qb->expr()->eq('n.parent', ':parentNode'))
+                    ->setParameter(':parentNode', $this->node);
+            }
+
+            return array_filter(array_map('current', $qb->getQuery()->getArrayResult()));
         } catch (NoResultException $e) {
             return [];
         }

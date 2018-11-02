@@ -74,7 +74,8 @@ IndexAction will assign:
 - `posts`: found `NodesSources` array according to your criteria
 - `filters`: pagination information array
 - `tags`: available filtering `Tag` array
-- `currentTag`: `Tag` or `null`
+- `currentTag`: `Tag`, `array<Tag>` or `null`
+- `currentTagNames`: `array<string>` containing current filtering tag(s) name for your filter menu template.
 - `archives`: available *years* and *months* of post archives
 - `currentArchive`: `string` or `not defined`
 - `currentArchiveDateTime`: `\DateTime` or `not defined`
@@ -83,7 +84,7 @@ IndexAction will assign:
 
 You can filter your post-container entities using `Request` attributes or query params :
 
-- `tag`: Filter by a tag’ name  using Roadiz nodes’s `tags` field
+- `tag`: Filter by a tag’ name  using Roadiz nodes’s `tags` field. **You can pass an array of tag name to combine them.**
 - `archive`: Filter by month and year, or just year on `publishedAt` field, or the one defined by `getPublicationField` method.
 - `related`: Filter by a related node’ name using Roadiz nodes’s `bNodes` field
 
@@ -180,6 +181,8 @@ Then create `pages/search.html.twig` template.
 - `getAmpTemplate()`: string
 - `getJsonLdArticle()`: JsonLdArticle
 - `getResponseTtl()`: string
+- `allowAmpFormat()`: boolean
+- `allowJsonFormat()`: boolean
 
 ### Search result model
 

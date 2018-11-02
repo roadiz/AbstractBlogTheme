@@ -49,10 +49,12 @@ trait PostControllerTrait
         $ampArticle = $this->getJsonLdArticle($this->nodeSource);
         $this->assignation['jsonLdPost'] = $serializer->serialize($ampArticle, 'json');
 
-        if ($request->get('amp', 0) == 1 || $request->getRequestFormat('html') === 'amp') {
+        if ($this->allowAmpFormat() &&
+           ($request->get('amp', 0) == 1 || $request->getRequestFormat('html') === 'amp')) {
             return $this->render($this->getAmpTemplate(), $this->assignation, null, '/');
         }
-        if ($request->get('json', 0) == 1 || $request->getRequestFormat('html') === 'json') {
+        if ($this->allowJsonFormat() &&
+            ($request->get('json', 0) == 1 || $request->getRequestFormat('html') === 'json')) {
             return new Response($this->assignation['jsonLdPost'], Response::HTTP_OK, ['content-type' => 'application/ld+json']);
         }
 
@@ -102,5 +104,21 @@ trait PostControllerTrait
     public function getResponseTtl()
     {
         return 5;
+    }
+
+    /**
+     * @return bool
+     */
+    public function allowAmpFormat()
+    {
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function allowJsonFormat()
+    {
+        return true;
     }
 }
