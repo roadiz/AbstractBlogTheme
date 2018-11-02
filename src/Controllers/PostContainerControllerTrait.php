@@ -280,10 +280,11 @@ trait PostContainerControllerTrait
      *
      * @param Translation $translation
      * @param string $prefixedFieldName DQL field (prefix with p. for post source, n. for post node or t. for post translation)
+     * @param string $sorting ASC or DESC
      *
      * @return array
      */
-    protected function getAvailableValuesForField(Translation $translation, $prefixedFieldName)
+    protected function getAvailableValuesForField(Translation $translation, $prefixedFieldName, $sorting = 'ASC')
     {
         /** @var QueryBuilder $qb */
         $qb = $this->getPostRepository()->createQueryBuilder('p');
@@ -292,6 +293,7 @@ trait PostContainerControllerTrait
             $qb->select($prefixedFieldName)
                 ->innerJoin('p.node', 'n')
                 ->innerJoin('p.translation', 't')
+                ->addOrderBy($prefixedFieldName, $sorting)
                 ->andWhere($qb->expr()->eq('n.visible', true))
                 ->andWhere($qb->expr()->eq('p.translation', ':translation'))
                 ->setParameter(':translation', $translation);
