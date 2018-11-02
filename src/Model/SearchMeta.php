@@ -8,7 +8,6 @@
 
 namespace Themes\AbstractBlogTheme\Model;
 
-
 class SearchMeta
 {
     /**
