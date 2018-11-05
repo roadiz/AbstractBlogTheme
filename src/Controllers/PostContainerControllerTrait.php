@@ -15,6 +15,16 @@ use Symfony\Component\HttpFoundation\Response;
 trait PostContainerControllerTrait
 {
     /**
+     * @var Tag[]
+     */
+    protected $availableTags;
+
+    /**
+     * @var array
+     */
+    protected $archives;
+
+    /**
      * @return bool
      */
     protected function throwExceptionOnEmptyResult()
@@ -57,13 +67,19 @@ trait PostContainerControllerTrait
             throw new \RuntimeException('blog_theme.post_entity must be configured with your own BlogPost node-type class');
         }
 
+        $this->availableTags = $this->getAvailableTags($translation);
+        $this->archives = $this->getArchives($translation);
+
         /** @var EntityListManager $elm */
         $elm = $this->createEntityListManager(
             $this->getPostEntity(),
-            $this->getDefaultCriteria(
+            array_merge($this->getDefaultCriteria(
                 $translation,
                 $request
-            ),
+            ), $this->getCriteria(
+                $translation,
+                $request
+            )),
             $this->getDefaultOrder()
         );
         $elm->setItemPerPage($this->getItemsPerPage());
@@ -78,8 +94,8 @@ trait PostContainerControllerTrait
 
         $this->assignation['posts'] = $posts;
         $this->assignation['filters'] = $elm->getAssignation();
-        $this->assignation['tags'] = $this->getAvailableTags($translation);
-        $this->assignation['archives'] = $this->getArchives($translation);
+        $this->assignation['tags'] = $this->availableTags;
+        $this->assignation['archives'] = $this->archives;
 
         $response = $this->render($this->getTemplate(), $this->assignation, null, '/');
 
@@ -95,6 +111,17 @@ trait PostContainerControllerTrait
         }
 
         return $response;
+    }
+
+    /**
+     * @param Translation $translation
+     * @param Request     $request
+     *
+     * @return array
+     */
+    protected function getCriteria(Translation $translation, Request $request)
+    {
+        return [];
     }
 
     /**
@@ -163,7 +190,7 @@ trait PostContainerControllerTrait
                     return $tag;
                 }, $tagName);
                 $criteria['tags'] = $tags;
-                $criteria['tagExclusive'] = true;
+                $criteria['tagExclusive'] = $this->isTagExclusive();
                 $this->assignation['currentTag'] = $tags;
                 $this->assignation['currentTagNames'] = array_map(function (Tag $tag) {
                     return $tag->getTagName();
@@ -174,10 +201,12 @@ trait PostContainerControllerTrait
                     throw $this->createNotFoundException('Tag does not exist.');
                 }
                 $criteria['tags'] = $tag;
-                $criteria['tagExclusive'] = true;
+                $criteria['tagExclusive'] = $this->isTagExclusive();
                 $this->assignation['currentTag'] = $tag;
                 $this->assignation['currentTagNames'] = [$tag->getTagName()];
             }
+        } else {
+            $this->assignation['currentTagNames'] = [];
         }
 
         if ('' != $archive = $request->get('archive', '')) {
@@ -197,9 +226,9 @@ trait PostContainerControllerTrait
                 $criteria[$this->getPublicationField()] = ['BETWEEN', $startDate, $endDate];
                 $this->assignation['currentArchive'] = $archive;
                 $this->assignation['currentArchiveDateTime'] = $startDate;
-            } else {
-                throw $this->createNotFoundException('Archive filter is malformed.');
             }
+        } else {
+            $this->assignation['currentArchive'] = null;
         }
 
         if ('' != $related = $request->get('related', '')) {
@@ -211,7 +240,13 @@ trait PostContainerControllerTrait
                  * Use bNode from NodesToNodes without field specification.
                  */
                 $criteria['node.bNodes.nodeB'] = $relatedNode;
+            } else {
+                $this->assignation['currentRelation'] = null;
+                $this->assignation['currentRelationSource'] = null;
             }
+        } else {
+            $this->assignation['currentRelation'] = null;
+            $this->assignation['currentRelationSource'] = null;
         }
 
         if ($this->isScopedToCurrentContainer()) {
@@ -431,5 +466,13 @@ trait PostContainerControllerTrait
     public function getResponseTtl()
     {
         return 2;
+    }
+
+    /**
+     * @return bool Get results matching all chosen tags. And not any.
+     */
+    protected function isTagExclusive()
+    {
+        return true;
     }
 }

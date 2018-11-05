@@ -118,8 +118,11 @@ Those methods can be overriden to customize your `PostContainerControllerTrait` 
 - `isScopedToCurrentContainer`: By default it returns `false`, `PostContainerControllerTrait` will fetch **all** blog-post no matter where
 there are. If your overriden `isScopedToCurrentContainer` method returns `true`, all blog post will be fetched only from your 
 current container allowing you to create many blog containers.
+- `isTagExclusive`: **returns** true by default, match posts linked with all tags exclusively (intersection). Override it to `false` if you want to match posts with *any* tags (union).
 - `getPublicationField`: By default this method returns `publishedAt` field name. You can return whatever name unless field
 exists in your BlogPost node-type.
+- `getDefaultCriteria`: **returns** default post query criteria. We encourage you to override `getCriteria` instead to keep default tags, archives and related filtering system.
+- `getCriteria`: Override default post query criteria, this method must return an array.
 - `getDefaultOrder`: By default this method returns an array :
 ```php
 [
