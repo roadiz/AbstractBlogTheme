@@ -4,6 +4,7 @@ namespace Themes\AbstractBlogTheme\Controllers;
 use JMS\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Themes\AbstractBlogTheme\Model\SearchMeta;
 use Themes\AbstractBlogTheme\Model\SearchResponse;
 use Themes\AbstractBlogTheme\Model\SearchResult;
@@ -50,6 +51,10 @@ trait SearchControllerTrait
         $translation = $this->bindLocaleFromRoute($request, $_locale);
         $this->prepareThemeAssignation(null, $translation);
         $query = $this->getQuery($request);
+
+        if (null === $this->get('solr.search.nodeSource')) {
+            throw new HttpException(Response::HTTP_SERVICE_UNAVAILABLE, 'Search engine does not respond.');
+        }
 
         $criteria = [
             'visible' => true,
