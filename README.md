@@ -256,12 +256,13 @@ By default, your Roadiz website will directly use *AbstractBlogTheme* templates.
 You can override them in your inheriting Theme using the exact same path and name.
 
 ## Twig extension
+
 ### Functions
 
 - `get_latest_posts`
 - `get_latest_posts_for_tag`
-- `get_previous_post`
-- `get_next_post`
+- `get_previous_post`: with a node-source and a post count (default: 1)
+- `get_next_post`: with a node-source and a post count (default: 1)
 
 ### Filters
 - `ampifize`: Strips unsupported tags in AMP format and convert `img` and `iframe` tags to their *AMP* equivalent.

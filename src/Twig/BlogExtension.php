@@ -80,36 +80,38 @@ class BlogExtension extends AbstractExtension
 
     /**
      * @param NodesSources $post
+     * @param int          $count
      *
      * @return null|object|NodesSources
      */
-    public function getPreviousPost(NodesSources $post)
+    public function getPreviousPost(NodesSources $post, $count = 1)
     {
-        return $this->entityManager->getRepository($this->postEntityClass)->findOneBy([
+        return $this->entityManager->getRepository($this->postEntityClass)->findBy([
             'id' => ['!=', $post->getId()],
             'publishedAt' => ['<', $post->getPublishedAt()],
             'node.visible' => true,
             'translation' => $post->getTranslation(),
         ], [
             'publishedAt' => 'DESC'
-        ]);
+        ], $count);
     }
 
     /**
      * @param NodesSources $post
+     * @param int          $count
      *
      * @return null|object|NodesSources
      */
-    public function getNextPost(NodesSources $post)
+    public function getNextPost(NodesSources $post, $count = 1)
     {
-        return $this->entityManager->getRepository($this->postEntityClass)->findOneBy([
+        return $this->entityManager->getRepository($this->postEntityClass)->findBy([
             'id' => ['!=', $post->getId()],
             'publishedAt' => ['>', $post->getPublishedAt()],
             'node.visible' => true,
             'translation' => $post->getTranslation(),
         ], [
             'publishedAt' => 'ASC'
-        ]);
+        ], $count);
     }
 
     /**
