@@ -261,8 +261,8 @@ You can override them in your inheriting Theme using the exact same path and nam
 
 - `get_latest_posts`
 - `get_latest_posts_for_tag`
-- `get_previous_post`: with a node-source and a post count (default: 1)
-- `get_next_post`: with a node-source and a post count (default: 1)
+- `get_previous_post`: with a node-source and a post count (default: 1). *Returns a single NodesSource by default, returns an array if count > 1.*
+- `get_next_post`: with a node-source and a post count (default: 1). *Returns a single NodesSource by default, returns an array if count > 1.*
 
 ### Filters
 - `ampifize`: Strips unsupported tags in AMP format and convert `img` and `iframe` tags to their *AMP* equivalent.

@@ -1,0 +1,22 @@
+{% set nextPost = get_next_post(nodeSource) %}
+{% set previousPost = get_previous_post(nodeSource) %}
+{% if nextPost or previousPost %}
+    <nav class="contextual-nav">
+        <div class="container">
+            {% if previousPost and previousPost is not iterable %}
+                <a rel="prev" class="contextual-nav-prev" href="{{ path(previousPost) }}">
+                    {% include 'svg/use.svg.twig' with { icon: 'icon-angle-left'} %}
+                    <span class="contextual-nav-label">{% trans %}previous_post{% endtrans %}</span>
+                    {{ previousPost.title }}
+                </a>
+            {% endif %}
+            {% if nextPost and nextPost is not iterable %}
+                <a rel="next" class="contextual-nav-next" href="{{ path(nextPost) }}">
+                    {{ nextPost.title }}
+                    <span class="contextual-nav-label">{% trans %}next_post{% endtrans %}</span>
+                    {% include 'svg/use.svg.twig' with { icon: 'icon-angle-right'} %}
+                </a>
+            {% endif %}
+        </div>
+    </nav>
+{% endif %}

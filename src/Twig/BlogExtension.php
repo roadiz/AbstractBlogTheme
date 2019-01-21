@@ -82,11 +82,11 @@ class BlogExtension extends AbstractExtension
      * @param NodesSources $post
      * @param int          $count
      *
-     * @return null|object|NodesSources
+     * @return null|NodesSources|array
      */
     public function getPreviousPost(NodesSources $post, $count = 1)
     {
-        return $this->entityManager->getRepository($this->postEntityClass)->findBy([
+        $posts = $this->entityManager->getRepository($this->postEntityClass)->findBy([
             'id' => ['!=', $post->getId()],
             'publishedAt' => ['<', $post->getPublishedAt()],
             'node.visible' => true,
@@ -94,17 +94,25 @@ class BlogExtension extends AbstractExtension
         ], [
             'publishedAt' => 'DESC'
         ], $count);
+
+        if ($count === 1 && count($posts) > 0) {
+            return $posts[0];
+        } elseif ($count === 1 && count($posts) === 0) {
+            return null;
+        }
+
+        return $posts;
     }
 
     /**
      * @param NodesSources $post
      * @param int          $count
      *
-     * @return null|object|NodesSources
+     * @return null|NodesSources|array
      */
     public function getNextPost(NodesSources $post, $count = 1)
     {
-        return $this->entityManager->getRepository($this->postEntityClass)->findBy([
+        $posts = $this->entityManager->getRepository($this->postEntityClass)->findBy([
             'id' => ['!=', $post->getId()],
             'publishedAt' => ['>', $post->getPublishedAt()],
             'node.visible' => true,
@@ -112,6 +120,14 @@ class BlogExtension extends AbstractExtension
         ], [
             'publishedAt' => 'ASC'
         ], $count);
+
+        if ($count === 1 && count($posts) > 0) {
+            return $posts[0];
+        } elseif ($count === 1 && count($posts) === 0) {
+            return null;
+        }
+
+        return $posts;
     }
 
     /**

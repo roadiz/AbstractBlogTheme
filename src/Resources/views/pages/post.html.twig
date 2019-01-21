@@ -120,29 +120,9 @@
         </div>
     </div>
 </div>
-{% set nextPost = get_next_post(nodeSource) %}
-{% set previousPost = get_previous_post(nodeSource) %}
-{% if nextPost or previousPost %}
-    <nav class="contextual-nav">
-        <div class="container">
-            {% if previousPost %}
-                <a rel="prev" class="contextual-nav-prev" href="{{ path(previousPost) }}">
-                    {% include 'svg/use.svg.twig' with { icon: 'icon-angle-left'} %}
-                    <span class="contextual-nav-label">{% trans %}previous_post{% endtrans %}</span>
-                    {{ previousPost.title }}
-                </a>
-            {% endif %}
-            {% if nextPost %}
-                <a rel="next" class="contextual-nav-next" href="{{ path(nextPost) }}">
-                    {{ nextPost.title }}
-                    <span class="contextual-nav-label">{% trans %}next_post{% endtrans %}</span>
-                    {% include 'svg/use.svg.twig' with { icon: 'icon-angle-right'} %}
-                </a>
-            {% endif %}
-        </div>
-    </nav>
-{% endif %}
-
-    <script type="application/ld+json">{{- jsonLdPost|raw -}}</script>
+{% include 'modules/blog-navigation.html.twig' with {
+    'nodeSource': nodeSource
+} only %}
+<script type="application/ld+json">{{- jsonLdPost|raw -}}</script>
 {% endblock %}
 
