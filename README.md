@@ -17,15 +17,22 @@ class MyThemeApp extends AbstractBlogThemeApp
 
 ## Dependency injection
 
-Edit your `app/conf/config.yml` file to register additional blog theme services.
+Edit your own `app/AppKernel.php` to register Blog services:
 
-```yaml
-additionalServiceProviders: 
-    - \Themes\AbstractBlogTheme\Services\BlogServiceProvider
+``php
+use Themes\AbstractBlogTheme\Services\BlogServiceProvider;
 
+/**
+ * {@inheritdoc}
+ */
+public function register(\Pimple\Container $container)
+{
+    parent::register($container);
+    $container->register(new BlogServiceProvider());
+}
 ```
 
-You must override these services:
+You must override these services in your custom theme:
 
 - blog_theme.post_container_entity
 - blog_theme.post_entity

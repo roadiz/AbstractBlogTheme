@@ -36,7 +36,10 @@ class AbstractBlogThemeApp extends FrontendController
     public function makeResponseCachable(Request $request, Response $response, $minutes)
     {
         $kernel = $this->get('kernel');
-        if (!$kernel->isPreview() && !$kernel->isDebug() && $request->isMethodCacheable()) {
+        if (!$kernel->isPreview() &&
+            !$kernel->isDebug() &&
+            $request->isMethodCacheable()
+        ) {
             $response->setPublic();
             $response->setMaxAge(60 * $minutes);
             $response->setSharedMaxAge(60 * $minutes);

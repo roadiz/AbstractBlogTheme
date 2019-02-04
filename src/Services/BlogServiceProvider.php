@@ -3,7 +3,6 @@
 namespace Themes\AbstractBlogTheme\Services;
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use GeneratedNodeSources\NSBlogPost;
 use JMS\Serializer\EventDispatcher\EventDispatcher;
 use JMS\Serializer\EventDispatcher\PreSerializeEvent;
 use JMS\Serializer\Handler\HandlerRegistry;
@@ -13,6 +12,7 @@ use JMS\Serializer\SerializerBuilder;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use RZ\Roadiz\Core\Entities\NodesSources;
+use RZ\SocialLinks\Twig\SocialLinksExtension;
 use Symfony\Component\Translation\Translator;
 use Themes\AbstractBlogTheme\Twig\BlogExtension;
 
@@ -71,7 +71,7 @@ class BlogServiceProvider implements ServiceProviderInterface
 
         $container->extend('twig.extensions', function ($extensions, $c) {
             $extensions->add(new BlogExtension($c['em'], $c['blog_theme.post_entity']));
-            $extensions->add(new \RZ\SocialLinks\Twig\SocialLinksExtension());
+            $extensions->add(new SocialLinksExtension());
 
             return $extensions;
         });
