@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AbstractBlogThemeApp extends FrontendController
 {
-    const VERSION = '1.3.0';
+    const VERSION = '1.4.1';
     const ITEM_PER_PAGE = 15;
 
     protected static $themeName = 'Blog Theme';
