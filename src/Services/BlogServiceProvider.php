@@ -5,6 +5,7 @@ namespace Themes\AbstractBlogTheme\Services;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use JMS\Serializer\EventDispatcher\EventDispatcher;
 use JMS\Serializer\EventDispatcher\PreSerializeEvent;
+use JMS\Serializer\GraphNavigatorInterface;
 use JMS\Serializer\Handler\HandlerRegistry;
 use JMS\Serializer\Naming\IdenticalPropertyNamingStrategy;
 use JMS\Serializer\Naming\SerializedNameAnnotationStrategy;
@@ -58,7 +59,7 @@ class BlogServiceProvider implements ServiceProviderInterface
                 })
                 ->configureHandlers(function (HandlerRegistry $registry) use ($c) {
                     $registry->registerHandler(
-                        'serialization',
+                        GraphNavigatorInterface::DIRECTION_SERIALIZATION,
                         NodesSources::class,
                         'json',
                         $c['searchResults.nodesSourcesSerializerHandler']
