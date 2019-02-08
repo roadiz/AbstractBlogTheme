@@ -3,7 +3,6 @@
 namespace Themes\AbstractBlogTheme\Controllers;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 use RZ\Roadiz\Core\Entities\Node;
 use RZ\Roadiz\Core\Entities\Tag;
@@ -11,6 +10,7 @@ use RZ\Roadiz\Core\Entities\Translation;
 use RZ\Roadiz\Core\ListManagers\EntityListManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 trait PostContainerControllerTrait
 {
@@ -67,17 +67,21 @@ trait PostContainerControllerTrait
             throw new \RuntimeException('blog_theme.post_entity must be configured with your own BlogPost node-type class');
         }
 
-        $this->availableTags = $this->getAvailableTags($translation);
-        $this->archives = $this->getArchives($translation);
+        if (null === $this->translation) {
+            throw new BadRequestHttpException('Translation cannot be found');
+        }
+
+        $this->availableTags = $this->getAvailableTags($this->translation);
+        $this->archives = $this->getArchives($this->translation);
 
         /** @var EntityListManager $elm */
         $elm = $this->createEntityListManager(
             $this->getPostEntity(),
             array_merge($this->getDefaultCriteria(
-                $translation,
+                $this->translation,
                 $request
             ), $this->getCriteria(
-                $translation,
+                $this->translation,
                 $request
             )),
             $this->getDefaultOrder()
@@ -272,42 +276,39 @@ trait PostContainerControllerTrait
         /** @var QueryBuilder $subQb */
         $subQb = $this->getPostRepository()->createQueryBuilder('p');
 
-        try {
-            $qb->select('t')
-                ->leftJoin('t.translatedTags', 'tt')
-                ->innerJoin('t.nodes', 'n')
-                ->innerJoin('n.nodeSources', 'ns')
-                ->andWhere($qb->expr()->in('ns.id', $subQb->select('p.id')->getDQL()))
-                ->andWhere($qb->expr()->eq('t.visible', true))
-                ->andWhere($qb->expr()->eq('tt.translation', ':translation'))
-                ->setParameter(':translation', $translation);
+        $qb->select('t')
+            ->leftJoin('t.translatedTags', 'tt')
+            ->innerJoin('t.nodes', 'n')
+            ->innerJoin('n.nodeSources', 'ns')
+            ->andWhere($qb->expr()->in('ns.id', $subQb->select('p.id')->getDQL()))
+            ->andWhere($qb->expr()->eq('t.visible', true))
+            ->andWhere($qb->expr()->eq('tt.translation', ':translation'))
+            ->setParameter(':translation', $translation);
 
-            if (null !== $parentTag) {
-                $parentTagId = $parentTag->getId();
-                $qb->innerJoin('t.parent', 'pt')
-                    ->andWhere('pt.id = :parent')
-                    ->setParameter('parent', $parentTagId);
-            }
-
-            $this->alterTagQueryOrderBy($qb);
-            /*
-             * Enforce tags nodes status not to display Tags which are linked to draft posts.
-             */
-            if ($this->get('kernel')->isPreview()) {
-                $qb->andWhere($qb->expr()->lte('n.status', Node::PUBLISHED));
-            } else {
-                $qb->andWhere($qb->expr()->eq('n.status', Node::PUBLISHED));
-            }
-
-            if ($this->isScopedToCurrentContainer()) {
-                $qb->andWhere($qb->expr()->eq('n.parent', ':parentNode'))
-                    ->setParameter(':parentNode', $this->node);
-            }
-
-            return $qb->getQuery()->getResult();
-        } catch (NoResultException $e) {
-            return [];
+        if (null !== $parentTag) {
+            $parentTagId = $parentTag->getId();
+            $qb->innerJoin('t.parent', 'pt')
+                ->andWhere('pt.id = :parent')
+                ->setParameter('parent', $parentTagId);
         }
+
+        $this->alterTagQueryOrderBy($qb);
+        /*
+         * Enforce tags nodes status not to display Tags which are linked to draft posts.
+         */
+        if ($this->get('kernel')->isPreview()) {
+            $qb->andWhere($qb->expr()->lte('n.status', Node::PUBLISHED));
+        } else {
+            $qb->andWhere($qb->expr()->eq('n.status', Node::PUBLISHED));
+        }
+
+        if ($this->isScopedToCurrentContainer()) {
+            $qb->andWhere($qb->expr()->eq('n.parent', ':parentNode'))
+                ->setParameter(':parentNode', $this->node);
+        }
+
+        return $qb->getQuery()->getResult();
+
     }
 
     /**
@@ -324,32 +325,28 @@ trait PostContainerControllerTrait
         /** @var QueryBuilder $qb */
         $qb = $this->getPostRepository()->createQueryBuilder('p');
 
-        try {
-            $qb->select($prefixedFieldName)
-                ->innerJoin('p.node', 'n')
-                ->innerJoin('p.translation', 't')
-                ->addOrderBy($prefixedFieldName, $sorting)
-                ->andWhere($qb->expr()->eq('n.visible', true))
-                ->andWhere($qb->expr()->eq('p.translation', ':translation'))
-                ->setParameter(':translation', $translation);
-            /*
-             * Enforce tags nodes status not to display Tags which are linked to draft posts.
-             */
-            if ($this->get('kernel')->isPreview()) {
-                $qb->andWhere($qb->expr()->lte('n.status', Node::PUBLISHED));
-            } else {
-                $qb->andWhere($qb->expr()->eq('n.status', Node::PUBLISHED));
-            }
-
-            if ($this->isScopedToCurrentContainer()) {
-                $qb->andWhere($qb->expr()->eq('n.parent', ':parentNode'))
-                    ->setParameter(':parentNode', $this->node);
-            }
-
-            return array_filter(array_map('current', $qb->getQuery()->getArrayResult()));
-        } catch (NoResultException $e) {
-            return [];
+        $qb->select($prefixedFieldName)
+            ->innerJoin('p.node', 'n')
+            ->innerJoin('p.translation', 't')
+            ->addOrderBy($prefixedFieldName, $sorting)
+            ->andWhere($qb->expr()->eq('n.visible', true))
+            ->andWhere($qb->expr()->eq('p.translation', ':translation'))
+            ->setParameter(':translation', $translation);
+        /*
+         * Enforce tags nodes status not to display Tags which are linked to draft posts.
+         */
+        if ($this->get('kernel')->isPreview()) {
+            $qb->andWhere($qb->expr()->lte('n.status', Node::PUBLISHED));
+        } else {
+            $qb->andWhere($qb->expr()->eq('n.status', Node::PUBLISHED));
         }
+
+        if ($this->isScopedToCurrentContainer()) {
+            $qb->andWhere($qb->expr()->eq('n.parent', ':parentNode'))
+                ->setParameter(':parentNode', $this->node);
+        }
+
+        return array_filter(array_map('current', $qb->getQuery()->getArrayResult()));
     }
 
     /**
