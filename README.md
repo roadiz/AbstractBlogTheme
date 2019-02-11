@@ -19,7 +19,7 @@ class MyThemeApp extends AbstractBlogThemeApp
 
 Edit your own `app/AppKernel.php` to register Blog services:
 
-``php
+```php
 use Themes\AbstractBlogTheme\Services\BlogServiceProvider;
 
 /**
