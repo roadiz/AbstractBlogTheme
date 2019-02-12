@@ -2,6 +2,25 @@
 
 **Abstract Blog middleware for your Roadiz theme.**
 
+- [Inheritance](#inheritance)
+- [Dependency injection](#dependency-injection)
+- [Add node-types](#add-node-types)
+- [PostContainerControllerTrait](#postcontainercontrollertrait)
+  * [Filtering](#filtering)
+  * [Usage](#usage)
+    + [Override PostContainerControllerTrait behaviour](#override-postcontainercontrollertrait-behaviour)
+- [PostControllerTrait](#postcontrollertrait)
+  * [Usage](#usage-1)
+    + [Override PostControllerTrait behaviour](#override-postcontrollertrait-behaviour)
+- [Search engine with Solr](#search-engine-with-solr)
+    + [Override PostControllerTrait behaviour](#override-postcontrollertrait-behaviour-1)
+  * [Search result model](#search-result-model)
+- [AMP mobile page support](#amp-mobile-page-support)
+- [Templates](#templates)
+- [Twig extension](#twig-extension)
+  * [Functions](#functions)
+  * [Filters](#filters)
+
 ## Inheritance
 
 Your own theme entry class must **extend** `AbstractBlogThemeApp` instead of `FrontendController` to provide essential methods:
@@ -120,6 +139,7 @@ class BlogPostContainerController extends MyThemeThemeApp implements Configurabl
 
 Those methods can be overridden to customize your `PostContainerControllerTrait` behaviour.
 
+- `getTemplate`: By default it returns `pages/post-container.html.twig`. It will search in every registered themes for this template and fallback on `@AbstractBlogTheme/pages/post-container.html.twig`. Make sure your own theme have a higher priority.
 - `throwExceptionOnEmptyResult`: By default it returns `true`. It throws a 404 when no posts found. 
 - `getPostEntity`: By default it returns `$this->get('blog_theme.post_entity')` as classname string. You can customize it to list other nodes.
 - `isScopedToCurrentContainer`: By default it returns `false`, `PostContainerControllerTrait` will fetch **all** blog-post no matter where
@@ -138,6 +158,8 @@ exists in your BlogPost node-type.
 ```
 - `getResponseTtl`: By default this method returns `5` (minutes).
 
+You can override other methods, just get a look at the `PostContainerControllerTrait` file…
+
 ## PostControllerTrait
 
 `PostControllerTrait` will implement your `indexAction` by handling all request data
@@ -147,7 +169,6 @@ to provide a single post with its multiple formats.
 
 All you need to do is creating your `Post` node-source'`Controller` in your theme and 
 implements `ConfigurableController` and use `PostControllerTrait`.
-You will be able to override any methods to configure your blog listing.
 
 ```php
 <?php
@@ -168,8 +189,8 @@ class BlogPostController extends MyThemeThemeApp implements ConfigurableControll
 Those methods can be overridden to customize your `PostControllerTrait` behaviour.
 
 - `getJsonLdArticle`: By default it returns a new `JsonLdArticle` to be serialized to JSON or AMP friendly format. 
-- `getTemplate`: By default it returns `pages/post.html.twig`.
-- `getAmpTemplate`: By default it returns `pages/post.amp.twig`.
+- `getTemplate`: By default it returns `pages/post.html.twig`. It will search in every registered themes for this template and fallback on `@AbstractBlogTheme/pages/post.html.twig`. Make sure your own theme have a higher priority.
+- `getAmpTemplate`: By default it returns `pages/post.amp.twig`. It will search in every registered themes for this template and fallback on `@AbstractBlogTheme/pages/post.amp.twig`. Make sure your own theme have a higher priority.
 - `allowAmpFormat`: By default it returns `true`.
 - `allowJsonFormat`: By default it returns `true`.
 - `getResponseTtl`: By default this method returns `5` (minutes).
