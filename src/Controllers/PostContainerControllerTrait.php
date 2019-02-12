@@ -308,7 +308,6 @@ trait PostContainerControllerTrait
         }
 
         return $qb->getQuery()->getResult();
-
     }
 
     /**

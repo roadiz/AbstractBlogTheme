@@ -71,9 +71,9 @@ bin/roadiz generate:nsentities
 bin/roadiz orm:schema-tool:update --dump-sql --force
 ```
 
-## PostContainerTrait
+## PostContainerControllerTrait
 
-`PostContainerTrait` will implement your `indexAction` by handling all request data
+`PostContainerControllerTrait` will implement your `indexAction` by handling all request data
 to provide your posts, filters and available tags to build your template.
 
 IndexAction will assign:
@@ -97,7 +97,7 @@ You can filter your post-container entities using `Request` attributes or query 
 
 ### Usage
 
-All you need to do is creating your node-source `Controller` in your theme and 
+All you need to do is creating your `PostContainer` node-source's `Controller` in your theme and 
 implements `ConfigurableController` and use `PostContainerControllerTrait`.
 You will be able to override any methods to configure your blog listing.
 
@@ -118,7 +118,7 @@ class BlogPostContainerController extends MyThemeThemeApp implements Configurabl
 
 #### Override PostContainerControllerTrait behaviour
 
-Those methods can be overriden to customize your `PostContainerControllerTrait` behaviour.
+Those methods can be overridden to customize your `PostContainerControllerTrait` behaviour.
 
 - `throwExceptionOnEmptyResult`: By default it returns `true`. It throws a 404 when no posts found. 
 - `getPostEntity`: By default it returns `$this->get('blog_theme.post_entity')` as classname string. You can customize it to list other nodes.
@@ -137,6 +137,43 @@ exists in your BlogPost node-type.
 ]
 ```
 - `getResponseTtl`: By default this method returns `5` (minutes).
+
+## PostControllerTrait
+
+`PostControllerTrait` will implement your `indexAction` by handling all request data
+to provide a single post with its multiple formats.
+
+### Usage
+
+All you need to do is creating your `Post` node-source'`Controller` in your theme and 
+implements `ConfigurableController` and use `PostControllerTrait`.
+You will be able to override any methods to configure your blog listing.
+
+```php
+<?php
+namespace Themes\MyTheme\Controllers;
+
+use Themes\AbstractBlogTheme\Controllers\ConfigurableController;
+use Themes\AbstractBlogTheme\Controllers\PostControllerTrait;
+use Themes\MyTheme\MyThemeThemeApp;
+
+class BlogPostController extends MyThemeThemeApp implements ConfigurableController
+{
+    use PostControllerTrait;
+}
+```
+
+#### Override PostControllerTrait behaviour
+
+Those methods can be overridden to customize your `PostControllerTrait` behaviour.
+
+- `getJsonLdArticle`: By default it returns a new `JsonLdArticle` to be serialized to JSON or AMP friendly format. 
+- `getTemplate`: By default it returns `pages/post.html.twig`.
+- `getAmpTemplate`: By default it returns `pages/post.amp.twig`.
+- `allowAmpFormat`: By default it returns `true`.
+- `allowJsonFormat`: By default it returns `true`.
+- `getResponseTtl`: By default this method returns `5` (minutes).
+
 
 ## Search engine with Solr
 
@@ -266,10 +303,16 @@ You can override them in your inheriting Theme using the exact same path and nam
 
 ### Functions
 
-- `get_latest_posts`
-- `get_latest_posts_for_tag`
-- `get_previous_post`: with a node-source and a post count (default: 1). *Returns a single NodesSource by default, returns an array if count > 1.*
-- `get_next_post`: with a node-source and a post count (default: 1). *Returns a single NodesSource by default, returns an array if count > 1.*
+- `get_latest_posts($translation, $count = 4)`
+- `get_latest_posts_for_tag($tag, $translation, $count = 4)`
+- `get_previous_post($nodeSource, $count = 1, $scopedToParent = false)`: Get previous post(s) sorted by `publishedAt`.   
+*Returns a single `NodesSource` by default, returns an `array` if count > 1.*
+- `get_previous_post_for_tag($nodeSource, $tag, $count = 1, $scopedToParent = false)`: Get previous post(s) sorted by `publishedAt` and filtered by one `Tag`.   
+*Returns a single `NodesSource` by default, returns an `array` if count > 1.*
+- `get_next_post($nodeSource, $count = 1, $scopedToParent = false)`: Get next post(s) sorted by `publishedAt`.    
+*Returns a single NodesSource by default, returns an array if count > 1.*
+- `get_next_post_for_tag($nodeSource, $tag, $count = 1, $scopedToParent = false)`: Get next post(s) sorted by `publishedAt` and filtered by one `Tag`.   
+*Returns a single `NodesSource` by default, returns an `array` if count > 1.*
 
 ### Filters
 - `ampifize`: Strips unsupported tags in AMP format and convert `img` and `iframe` tags to their *AMP* equivalent.

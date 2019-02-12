@@ -37,9 +37,11 @@ class BlogExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('get_latest_posts', [$this, 'getLatestPosts']),
             new TwigFunction('get_previous_post', [$this, 'getPreviousPost']),
+            new TwigFunction('get_previous_post_for_tag', [$this, 'getPreviousPostForTag']),
             new TwigFunction('get_next_post', [$this, 'getNextPost']),
+            new TwigFunction('get_next_post_for_tag', [$this, 'getNextPostForTag']),
+            new TwigFunction('get_latest_posts', [$this, 'getLatestPosts']),
             new TwigFunction('get_latest_posts_for_tag', [$this, 'getLatestPostsForTag']),
         ];
     }
@@ -80,18 +82,64 @@ class BlogExtension extends AbstractExtension
 
     /**
      * @param NodesSources $post
+     *
+     * @return array
+     */
+    private function getDefaultPrevNextCriteria(NodesSources $post)
+    {
+        return [
+            'id' => ['!=', $post->getId()],
+            'node.visible' => true,
+            'translation' => $post->getTranslation(),
+        ];
+    }
+
+    /**
+     * @param NodesSources $post
      * @param int          $count
+     * @param bool         $scopedToParent
      *
      * @return null|NodesSources|array
      */
-    public function getPreviousPost(NodesSources $post, $count = 1)
+    public function getPreviousPost(NodesSources $post, $count = 1, $scopedToParent = false)
     {
-        $posts = $this->entityManager->getRepository($this->postEntityClass)->findBy([
-            'id' => ['!=', $post->getId()],
+        $criteria = array_merge($this->getDefaultPrevNextCriteria($post), [
             'publishedAt' => ['<', $post->getPublishedAt()],
-            'node.visible' => true,
-            'translation' => $post->getTranslation(),
-        ], [
+        ]);
+        if ($scopedToParent) {
+            $criteria['node.parent'] = $post->getParent();
+        }
+        $posts = $this->entityManager->getRepository($this->postEntityClass)->findBy($criteria, [
+            'publishedAt' => 'DESC'
+        ], $count);
+
+        if ($count === 1 && count($posts) > 0) {
+            return $posts[0];
+        } elseif ($count === 1 && count($posts) === 0) {
+            return null;
+        }
+
+        return $posts;
+    }
+
+    /**
+     * @param NodesSources $post
+     * @param Tag          $tag
+     * @param int          $count
+     * @param bool         $scopedToParent
+     *
+     * @return null|NodesSources|array
+     */
+    public function getPreviousPostForTag(NodesSources $post, Tag $tag, $count = 1, $scopedToParent = false)
+    {
+        $criteria = array_merge($this->getDefaultPrevNextCriteria($post), [
+            'publishedAt' => ['<', $post->getPublishedAt()],
+            'tags' => $tag,
+        ]);
+        if ($scopedToParent) {
+            $criteria['node.parent'] = $post->getParent();
+        }
+        $posts = $this->entityManager->getRepository($this->postEntityClass)->findBy($criteria, [
             'publishedAt' => 'DESC'
         ], $count);
 
@@ -107,17 +155,49 @@ class BlogExtension extends AbstractExtension
     /**
      * @param NodesSources $post
      * @param int          $count
+     * @param bool         $scopedToParent
      *
      * @return null|NodesSources|array
      */
-    public function getNextPost(NodesSources $post, $count = 1)
+    public function getNextPost(NodesSources $post, $count = 1, $scopedToParent = false)
     {
-        $posts = $this->entityManager->getRepository($this->postEntityClass)->findBy([
-            'id' => ['!=', $post->getId()],
+        $criteria = array_merge($this->getDefaultPrevNextCriteria($post), [
             'publishedAt' => ['>', $post->getPublishedAt()],
-            'node.visible' => true,
-            'translation' => $post->getTranslation(),
-        ], [
+        ]);
+        if ($scopedToParent) {
+            $criteria['node.parent'] = $post->getParent();
+        }
+        $posts = $this->entityManager->getRepository($this->postEntityClass)->findBy($criteria, [
+            'publishedAt' => 'ASC'
+        ], $count);
+
+        if ($count === 1 && count($posts) > 0) {
+            return $posts[0];
+        } elseif ($count === 1 && count($posts) === 0) {
+            return null;
+        }
+
+        return $posts;
+    }
+
+    /**
+     * @param NodesSources $post
+     * @param Tag          $tag
+     * @param int          $count
+     * @param bool         $scopedToParent
+     *
+     * @return null|NodesSources|array
+     */
+    public function getNextPostForTag(NodesSources $post, Tag $tag, $count = 1, $scopedToParent = false)
+    {
+        $criteria = array_merge($this->getDefaultPrevNextCriteria($post), [
+            'publishedAt' => ['>', $post->getPublishedAt()],
+            'tags' => $tag,
+        ]);
+        if ($scopedToParent) {
+            $criteria['node.parent'] = $post->getParent();
+        }
+        $posts = $this->entityManager->getRepository($this->postEntityClass)->findBy($criteria, [
             'publishedAt' => 'ASC'
         ], $count);
 
