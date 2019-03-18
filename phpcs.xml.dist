@@ -9,6 +9,6 @@
     <arg name="extensions" value="php"/>
 
     <rule ref="PSR2"/>
-    <file>themes/</file>
+    <file>src/</file>
     <exclude-pattern>*/node_modules</exclude-pattern>
 </ruleset>
