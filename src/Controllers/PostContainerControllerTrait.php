@@ -51,16 +51,15 @@ trait PostContainerControllerTrait
     }
 
     /**
-     * @param Request $request
-     * @param Node|null $node
-     * @param Translation|null $translation
+     * @param  Request          $request
+     * @param  Node|null        $node
+     * @param  Translation|null $translation
      * @return Response
      */
     public function indexAction(
         Request $request,
         Node $node = null,
-        Translation $translation = null,
-        $_format = 'html'
+        Translation $translation = null
     ) {
         $this->prepareThemeAssignation($node, $translation);
 
@@ -75,16 +74,21 @@ trait PostContainerControllerTrait
         $this->availableTags = $this->getAvailableTags($this->translation);
         $this->archives = $this->getArchives($this->translation);
 
-        /** @var EntityListManager $elm */
+        /**
+         * @var EntityListManager $elm
+         */
         $elm = $this->createEntityListManager(
             $this->getPostEntity(),
-            array_merge($this->getDefaultCriteria(
-                $this->translation,
-                $request
-            ), $this->getCriteria(
-                $this->translation,
-                $request
-            )),
+            array_merge(
+                $this->getDefaultCriteria(
+                    $this->translation,
+                    $request
+                ),
+                $this->getCriteria(
+                    $this->translation,
+                    $request
+                )
+            ),
             $this->getDefaultOrder()
         );
         $elm->setItemPerPage($this->getItemsPerPage());
@@ -101,6 +105,8 @@ trait PostContainerControllerTrait
         $this->assignation['filters'] = $elm->getAssignation();
         $this->assignation['tags'] = $this->availableTags;
         $this->assignation['archives'] = $this->archives;
+
+        $_format = $request->get('_format', 'html');
 
         if ($_format === 'xml' || $_format === 'rss') {
             $response = $this->renderRss($this->getRssTemplate(), $this->assignation, null, '/');
@@ -127,10 +133,10 @@ trait PostContainerControllerTrait
      *
      * @see http://api.symfony.com/2.6/Symfony/Bundle/FrameworkBundle/Controller/Controller.html#method_render
      *
-     * @param string $view Template file path
-     * @param array $parameters Twig assignation array
-     * @param Response $response Optional Response object to customize response parameters
-     * @param string $namespace Twig loader namespace
+     * @param string   $view       Template file path
+     * @param array    $parameters Twig assignation array
+     * @param Response $response   Optional Response object to customize response parameters
+     * @param string   $namespace  Twig loader namespace
      *
      * @return Response
      * @throws \Twig_Error_Runtime
@@ -188,10 +194,12 @@ trait PostContainerControllerTrait
     protected function getTag($tagName = '')
     {
         if ($tagName !== '') {
-            return $this->get('em')->getRepository(Tag::class)->findOneBy([
+            return $this->get('em')->getRepository(Tag::class)->findOneBy(
+                [
                 'tagName' => $tagName,
                 'translation' => $this->translation,
-            ]);
+                ]
+            );
         }
 
         return null;
@@ -205,10 +213,12 @@ trait PostContainerControllerTrait
     protected function getNode($nodeName = '')
     {
         if ($nodeName !== '') {
-            return $this->get('nodeApi')->getOneBy([
+            return $this->get('nodeApi')->getOneBy(
+                [
                 'nodeName' => $nodeName,
                 'translation' => $this->translation,
-            ]);
+                ]
+            );
         }
 
         return null;
@@ -230,19 +240,25 @@ trait PostContainerControllerTrait
 
         if ('' != $tagName = $request->get('tag', '')) {
             if (is_array($tagName)) {
-                $tags = array_map(function ($name) {
-                    $tag = $this->getTag($name);
-                    if (null === $tag) {
-                        throw $this->createNotFoundException('Tag does not exist.');
-                    }
-                    return $tag;
-                }, $tagName);
+                $tags = array_map(
+                    function ($name) {
+                        $tag = $this->getTag($name);
+                        if (null === $tag) {
+                            throw $this->createNotFoundException('Tag does not exist.');
+                        }
+                        return $tag;
+                    },
+                    $tagName
+                );
                 $criteria['tags'] = $tags;
                 $criteria['tagExclusive'] = $this->isTagExclusive();
                 $this->assignation['currentTag'] = $tags;
-                $this->assignation['currentTagNames'] = array_map(function (Tag $tag) {
-                    return $tag->getTagName();
-                }, $tags);
+                $this->assignation['currentTagNames'] = array_map(
+                    function (Tag $tag) {
+                        return $tag->getTagName();
+                    },
+                    $tags
+                );
             } else {
                 $tag = $this->getTag($tagName);
                 if (null === $tag) {
@@ -306,18 +322,22 @@ trait PostContainerControllerTrait
 
     /**
      * @param Translation $translation
-     * @param Tag $parentTag Parent tag
+     * @param Tag         $parentTag   Parent tag
      *
      * @return array
      */
     protected function getAvailableTags(Translation $translation, Tag $parentTag = null)
     {
-        /** @var QueryBuilder $qb */
+        /**
+         * @var QueryBuilder $qb
+         */
         $qb = $this->get('em')
             ->getRepository(Tag::class)
             ->createQueryBuilder('t');
 
-        /** @var QueryBuilder $subQb */
+        /**
+         * @var QueryBuilder $subQb
+         */
         $subQb = $this->getPostRepository()->createQueryBuilder('p');
 
         $qb->select('t')
@@ -358,14 +378,16 @@ trait PostContainerControllerTrait
      * Return all post values for given field.
      *
      * @param Translation $translation
-     * @param string $prefixedFieldName DQL field (prefix with p. for post source, n. for post node or t. for post translation)
-     * @param string $sorting ASC or DESC
+     * @param string      $prefixedFieldName DQL field (prefix with p. for post source, n. for post node or t. for post translation)
+     * @param string      $sorting           ASC or DESC
      *
      * @return array
      */
     protected function getAvailableValuesForField(Translation $translation, $prefixedFieldName, $sorting = 'ASC')
     {
-        /** @var QueryBuilder $qb */
+        /**
+         * @var QueryBuilder $qb
+         */
         $qb = $this->getPostRepository()->createQueryBuilder('p');
 
         $qb->select($prefixedFieldName)
@@ -436,11 +458,12 @@ trait PostContainerControllerTrait
             ->andWhere($qb->expr()->lte($publicationField, ':datetime'))
             ->addGroupBy($publicationField)
             ->orderBy($publicationField, 'DESC')
-            ->setParameters([
+            ->setParameters(
+                [
                 'translation' => $translation,
                 'datetime' => new \Datetime('now'),
-            ])
-        ;
+                ]
+            );
         /*
          * Enforce post nodes status not to display Archives which are linked to draft posts.
          */
