@@ -1,0 +1,39 @@
+{% extends 'base.rss.twig' %}
+
+{% block items %}
+    {% spaceless %}
+        {% for post in posts %}
+            {% set thumb = post.image[0]|default(post.imagePortrait[0]) %}
+            <item>
+                <title>{{ post.title }}</title>
+                <link>{{ url(post) }}</link>
+                <description><![CDATA[
+                    {% if post.textDate %}
+                        <p><strong>{{ post.textDate }}</strong></p>
+                    {% elseif date(post.publishedAt) > date('now') %}
+                        <p><strong>{{ post.publishedAt|localizeddate('long', 'none') }}</strong></p>
+                    {% endif %}
+                    {% if post.location %}
+                        <p><em>{{ post.location }}</em></p>
+                    {% endif %}
+                    {{ post.excerpt|markdown }}
+                    <p><a href="{{ url(post) }}">{% trans %}read_more{% endtrans %}</a></p>
+                    {% if thumb %}
+                        <img src="{{ thumb|url({absolute:true, width:600}) }}">
+                    {% endif %}
+                    ]]></description>
+                <pubDate>
+                    {% if date(post.publishedAt) > date('now') and post.node.updatedAt %}
+                        {{- post.node.updatedAt|date('D, d M Y h:i:s O') -}}
+                    {% else %}
+                        {{- post.publishedAt|date('D, d M Y h:i:s O') -}}
+                    {% endif %}
+                </pubDate>
+                {% for tag in post|tags %}
+                    <category>{{ tag.translatedTags.first.name }}</category>
+                {% endfor %}
+                <guid isPermaLink="true">{{ url(post) }}</guid>
+            </item>
+        {% endfor %}
+    {% endspaceless %}
+{% endblock %}

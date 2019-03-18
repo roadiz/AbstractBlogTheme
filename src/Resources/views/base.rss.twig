@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+    <channel>
+        {% if nodeSource %}
+            <link>{{ url(nodeSource) }}</link>
+        {% elseif pageMeta.url %}
+            <link>{{ pageMeta.url }}</link>
+        {% endif %}
+        <title>{{ pageMeta.title }}</title>
+        <description>{% if pageMeta.description %}{{ pageMeta.description }}{% endif %}</description>
+        <language>{{ translation.locale }}</language>
+        <copyright>{{ meta.siteName }}</copyright>
+        {% block items %}{% endblock %}
+    </channel>
+</rss>

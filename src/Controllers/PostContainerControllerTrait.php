@@ -59,7 +59,8 @@ trait PostContainerControllerTrait
     public function indexAction(
         Request $request,
         Node $node = null,
-        Translation $translation = null
+        Translation $translation = null,
+        $_format = 'html'
     ) {
         $this->prepareThemeAssignation($node, $translation);
 
@@ -101,7 +102,11 @@ trait PostContainerControllerTrait
         $this->assignation['tags'] = $this->availableTags;
         $this->assignation['archives'] = $this->archives;
 
-        $response = $this->render($this->getTemplate(), $this->assignation, null, '/');
+        if ($_format === 'xml' || $_format === 'rss') {
+            $response = $this->renderRss($this->getRssTemplate(), $this->assignation, null, '/');
+        } else {
+            $response = $this->render($this->getTemplate(), $this->assignation, null, '/');
+        }
 
         if ($this->getResponseTtl() > 0) {
             /*
@@ -115,6 +120,45 @@ trait PostContainerControllerTrait
         }
 
         return $response;
+    }
+
+    /**
+     * Return a Response from a template string with its rendering assignation.
+     *
+     * @see http://api.symfony.com/2.6/Symfony/Bundle/FrameworkBundle/Controller/Controller.html#method_render
+     *
+     * @param string $view Template file path
+     * @param array $parameters Twig assignation array
+     * @param Response $response Optional Response object to customize response parameters
+     * @param string $namespace Twig loader namespace
+     *
+     * @return Response
+     * @throws \Twig_Error_Runtime
+     */
+    public function renderRss($view, array $parameters = [], Response $response = null, $namespace = "")
+    {
+        if (!$this->get('stopwatch')->isStarted('twigRender')) {
+            $this->get('stopwatch')->start('twigRender');
+        }
+
+        try {
+            if (null === $response) {
+                $response = new Response(
+                    '',
+                    Response::HTTP_OK,
+                    ['Content-Type' => 'application/xml; charset=UTF-8']
+                );
+            }
+            $response->setContent($this->renderView($this->getNamespacedView($view, $namespace), $parameters));
+
+            return $response;
+        } catch (\Twig_Error_Runtime $e) {
+            if ($e->getPrevious() instanceof ForceResponseException) {
+                return $e->getPrevious()->getResponse();
+            } else {
+                throw $e;
+            }
+        }
     }
 
     /**
@@ -446,6 +490,14 @@ trait PostContainerControllerTrait
     public function getTemplate()
     {
         return 'pages/post-container.html.twig';
+    }
+
+    /**
+     * @return string
+     */
+    public function getRssTemplate()
+    {
+        return 'pages/post-container.rss.twig';
     }
 
     /**

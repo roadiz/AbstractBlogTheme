@@ -140,6 +140,7 @@ class BlogPostContainerController extends MyThemeThemeApp implements Configurabl
 Those methods can be overridden to customize your `PostContainerControllerTrait` behaviour.
 
 - `getTemplate`: By default it returns `pages/post-container.html.twig`. It will search in every registered themes for this template and fallback on `@AbstractBlogTheme/pages/post-container.html.twig`. Make sure your own theme have a higher priority.
+- `getRssTemplate`: By default it returns `pages/post-container.rss.twig`. It will search in every registered themes for this template and fallback on `@AbstractBlogTheme/pages/post-container.rss.twig`. Make sure your own theme have a higher priority.
 - `throwExceptionOnEmptyResult`: By default it returns `true`. It throws a 404 when no posts found. 
 - `getPostEntity`: By default it returns `$this->get('blog_theme.post_entity')` as classname string. You can customize it to list other nodes.
 - `isScopedToCurrentContainer`: By default it returns `false`, `PostContainerControllerTrait` will fetch **all** blog-post no matter where
@@ -309,6 +310,24 @@ public function getExcerpt()
 {% block share_metas %}
     {{ parent() }}
     <link rel="amphtml" href="{{ url(nodeSource, {'amp': 1}) }}">
+{% endblock %}
+```
+
+## RSS feed support
+
+RSS format is supported for blog-post **containers** listing pages.
+
+- Add RSS `link` into your HTML template:
+
+```twig
+{% block share_metas %}
+    {{ parent() }}
+    <link rel="alternate" href="{{ url(nodeSource, {
+            '_format': 'xml',
+            'page': filters.currentPage,
+            'tag': currentTag.tagName,
+            'archive': currentArchive
+        }) }}" title="{{ pageMeta.title }}" type="application/rss+xml">
 {% endblock %}
 ```
 

@@ -1,5 +1,15 @@
 {% extends 'pages/page.html.twig' %}
 
+{% block share_metas %}
+    {{ parent() }}
+    <link rel="alternate" href="{{ url(nodeSource, {
+        '_format': 'xml',
+        'page': filters.currentPage,
+        'tag': currentTag.tagName,
+        'archive': currentArchive
+    }) }}" title="{{ pageMeta.title }}" type="application/rss+xml">
+{% endblock %}
+
 {% block header_title %}
     <h1 class="page-title">
         {{ nodeSource.title }}
