@@ -63,7 +63,6 @@
                 {% include 'blocks/blogpost.html.twig' ignore missing with {
                     'nodeSource': post,
                     'request': request,
-                    'parentNodeSource': (post|parent),
                     'themeServices': themeServices,
                     'head': head,
                     'node': post.node,
