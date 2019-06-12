@@ -22,6 +22,11 @@ trait PostContainerControllerTrait
     /**
      * @var array
      */
+    protected $countPerAvailableTags;
+
+    /**
+     * @var array
+     */
     protected $archives;
 
     /**
@@ -51,18 +56,16 @@ trait PostContainerControllerTrait
     }
 
     /**
-     * @param  Request          $request
-     * @param  Node|null        $node
-     * @param  Translation|null $translation
-     * @return Response
+     * Makes all data assignations:
+     * - nodes
+     * - tags
+     * - archives
+     * And filter all these against current Request.
+     *
+     * @param Request $request
      */
-    public function indexAction(
-        Request $request,
-        Node $node = null,
-        Translation $translation = null
-    ) {
-        $this->prepareThemeAssignation($node, $translation);
-
+    protected function prepareListingAssignation(Request $request): void
+    {
         if ($this->getPostEntity() === false) {
             throw new \RuntimeException('blog_theme.post_entity must be configured with your own BlogPost node-type class');
         }
@@ -72,6 +75,13 @@ trait PostContainerControllerTrait
         }
 
         $this->availableTags = $this->getAvailableTags($this->translation);
+        /*
+         * When you want to display post count numbers on each available tags.
+         */
+        if ($this->selectPostCounts()) {
+            $this->countPerAvailableTags = $this->getPostCountForTags($this->availableTags, $this->translation);
+            $this->assignation['postsCountForTagId'] = $this->countPerAvailableTags;
+        }
         $this->archives = $this->getArchives($this->translation);
 
         /**
@@ -105,6 +115,28 @@ trait PostContainerControllerTrait
         $this->assignation['filters'] = $elm->getAssignation();
         $this->assignation['tags'] = $this->availableTags;
         $this->assignation['archives'] = $this->archives;
+    }
+
+    /**
+     * @param  Request          $request
+     * @param  Node|null        $node
+     * @param  Translation|null $translation
+     * @return Response
+     */
+    public function indexAction(
+        Request $request,
+        Node $node = null,
+        Translation $translation = null
+    ) {
+        $this->prepareThemeAssignation($node, $translation);
+        /*
+         * Makes all data assignations:
+         * - nodes
+         * - tags
+         * - archives
+         * And filter all these against current Request
+         */
+        $this->prepareListingAssignation($request);
 
         $_format = $request->get('_format', 'html');
 
@@ -165,6 +197,55 @@ trait PostContainerControllerTrait
                 throw $e;
             }
         }
+    }
+
+    /**
+     * @param array<Tag> $tags
+     */
+    protected function getPostCountForTags(array $tags, Translation $translation): array
+    {
+        $counts = [];
+        /** @var Tag $tag */
+        foreach ($tags as $tag) {
+            $counts[$tag->getId()] = $this->getPostCountForTag($tag, $translation);
+        }
+        return $counts;
+    }
+
+    /**
+     * @param Tag $tag
+     *
+     * @return int
+     */
+    public function getPostCountForTag(Tag $tag, Translation $translation): int
+    {
+        /**
+         * @var QueryBuilder $qb
+         */
+        $qb = $this->getPostRepository()->createQueryBuilder('p');
+        $qb->select($qb->expr()->countDistinct('p'))
+            ->innerJoin('p.node', 'n')
+            ->innerJoin('n.tags', 't')
+            ->andWhere($qb->expr()->eq('t', ':tag'))
+            ->setParameter(':tag', $tag)
+            ->setCacheable(true)
+        ;
+
+        /*
+         * Enforce tags nodes status not to display Tags which are linked to draft posts.
+         */
+        if ($this->get('kernel')->isPreview()) {
+            $qb->andWhere($qb->expr()->lte('n.status', Node::PUBLISHED));
+        } else {
+            $qb->andWhere($qb->expr()->eq('n.status', Node::PUBLISHED));
+        }
+
+        if ($this->isScopedToCurrentContainer()) {
+            $qb->andWhere($qb->expr()->eq('n.parent', ':parentNode'))
+                ->setParameter(':parentNode', $this->node);
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -378,7 +459,8 @@ trait PostContainerControllerTrait
      * Return all post values for given field.
      *
      * @param Translation $translation
-     * @param string      $prefixedFieldName DQL field (prefix with p. for post source, n. for post node or t. for post translation)
+     * @param string      $prefixedFieldName DQL field (prefix with p. for post source, n. for post node or t. for post
+     *     translation)
      * @param string      $sorting           ASC or DESC
      *
      * @return array
@@ -430,7 +512,7 @@ trait PostContainerControllerTrait
     protected function getDefaultOrder()
     {
         return [
-            $this->getPublicationField() => 'DESC'
+            $this->getPublicationField() => 'DESC',
         ];
     }
 
@@ -545,5 +627,13 @@ trait PostContainerControllerTrait
     protected function isTagExclusive()
     {
         return true;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function selectPostCounts(): bool
+    {
+        return false;
     }
 }

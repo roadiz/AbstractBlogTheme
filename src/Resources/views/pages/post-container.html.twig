@@ -33,7 +33,12 @@
                     {% for tag in tags %}
                         <li {% if tag.tagName in currentTagNames %}class="active"{% endif %}>
                             <a {% if tag.tagName in currentTagNames %}class="active"{% endif %}
-                               href="{{ path(nodeSource, {tag: tag.tagName}) }}">{{ tag.translatedTags.first.name }}</a>
+                               href="{{ path(nodeSource, {tag: tag.tagName}) }}">
+                                {{- tag.translatedTags.first.name -}}
+                                {% if postsCountForTagId and postsCountForTagId[tag.id] %}
+                                    <span class="badge badge-info">({{- postsCountForTagId[tag.id] -}})</span>
+                                {%- endif -%}
+                            </a>
                         </li>
                     {% endfor %}
                     <li class="hidden-xs hidden-sm">

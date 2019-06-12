@@ -158,6 +158,8 @@ exists in your BlogPost node-type.
 ]
 ```
 - `getResponseTtl`: By default this method returns `5` (minutes).
+- `selectPostCounts`: By default `false`: make additional queries to get each tag’ post count to display posts count number in your tags menu. 
+- `prepareListingAssignation`: This is the critical method which performs all queries and tag resolutions. **We do not recommend overriding this method**, override other methods to change your PostContainer behaviour instead.
 
 You can override other methods, just get a look at the `PostContainerControllerTrait` file…
 
