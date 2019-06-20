@@ -2,6 +2,7 @@
 namespace Themes\AbstractBlogTheme\Controllers;
 
 use JMS\Serializer\Serializer;
+use RZ\Roadiz\Core\SearchEngine\NodeSourceSearchHandler;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -52,25 +53,25 @@ trait SearchControllerTrait
         $this->prepareThemeAssignation(null, $translation);
         $query = $this->getQuery($request);
 
-        if (null === $this->get('solr.search.nodeSource')) {
+        /** @var NodeSourceSearchHandler|null $searchHandler */
+        $searchHandler = $this->get('solr.search.nodeSource');
+        if (null === $searchHandler) {
             throw new HttpException(Response::HTTP_SERVICE_UNAVAILABLE, 'Search engine does not respond.');
         }
-
+        $searchHandler->boostByPublicationDate();
         $criteria = [
             'visible' => true,
             'translation' => $translation,
             'nodeType' => $this->getSearchableTypes(),
         ];
-        $numResults = $this->get('solr.search.nodeSource')
-            ->count(
+        $numResults = $searchHandler->count(
                 $query, # Use ?q query parameter to search with
                 $criteria, # a simple criteria array to filter search results
                 $this->getItemsPerPage(), # result count
                 true
             )
         ;
-        $results = $this->get('solr.search.nodeSource')
-            ->searchWithHighlight(
+        $results = $searchHandler->searchWithHighlight(
                 $query, # Use ?q query parameter to search with
                 $criteria, # a simple criteria array to filter search results
                 $this->getItemsPerPage(), # result count
