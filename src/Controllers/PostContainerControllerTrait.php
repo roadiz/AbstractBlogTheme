@@ -291,7 +291,7 @@ trait PostContainerControllerTrait
      *
      * @return Node|null
      */
-    protected function getNode($nodeName = '')
+    protected function findNodeByName($nodeName = '')
     {
         if ($nodeName !== '') {
             return $this->get('nodeApi')->getOneBy(
@@ -377,7 +377,7 @@ trait PostContainerControllerTrait
         }
 
         if ('' != $related = $request->get('related', '')) {
-            if (null !== $relatedNode = $this->getNode($related)) {
+            if (null !== $relatedNode = $this->findNodeByName($related)) {
                 $this->assignation['currentRelation'] = $relatedNode;
                 $this->assignation['currentRelationSource'] = $relatedNode->getNodeSources()->first();
 
