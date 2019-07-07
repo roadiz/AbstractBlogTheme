@@ -6,14 +6,14 @@ themeDir: "AbstractBlogTheme"
 supportedLocale:
     - "en"
     - "fr"
-versionRequire: "0.22.0"
+versionRequire: "1.2.0"
 importFiles:
     roles: []
     groups: []
     settings: []
     nodetypes:
-        - Resources/import/node-type/BlogFeedBlock.rzt
-        - Resources/import/node-type/BlogPost.rzt
-        - Resources/import/node-type/BlogPostContainer.rzt
+        - Resources/import/node-type/BlogFeedBlock.json
+        - Resources/import/node-type/BlogPost.json
+        - Resources/import/node-type/BlogPostContainer.json
     tags: []
     nodes: []

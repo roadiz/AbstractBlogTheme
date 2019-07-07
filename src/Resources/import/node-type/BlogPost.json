@@ -11,6 +11,7 @@
     "fields": [
         {
             "name": "excerpt",
+            "nodeTypeName": "BlogPost",
             "label": "Extrait",
             "description": null,
             "visible": true,
@@ -18,16 +19,17 @@
             "indexed": false,
             "virtual": false,
             "universal": false,
-            "default_values": null,
-            "group_name": null,
-            "group_name_canonical": null,
+            "defaultValues": null,
+            "groupName": null,
+            "groupNameCanonical": null,
             "expanded": false,
             "placeholder": null,
-            "min_length": null,
-            "max_length": null
+            "minLength": null,
+            "maxLength": null
         },
         {
             "name": "content",
+            "nodeTypeName": "BlogPost",
             "label": "Contenu",
             "description": null,
             "visible": true,
@@ -35,16 +37,17 @@
             "indexed": false,
             "virtual": false,
             "universal": false,
-            "default_values": null,
-            "group_name": null,
-            "group_name_canonical": null,
+            "defaultValues": null,
+            "groupName": null,
+            "groupNameCanonical": null,
             "expanded": false,
             "placeholder": null,
-            "min_length": null,
-            "max_length": null
+            "minLength": null,
+            "maxLength": null
         },
         {
             "name": "image",
+            "nodeTypeName": "BlogPost",
             "label": "Image",
             "description": null,
             "visible": true,
@@ -52,16 +55,17 @@
             "indexed": false,
             "virtual": true,
             "universal": true,
-            "default_values": null,
-            "group_name": null,
-            "group_name_canonical": null,
+            "defaultValues": null,
+            "groupName": null,
+            "groupNameCanonical": null,
             "expanded": false,
             "placeholder": null,
-            "min_length": null,
-            "max_length": null
+            "minLength": null,
+            "maxLength": null
         },
         {
             "name": "file",
+            "nodeTypeName": "BlogPost",
             "label": "Fichier à télécharger",
             "description": null,
             "visible": true,
@@ -69,16 +73,17 @@
             "indexed": false,
             "virtual": true,
             "universal": false,
-            "default_values": null,
-            "group_name": null,
-            "group_name_canonical": null,
+            "defaultValues": null,
+            "groupName": null,
+            "groupNameCanonical": null,
             "expanded": false,
             "placeholder": null,
-            "min_length": null,
-            "max_length": null
+            "minLength": null,
+            "maxLength": null
         },
         {
             "name": "location",
+            "nodeTypeName": "BlogPost",
             "label": "Lieu",
             "description": null,
             "visible": true,
@@ -86,13 +91,14 @@
             "indexed": false,
             "virtual": false,
             "universal": false,
-            "default_values": null,
-            "group_name": null,
-            "group_name_canonical": null,
+            "defaultValues": null,
+            "groupName": null,
+            "groupNameCanonical": null,
             "expanded": false,
             "placeholder": null,
-            "min_length": null,
-            "max_length": null
+            "minLength": null,
+            "maxLength": null
         }
-    ]
+    ],
+    "defaultTtl": 120
 }

@@ -11,6 +11,7 @@
     "fields": [
         {
             "name": "over_title",
+            "nodeTypeName": "BlogFeedBlock",
             "label": "Sur-titre",
             "description": null,
             "visible": true,
@@ -18,13 +19,14 @@
             "indexed": false,
             "virtual": false,
             "universal": false,
-            "default_values": null,
-            "group_name": null,
-            "group_name_canonical": null,
+            "defaultValues": null,
+            "groupName": null,
+            "groupNameCanonical": null,
             "expanded": false,
             "placeholder": null,
-            "min_length": null,
-            "max_length": null
+            "minLength": null,
+            "maxLength": null
         }
-    ]
+    ],
+    "defaultTtl": 0
 }
