@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AbstractBlogThemeApp extends FrontendController
 {
-    const VERSION = '1.6.2';
+    const VERSION = '1.7.0';
     const ITEM_PER_PAGE = 15;
 
     protected static $themeName = 'Blog Theme';
@@ -25,34 +25,6 @@ class AbstractBlogThemeApp extends FrontendController
      * {@inheritdoc}
      */
     public static $priority = 5;
-
-    /**
-     * @param Request $request
-     * @param Response $response
-     * @param int $minutes TTL in minutes
-     *
-     * @return Response
-     */
-    public function makeResponseCachable(Request $request, Response $response, $minutes)
-    {
-        $kernel = $this->get('kernel');
-        if (!$kernel->isPreview() &&
-            !$kernel->isDebug() &&
-            $request->isMethodCacheable()
-        ) {
-            $response->setPublic();
-            $response->setMaxAge(60 * $minutes);
-            $response->setSharedMaxAge(60 * $minutes);
-            $response->setVary('Accept-Encoding, X-Partial, x-requested-with');
-            if ($request->isXmlHttpRequest()) {
-                $response->headers->add([
-                    'X-Partial' => true
-                ]);
-            }
-        }
-
-        return $response;
-    }
 
     /**
      * @param Container $container
