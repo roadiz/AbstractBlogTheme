@@ -103,6 +103,9 @@ trait PostControllerTrait
      */
     public function getResponseTtl()
     {
+        if (null !== $this->nodeSource) {
+            return $this->nodeSource->getNode()->getTtl();
+        }
         return 5;
     }
 

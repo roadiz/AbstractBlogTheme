@@ -618,6 +618,9 @@ trait PostContainerControllerTrait
      */
     public function getResponseTtl()
     {
+        if (null !== $this->nodeSource) {
+            return $this->nodeSource->getNode()->getTtl();
+        }
         return 2;
     }
 

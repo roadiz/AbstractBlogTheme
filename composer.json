@@ -10,11 +10,11 @@
         }
     ],
     "require": {
-        "php": "^7.0",
+        "php": "^7.2",
         "roadiz/roadiz": "^1.2.0 || dev-develop",
         "rezozero/social-links": "^1.1.0",
-        "twig/twig": "1.* || 2.*",
-        "jms/serializer": "^2.1"
+        "twig/twig": "2.*",
+        "jms/serializer": "~2.3.0 || ~3.1.1"
     },
     "autoload": {
         "psr-4": {
