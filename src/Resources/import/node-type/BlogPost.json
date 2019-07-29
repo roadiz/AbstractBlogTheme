@@ -100,5 +100,5 @@
             "maxLength": null
         }
     ],
-    "defaultTtl": 120
+    "defaultTtl": 5
 }
