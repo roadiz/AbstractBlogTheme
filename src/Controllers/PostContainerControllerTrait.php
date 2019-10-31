@@ -5,17 +5,22 @@ namespace Themes\AbstractBlogTheme\Controllers;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use GeneratedNodeSources\NSCompany;
+use JMS\Serializer\Serializer;
+use JMS\Serializer\SerializationContext;
 use RZ\Roadiz\Core\Entities\Node;
 use RZ\Roadiz\Core\Entities\NodesSources;
 use RZ\Roadiz\Core\Entities\Tag;
 use RZ\Roadiz\Core\Entities\Translation;
 use RZ\Roadiz\Core\ListManagers\EntityListManager;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 trait PostContainerControllerTrait
 {
+    use JsonLdSupportTrait;
+
     /**
      * @var Tag[]
      */
@@ -142,7 +147,9 @@ trait PostContainerControllerTrait
 
         $_format = $request->get('_format', 'html');
 
-        if ($_format === 'xml' || $_format === 'rss') {
+        if ($_format === 'json') {
+            $response = $this->renderHydra($this->assignation);
+        } elseif ($_format === 'xml' || $_format === 'rss') {
             $response = $this->renderRss($this->getRssTemplate(), $this->assignation, null, '/');
         } else {
             $response = $this->render($this->getTemplate(), $this->assignation, null, '/');
@@ -160,6 +167,34 @@ trait PostContainerControllerTrait
         }
 
         return $response;
+    }
+
+    /**
+     * @param array $parameters
+     *
+     * @return Response
+     */
+    public function renderHydra(array $parameters = []): Response
+    {
+        /** @var Serializer $serializer */
+        $serializer = $this->get('serializer');
+        $articles = [];
+        /** @var NodesSources $post */
+        foreach ($this->assignation['posts'] as $post) {
+            $articles[] = $this->getJsonLdArticle($post);
+        }
+
+        return new JsonResponse(
+            $serializer->serialize(
+                $articles,
+                'json',
+                SerializationContext::create()
+                    ->enableMaxDepthChecks()
+            ),
+            Response::HTTP_OK,
+            [],
+            true
+        );
     }
 
     /**

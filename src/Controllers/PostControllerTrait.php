@@ -12,20 +12,7 @@ use JMS\Serializer\Serializer;
 
 trait PostControllerTrait
 {
-    /**
-     * @param NodesSources $nodeSource
-     *
-     * @return JsonLdArticle
-     */
-    protected function getJsonLdArticle(NodesSources $nodeSource)
-    {
-        return new JsonLdArticle(
-            $nodeSource,
-            $this->get('document.url_generator'),
-            $this->get('router'),
-            $this->get('settingsBag')
-        );
-    }
+    use JsonLdSupportTrait;
 
     /**
      * @param Request $request

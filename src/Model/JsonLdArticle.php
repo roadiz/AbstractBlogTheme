@@ -5,6 +5,7 @@ use JMS\Serializer\Annotation as JMS;
 use RZ\Roadiz\Core\Bags\Settings;
 use RZ\Roadiz\Core\Entities\Document;
 use RZ\Roadiz\Core\Entities\NodesSources;
+use RZ\Roadiz\Core\Entities\Tag;
 use RZ\Roadiz\Utils\UrlGenerators\DocumentUrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -102,7 +103,15 @@ class JsonLdArticle
      */
     public function getImage()
     {
+        /** @var string|null $methodName */
+        $methodName = null;
         if (method_exists($this->nodeSource, 'getImage')) {
+            $methodName = 'getImage';
+        }
+        if (method_exists($this->nodeSource, 'getImages')) {
+            $methodName = 'getImages';
+        }
+        if (null !== $methodName) {
             return array_map(function (Document $document) {
                 $this->documentUrlGenerator->setDocument($document);
                 $this->documentUrlGenerator->setOptions([
@@ -110,7 +119,7 @@ class JsonLdArticle
                 ]);
 
                 return $this->documentUrlGenerator->getUrl(true);
-            }, $this->nodeSource->getImage());
+            }, $this->nodeSource->$methodName());
         }
 
         return [];
@@ -135,12 +144,16 @@ class JsonLdArticle
      */
     public function getDescription()
     {
-        if (method_exists($this->nodeSource, 'getExcerpt') &&
-            $this->nodeSource->getExcerpt() != '') {
-            return strip_tags(\Parsedown::instance()->text($this->nodeSource->getExcerpt()));
-        } elseif (method_exists($this->nodeSource, 'getDescription') &&
-            $this->nodeSource->getDescription() != '') {
-            return strip_tags(\Parsedown::instance()->text($this->nodeSource->getDescription()));
+        $methodName = null;
+        if (method_exists($this->nodeSource, 'getPreview')) {
+            $methodName = 'getPreview';
+        } elseif (method_exists($this->nodeSource, 'getExcerpt')) {
+            $methodName = 'getExcerpt';
+        } elseif (method_exists($this->nodeSource, 'getDescription')) {
+            $methodName = 'getDescription';
+        }
+        if (null !== $methodName && $this->nodeSource->$methodName() != '') {
+            return strip_tags(\Parsedown::instance()->text($this->nodeSource->$methodName()));
         }
         return null;
     }
@@ -178,6 +191,19 @@ class JsonLdArticle
     public function getUrl()
     {
         return $this->urlGenerator->generate($this->nodeSource, [], UrlGenerator::ABSOLUTE_URL);
+    }
+
+    /**
+     * @JMS\VirtualProperty()
+     * @return array
+     */
+    public function getArticleSection()
+    {
+        return array_map(function (Tag $tag) {
+            return $tag->getTranslatedTagsByTranslation($this->nodeSource->getTranslation())
+                ->first()
+                ->getName();
+        }, $this->nodeSource->getNode()->getTags()->toArray());
     }
 
     /**
