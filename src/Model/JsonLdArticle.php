@@ -49,23 +49,39 @@ class JsonLdArticle
     protected $settingsBag;
 
     /**
-     * AmpArticle constructor.
+     * @JMS\Exclude
+     * @var array
+     */
+    protected $imageOptions;
+
+    /**
+     * JsonLdArticle constructor.
      *
      * @param NodesSources          $nodeSource
      * @param DocumentUrlGenerator  $documentUrlGenerator
      * @param UrlGeneratorInterface $urlGenerator
      * @param Settings              $settingsBag
+     * @param array|null            $imageOptions
      */
     public function __construct(
         NodesSources $nodeSource,
         DocumentUrlGenerator $documentUrlGenerator,
         UrlGeneratorInterface $urlGenerator,
-        Settings $settingsBag
+        Settings $settingsBag,
+        array $imageOptions = null
     ) {
         $this->nodeSource = $nodeSource;
         $this->documentUrlGenerator = $documentUrlGenerator;
         $this->urlGenerator = $urlGenerator;
         $this->settingsBag = $settingsBag;
+
+        if (null !== $imageOptions) {
+            $this->imageOptions = $imageOptions;
+        } else {
+            $this->imageOptions = [
+                'width' => 800,
+            ];
+        }
     }
 
     /**
@@ -98,6 +114,14 @@ class JsonLdArticle
     }
 
     /**
+     * @return array
+     */
+    protected function getImageGenerationOptions(): array
+    {
+        return $this->imageOptions;
+    }
+
+    /**
      * @JMS\VirtualProperty()
      * @return array
      */
@@ -114,9 +138,7 @@ class JsonLdArticle
         if (null !== $methodName) {
             return array_map(function (Document $document) {
                 $this->documentUrlGenerator->setDocument($document);
-                $this->documentUrlGenerator->setOptions([
-                    'width' => 800,
-                ]);
+                $this->documentUrlGenerator->setOptions($this->getImageGenerationOptions());
 
                 return $this->documentUrlGenerator->getUrl(true);
             }, $this->nodeSource->$methodName());

@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Themes\AbstractBlogTheme\Model\HydraCollection;
 
 trait PostContainerControllerTrait
 {
@@ -178,15 +179,10 @@ trait PostContainerControllerTrait
     {
         /** @var Serializer $serializer */
         $serializer = $this->get('serializer');
-        $articles = [];
-        /** @var NodesSources $post */
-        foreach ($this->assignation['posts'] as $post) {
-            $articles[] = $this->getJsonLdArticle($post);
-        }
 
         return new JsonResponse(
             $serializer->serialize(
-                $articles,
+                $this->getHydraCollection($parameters),
                 'json',
                 SerializationContext::create()
                     ->enableMaxDepthChecks()
@@ -194,6 +190,28 @@ trait PostContainerControllerTrait
             Response::HTTP_OK,
             [],
             true
+        );
+    }
+
+    protected function getHydraCollection(array $parameters = []): HydraCollection
+    {
+        $articles = [];
+        /** @var NodesSources $post */
+        foreach ($parameters['posts'] as $post) {
+            $articles[] = $this->getJsonLdArticle($post);
+        }
+
+        /** @var Request $request */
+        $request = $this->get('requestStack')->getMasterRequest();
+
+        return new HydraCollection(
+            $articles,
+            $parameters['filters']['itemCount'],
+            $parameters['filters']['currentPage'],
+            $parameters['filters']['pageCount'],
+            $this->get('router'),
+            $this->nodeSource ?: $request->attributes->get('_route'),
+            $request->attributes->get('_route_params')
         );
     }
 
