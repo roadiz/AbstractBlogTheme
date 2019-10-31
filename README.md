@@ -102,6 +102,9 @@ IndexAction will assign:
 - `tags`: available filtering `Tag` array
 - `currentTag`: `Tag`, `array<Tag>` or `null`
 - `currentTagNames`: `array<string>` containing current filtering tag(s) name for your filter menu template.
+- `currentRelationSource`: `NodesSources` or `null` containing the filtering related entity
+- `currentRelationsSources`: `array<NodesSources>` containing current filtering related entities(s) for your filter menu template.
+- `currentRelationsNames`: `array<string>` containing current filtering related entities(s) name for your filter menu template.
 - `archives`: available *years* and *months* of post archives
 - `currentArchive`: `string` or `not defined`
 - `currentArchiveDateTime`: `\DateTime` or `not defined`
@@ -112,14 +115,13 @@ You can filter your post-container entities using `Request` attributes or query 
 
 - `tag`: Filter by a tag’ name  using Roadiz nodes’s `tags` field. **You can pass an array of tag name to combine them.**
 - `archive`: Filter by month and year, or just year on `publishedAt` field, or the one defined by `getPublicationField` method.
-- `related`: Filter by a related node’ name using Roadiz nodes’s `bNodes` field
+- `related`: Filter by a related node’ name using Roadiz nodes’s `bNodes` field. **You can pass an array of node name to combine them.**
 
 ### Usage
 
 All you need to do is creating your `PostContainer` node-source's `Controller` in your theme and 
 implements `ConfigurableController` and use `PostContainerControllerTrait`.
 You will be able to override any methods to configure your blog listing.
-
 
 ```php
 <?php
@@ -135,9 +137,48 @@ class BlogPostContainerController extends MyThemeThemeApp implements Configurabl
 }
 ```
 
+#### Multiple container controllers usage
+
+If you have more than one blog-post type (`Blogpost` and `PressReview` for example), we advise strongly to create 
+an *Abstract* class in your theme using this *Trait* before using it, it will ease up
+method overriding if you have multiple container controllers classes:
+
+```php
+<?php
+namespace Themes\MyTheme\Controllers;
+
+use Themes\AbstractBlogTheme\Controllers\ConfigurableController;
+use Themes\AbstractBlogTheme\Controllers\PostContainerControllerTrait;
+use Themes\MyTheme\MyThemeThemeApp;
+
+abstract class AbstractContainerController extends MyThemeThemeApp implements ConfigurableController
+{
+    use PostContainerControllerTrait;
+
+    // common methods overriding here…
+}
+```
+
+Then, simply inherit from your *Abstract* in your multiple container controller definitions:
+
+```php
+<?php
+namespace Themes\MyTheme\Controllers;
+
+class BlogPostContainerController extends AbstractContainerController
+{
+    // override whatever you want
+}
+
+class PressReviewContainerController extends AbstractContainerController
+{
+    // override whatever you want
+}
+```
+
 #### Override PostContainerControllerTrait behaviour
 
-Those methods can be overridden to customize your `PostContainerControllerTrait` behaviour.
+Those methods can be overridden to customize your `PostContainerControllerTrait` behaviour. 
 
 - `getTemplate`: By default it returns `pages/post-container.html.twig`. It will search in every registered themes for this template and fallback on `@AbstractBlogTheme/pages/post-container.html.twig`. Make sure your own theme have a higher priority.
 - `getRssTemplate`: By default it returns `pages/post-container.rss.twig`. It will search in every registered themes for this template and fallback on `@AbstractBlogTheme/pages/post-container.rss.twig`. Make sure your own theme have a higher priority.
@@ -160,6 +201,7 @@ exists in your BlogPost node-type.
 - `getResponseTtl`: By default this method returns `5` (minutes).
 - `selectPostCounts`: By default `false`: make additional queries to get each tag’ post count to display posts count number in your tags menu. 
 - `prepareListingAssignation`: This is the critical method which performs all queries and tag resolutions. **We do not recommend overriding this method**, override other methods to change your PostContainer behaviour instead.
+- `getRelatedNodesSourcesQueryBuilder`: if you want to fetch only one type related node-sources. Or filter more precisely.
 
 You can override other methods, just get a look at the `PostContainerControllerTrait` file…
 

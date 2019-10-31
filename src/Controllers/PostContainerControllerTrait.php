@@ -4,7 +4,9 @@ namespace Themes\AbstractBlogTheme\Controllers;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use GeneratedNodeSources\NSCompany;
 use RZ\Roadiz\Core\Entities\Node;
+use RZ\Roadiz\Core\Entities\NodesSources;
 use RZ\Roadiz\Core\Entities\Tag;
 use RZ\Roadiz\Core\Entities\Translation;
 use RZ\Roadiz\Core\ListManagers\EntityListManager;
@@ -294,12 +296,10 @@ trait PostContainerControllerTrait
     protected function findNodeByName($nodeName = '')
     {
         if ($nodeName !== '') {
-            return $this->get('nodeApi')->getOneBy(
-                [
+            return $this->get('nodeApi')->getOneBy([
                 'nodeName' => $nodeName,
                 'translation' => $this->translation,
-                ]
-            );
+            ]);
         }
 
         return null;
@@ -322,7 +322,7 @@ trait PostContainerControllerTrait
         if ('' != $tagName = $request->get('tag', '')) {
             if (is_array($tagName)) {
                 $tags = array_map(
-                    function ($name) {
+                    function (string $name) {
                         $tag = $this->getTag($name);
                         if (null === $tag) {
                             throw $this->createNotFoundException('Tag does not exist.');
@@ -376,22 +376,59 @@ trait PostContainerControllerTrait
             $this->assignation['currentArchive'] = null;
         }
 
+        /*
+         * Support filtering by related node entity.
+         */
         if ('' != $related = $request->get('related', '')) {
-            if (null !== $relatedNode = $this->findNodeByName($related)) {
-                $this->assignation['currentRelation'] = $relatedNode;
-                $this->assignation['currentRelationSource'] = $relatedNode->getNodeSources()->first();
-
+            if (is_array($related)) {
+                $relatedNodes = array_map(
+                    function (string $name) {
+                        $relatedNode = $this->findNodeByName($name);
+                        if (null === $relatedNode) {
+                            throw $this->createNotFoundException('Node does not exist.');
+                        }
+                        return $relatedNode;
+                    },
+                    $related
+                );
+                $this->assignation['currentRelations'] = $relatedNodes;
+                $this->assignation['currentRelationsSources'] = array_map(function (Node $node) {
+                    return $node->getNodeSources()->first();
+                }, $relatedNodes);
+                $this->assignation['currentRelationsNames'] = array_map(function (Node $node) {
+                    return $node->getNodeName();
+                }, $relatedNodes);;
                 /*
                  * Use bNode from NodesToNodes without field specification.
                  */
-                $criteria['node.bNodes.nodeB'] = $relatedNode;
+                $criteria['node.bNodes.nodeB'] = $relatedNodes;
             } else {
-                $this->assignation['currentRelation'] = null;
-                $this->assignation['currentRelationSource'] = null;
+                if (null !== $relatedNode = $this->findNodeByName($related)) {
+                    $this->assignation['currentRelation'] = $relatedNode;
+                    $this->assignation['currentRelations'] = [$relatedNode];
+                    $this->assignation['currentRelationsNames'] = [$relatedNode->getNodeName()];
+                    $this->assignation['currentRelationSource'] = $relatedNode->getNodeSources()->first();
+                    $this->assignation['currentRelationsSources'] = [$relatedNode->getNodeSources()->first()];
+
+                    /*
+                     * Use bNode from NodesToNodes without field specification.
+                     */
+                    $criteria['node.bNodes.nodeB'] = $relatedNode;
+                } else {
+                    $this->assignation['currentRelation'] = null;
+                    $this->assignation['currentRelationSource'] = null;
+                    $this->assignation['currentRelations'] = [];
+                    $this->assignation['currentRelationsSources'] = [];
+                    $this->assignation['currentRelationsNames'] = [];
+
+                }
             }
         } else {
             $this->assignation['currentRelation'] = null;
             $this->assignation['currentRelationSource'] = null;
+            $this->assignation['currentRelations'] = [];
+            $this->assignation['currentRelationsSources'] = [];
+            $this->assignation['currentRelationsNames'] = [];
         }
 
         if ($this->isScopedToCurrentContainer()) {
@@ -453,6 +490,46 @@ trait PostContainerControllerTrait
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param Translation $translation
+     *
+     * @return NodesSources[]
+     */
+    protected function getAvailableRelatedNodesSources(Translation $translation): array
+    {
+        /**
+         * @var QueryBuilder $qb
+         */
+        $qb = $this->getRelatedNodesSourcesQueryBuilder();
+
+        /**
+         * @var QueryBuilder $subQb
+         */
+        $subQb = $this->getPostRepository()->createQueryBuilder('p');
+
+        $qb->select('ns, n')
+            ->innerJoin('ns.node', 'n')
+            ->leftJoin('n.aNodes', 'an')
+            ->leftJoin('an.nodeA', 'nodeA')
+            ->andWhere($qb->expr()->in('nodeA.id', $subQb->select('pn.id')->innerJoin('p.node', 'pn')->getDQL()))
+            ->andWhere($qb->expr()->eq('n.visible', true))
+            ->andWhere($qb->expr()->eq('ns.translation', ':translation'))
+            ->addOrderBy('ns.title', 'ASC')
+            ->setParameter(':translation', $translation);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @return QueryBuilder
+     */
+    protected function getRelatedNodesSourcesQueryBuilder(): QueryBuilder
+    {
+        return $this->get('em')
+            ->getRepository(NodesSources::class)
+            ->createQueryBuilder('ns');
     }
 
     /**
