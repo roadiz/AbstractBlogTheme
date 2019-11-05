@@ -98,14 +98,19 @@ class BlogExtension extends AbstractExtension
      * @param NodesSources $post
      * @param int          $count
      * @param bool         $scopedToParent
+     * @param array        $criteria
      *
      * @return null|NodesSources|array
      */
-    public function getPreviousPost(NodesSources $post, $count = 1, $scopedToParent = false)
+    public function getPreviousPost(NodesSources $post, $count = 1, $scopedToParent = false, array $criteria = [])
     {
-        $criteria = array_merge($this->getDefaultPrevNextCriteria($post), [
-            'publishedAt' => ['<', $post->getPublishedAt()],
-        ]);
+        $criteria = array_merge(
+            $this->getDefaultPrevNextCriteria($post),
+            $criteria,
+            [
+                'publishedAt' => ['<', $post->getPublishedAt()],
+            ]
+        );
         if ($scopedToParent) {
             $criteria['node.parent'] = $post->getParent();
         }
@@ -156,14 +161,19 @@ class BlogExtension extends AbstractExtension
      * @param NodesSources $post
      * @param int          $count
      * @param bool         $scopedToParent
+     * @param array        $criteria
      *
      * @return null|NodesSources|array
      */
-    public function getNextPost(NodesSources $post, $count = 1, $scopedToParent = false)
+    public function getNextPost(NodesSources $post, $count = 1, $scopedToParent = false, array $criteria = [])
     {
-        $criteria = array_merge($this->getDefaultPrevNextCriteria($post), [
-            'publishedAt' => ['>', $post->getPublishedAt()],
-        ]);
+        $criteria = array_merge(
+            $this->getDefaultPrevNextCriteria($post),
+            $criteria,
+            [
+                'publishedAt' => ['>', $post->getPublishedAt()],
+            ]
+        );
         if ($scopedToParent) {
             $criteria['node.parent'] = $post->getParent();
         }
@@ -213,16 +223,21 @@ class BlogExtension extends AbstractExtension
     /**
      * @param Translation $translation
      * @param int $count
+     * @param array $criteria
      *
      * @return array
      */
-    public function getLatestPosts(Translation $translation, $count = 4)
+    public function getLatestPosts(Translation $translation, $count = 4, array $criteria = [])
     {
-        return $this->entityManager->getRepository($this->postEntityClass)->findBy([
+        $mandatoryCriteria = [
             'publishedAt' => ['<=', new \DateTime()],
             'node.visible' => true,
             'translation' => $translation,
-        ], [
+        ];
+        return $this->entityManager->getRepository($this->postEntityClass)->findBy(array_merge(
+            $criteria,
+            $mandatoryCriteria
+        ), [
             'publishedAt' => 'DESC'
         ], $count);
     }
