@@ -86,7 +86,7 @@ class JsonLdArticle
 
     /**
      * @JMS\VirtualProperty()
-     * @return string
+     * @return string|null
      */
     public function getHeadline()
     {
@@ -96,7 +96,7 @@ class JsonLdArticle
     /**
      * @JMS\VirtualProperty()
      * @JMS\Type("DateTime<'c'>")
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getDatePublished()
     {
@@ -106,7 +106,7 @@ class JsonLdArticle
     /**
      * @JMS\VirtualProperty()
      * @JMS\Type("DateTime<'Y'>")
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getCopyrightYear()
     {
@@ -116,14 +116,14 @@ class JsonLdArticle
     /**
      * @return array
      */
-    protected function getImageGenerationOptions(): array
+    protected function getImageGenerationOptions()
     {
         return $this->imageOptions;
     }
 
     /**
      * @JMS\VirtualProperty()
-     * @return array
+     * @return array|null
      */
     public function getImage()
     {
@@ -149,7 +149,7 @@ class JsonLdArticle
 
     /**
      * @JMS\VirtualProperty()
-     * @return JsonLdPerson|JsonLdOrganization
+     * @return JsonLdPerson|JsonLdOrganization|null
      */
     public function getAuthor()
     {
@@ -208,7 +208,7 @@ class JsonLdArticle
 
     /**
      * @JMS\VirtualProperty()
-     * @return string
+     * @return string|null
      */
     public function getUrl()
     {
@@ -217,7 +217,7 @@ class JsonLdArticle
 
     /**
      * @JMS\VirtualProperty()
-     * @return array
+     * @return array|null
      */
     public function getArticleSection()
     {
