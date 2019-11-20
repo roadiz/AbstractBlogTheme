@@ -28,7 +28,7 @@
                     {% include themePrefix ~ '/svg/use.svg.twig' with {
                         'classes': ['prev-icon'],
                         'icon': 'icon-chevron-left',
-                    } only %}<span class="pagination-label"> {% trans %}previous{%- endtrans -%}</span></a>
+                    } only %}<span class="pagination-label"> {% trans %}blog.previous{%- endtrans -%}</span></a>
 
                 {% for i in range(1, extremePagesLimit) if ( i < currentPage - nearbyPagesLimit ) %}
                     <a class="pagination-number" href="{{ path(paginationPath, currentFilters|merge({page: i})) }}">{{ i }}</a>
@@ -45,7 +45,7 @@
                 <span class="pagination-prev disabled">{% include themePrefix ~ '/svg/use.svg.twig' with {
                         'classes': ['prev-icon'],
                         'icon': 'icon-chevron-left',
-                    } only %}<span class="pagination-label"> {% trans %}previous{%- endtrans -%}</span></span>
+                    } only %}<span class="pagination-label"> {% trans %}blog.previous{%- endtrans -%}</span></span>
             {%- endif -%}
 
             <a href="{{ path(paginationPath, currentFilters|merge({ page: currentPage })) }}"
@@ -66,12 +66,12 @@
 
                 <a rel="next"
                    class="pagination-next"
-                   href="{{ path(paginationPath, currentFilters|merge({page: currentPage+1})) }}"><span class="pagination-label">{%- trans -%}next{% endtrans %} </span>{% include themePrefix ~ '/svg/use.svg.twig' with {
+                   href="{{ path(paginationPath, currentFilters|merge({page: currentPage+1})) }}"><span class="pagination-label">{%- trans -%}blog.next{% endtrans %} </span>{% include themePrefix ~ '/svg/use.svg.twig' with {
                         'classes': ['next-icon'],
                         'icon': 'icon-chevron-right',
                     } only -%}</a>
             {% elseif showAlwaysFirstAndLast %}
-                <span class="pagination-next disabled"><span class="pagination-label">{%- trans -%}next{% endtrans %} </span>{% include themePrefix ~ '/svg/use.svg.twig' with {
+                <span class="pagination-next disabled"><span class="pagination-label">{%- trans -%}blog.next{% endtrans %} </span>{% include themePrefix ~ '/svg/use.svg.twig' with {
                         'classes': ['next-icon'],
                         'icon': 'icon-chevron-right',
                     } only -%}</span>

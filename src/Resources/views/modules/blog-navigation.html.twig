@@ -6,14 +6,14 @@
             {% if previousPost and previousPost is not iterable %}
                 <a rel="prev" class="contextual-nav-prev" href="{{ path(previousPost) }}">
                     {% include 'svg/use.svg.twig' with { icon: 'icon-angle-left'} %}
-                    <span class="contextual-nav-label">{% trans %}previous_post{% endtrans %}</span>
+                    <span class="contextual-nav-label">{% trans %}blog.previous_post{% endtrans %}</span>
                     {{ previousPost.title }}
                 </a>
             {% endif %}
             {% if nextPost and nextPost is not iterable %}
                 <a rel="next" class="contextual-nav-next" href="{{ path(nextPost) }}">
                     {{ nextPost.title }}
-                    <span class="contextual-nav-label">{% trans %}next_post{% endtrans %}</span>
+                    <span class="contextual-nav-label">{% trans %}blog.next_post{% endtrans %}</span>
                     {% include 'svg/use.svg.twig' with { icon: 'icon-angle-right'} %}
                 </a>
             {% endif %}

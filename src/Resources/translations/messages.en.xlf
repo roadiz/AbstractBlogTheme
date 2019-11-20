@@ -2,52 +2,52 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="none" original="" target-language="en" datatype="plaintext">
     <body>
-      <trans-unit id="all" xml:space="preserve">
-        <source>all</source>
+      <trans-unit id="blog.all" xml:space="preserve">
+        <source>blog.all</source>
         <target xml:lang="en" state="translated">All</target>
       </trans-unit>
-      <trans-unit id="archives" xml:space="preserve">
-        <source>archives</source>
+      <trans-unit id="blog.archives" xml:space="preserve">
+        <source>blog.archives</source>
         <target xml:lang="en" state="translated">Archives</target>
       </trans-unit>
-      <trans-unit id="back_to_news" xml:space="preserve">
-        <source>back_to_news</source>
+      <trans-unit id="blog.back_to_news" xml:space="preserve">
+        <source>blog.back_to_news</source>
         <target xml:lang="en" state="translated">Back to news</target>
       </trans-unit>
-      <trans-unit id="filters" xml:space="preserve">
-        <source>filters</source>
+      <trans-unit id="blog.filters" xml:space="preserve">
+        <source>blog.filters</source>
         <target xml:lang="en" state="translated">Categories</target>
       </trans-unit>
-      <trans-unit id="next" xml:space="preserve">
-        <source>next</source>
+      <trans-unit id="blog.next" xml:space="preserve">
+        <source>blog.next</source>
         <target xml:lang="en" state="translated">Next</target>
       </trans-unit>
-      <trans-unit id="next_post" xml:space="preserve">
-        <source>next_post</source>
+      <trans-unit id="blog.next_post" xml:space="preserve">
+        <source>blog.next_post</source>
         <target xml:lang="en" state="translated">Next article</target>
       </trans-unit>
-      <trans-unit id="previous" xml:space="preserve">
-        <source>previous</source>
+      <trans-unit id="blog.previous" xml:space="preserve">
+        <source>blog.previous</source>
         <target xml:lang="en" state="translated">Previous</target>
       </trans-unit>
-      <trans-unit id="previous_post" xml:space="preserve">
-        <source>previous_post</source>
+      <trans-unit id="blog.previous_post" xml:space="preserve">
+        <source>blog.previous_post</source>
         <target xml:lang="en" state="translated">Previous article</target>
       </trans-unit>
-      <trans-unit id="read_more" xml:space="preserve">
-        <source>read_more</source>
+      <trans-unit id="blog.read_more" xml:space="preserve">
+        <source>blog.read_more</source>
         <target xml:lang="en" state="translated">Read more…</target>
       </trans-unit>
-      <trans-unit id="search" xml:space="preserve">
-        <source>search</source>
+      <trans-unit id="blog.search" xml:space="preserve">
+        <source>blog.search</source>
         <target xml:lang="en" state="translated">Search</target>
       </trans-unit>
-      <trans-unit id="search_results_for__q_" xml:space="preserve">
-        <source>search_results_for_%q%</source>
+      <trans-unit id="blog.search_results_for__q_" xml:space="preserve">
+        <source>blog.search_results_for_%q%</source>
         <target xml:lang="en" state="translated">Search results for "%q%"</target>
       </trans-unit>
-      <trans-unit id="share_on" xml:space="preserve">
-        <source>share_on</source>
+      <trans-unit id="blog.share_on" xml:space="preserve">
+        <source>blog.share_on</source>
         <target xml:lang="en" state="translated">Share on:</target>
       </trans-unit>
     </body>
