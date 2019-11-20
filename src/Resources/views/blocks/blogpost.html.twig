@@ -5,7 +5,7 @@
     blockClassPrefix
 ] %}
 
-<article class="row blogpost" itemscope itemtype="http://schema.org/Article">
+<article class="{{ blockClasses|join(' ') }}" itemscope itemtype="http://schema.org/Article">
     <a class="blogpost-element" href="{{ path(nodeSource) }}">
         <meta itemprop="url" content="{{ url(nodeSource) }}">
         <meta itemprop="headline" content="{{ nodeSource.title }}">
