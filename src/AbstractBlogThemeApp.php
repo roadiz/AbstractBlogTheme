@@ -1,11 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace Themes\AbstractBlogTheme;
 
 use Pimple\Container;
 use RZ\Roadiz\CMS\Controllers\FrontendController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * AbstractBlogThemeApp class

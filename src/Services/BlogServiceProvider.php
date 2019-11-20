@@ -1,18 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace Themes\AbstractBlogTheme\Services;
 
-use Doctrine\Common\Annotations\AnnotationRegistry;
-use JMS\Serializer\EventDispatcher\EventDispatcher;
-use JMS\Serializer\EventDispatcher\PreSerializeEvent;
-use JMS\Serializer\GraphNavigatorInterface;
-use JMS\Serializer\Handler\HandlerRegistry;
-use JMS\Serializer\Naming\IdenticalPropertyNamingStrategy;
-use JMS\Serializer\Naming\SerializedNameAnnotationStrategy;
-use JMS\Serializer\SerializerBuilder;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
-use RZ\Roadiz\Core\Entities\NodesSources;
 use RZ\SocialLinks\Twig\SocialLinksExtension;
 use Symfony\Component\Translation\Translator;
 use Themes\AbstractBlogTheme\Twig\BlogExtension;
@@ -21,55 +13,6 @@ class BlogServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $container)
     {
-        $container['searchResults.nodesSourcesSerializerHandler'] = function ($c) {
-            return function ($visitor, NodesSources $obj, array $type) {
-                return [
-                    'id' => $obj->getId(),
-                    'locale' => $obj->getTranslation()->getLocale(),
-                    'title' => $obj->getTitle(),
-                    'node' => [
-                        'id' => $obj->getNode()->getId(),
-                        'nodeName' => $obj->getNode()->getNodeName(),
-                    ],
-                    'publishedAt' => $obj->getPublishedAt(),
-                ];
-            };
-        };
-
-        $container['searchResults.serializer'] = function ($c) {
-            AnnotationRegistry::registerLoader('class_exists');
-            $serializer = SerializerBuilder::create()
-                ->setCacheDir($c['kernel']->getCacheDir())
-                ->setDebug($c['kernel']->isDebug())
-                ->setPropertyNamingStrategy(
-                    new SerializedNameAnnotationStrategy(
-                        new IdenticalPropertyNamingStrategy()
-                    )
-                )
-                ->addDefaultHandlers()
-                ->configureListeners(function (EventDispatcher $dispatcher) {
-                    $dispatcher->addListener(
-                        'serializer.pre_serialize',
-                        function (PreSerializeEvent $event) {
-                            if ($event->getObject() instanceof NodesSources) {
-                                $event->setType(NodesSources::class);
-                            }
-                        }
-                    );
-                })
-                ->configureHandlers(function (HandlerRegistry $registry) use ($c) {
-                    $registry->registerHandler(
-                        GraphNavigatorInterface::DIRECTION_SERIALIZATION,
-                        NodesSources::class,
-                        'json',
-                        $c['searchResults.nodesSourcesSerializerHandler']
-                    );
-                })
-                ->build();
-
-            return $serializer;
-        };
-
         $container->extend('twig.extensions', function ($extensions, $c) {
             $extensions->add(new BlogExtension($c['em'], $c['blog_theme.post_entity']));
             $extensions->add(new SocialLinksExtension());
