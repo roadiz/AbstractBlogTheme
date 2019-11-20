@@ -37,11 +37,11 @@
                                 {% for sort in sorts %}
                                     <li class="{% if currentSort == sort and currentSortDirection == 'ASC' %}active{% endif %}">
                                         <a class="{% if currentSort == sort and currentSortDirection == 'ASC' %}active{% endif %}"
-                                           href="{{ path(nodeSource, {'sort': sort, 'sortDirection': 'ASC'}) }}">{{ 'blog.sort_by_' ~ sort ~ '_asc' }}</a>
+                                           href="{{ path(nodeSource, {'sort': sort, 'sortDirection': 'ASC'}) }}">{{ 'blog.sort_by_' ~ sort ~ '_asc'|trans }}</a>
                                     </li>
                                     <li class="{% if currentSort == sort and currentSortDirection == 'DESC' %}active{% endif %}">
                                         <a class="{% if currentSort == sort and currentSortDirection == 'DESC' %}active{% endif %}"
-                                           href="{{ path(nodeSource, {'sort': sort, 'sortDirection': 'DESC'}) }}">{{ 'blog.sort_by_' ~ sort ~ '_desc' }}</a>
+                                           href="{{ path(nodeSource, {'sort': sort, 'sortDirection': 'DESC'}) }}">{{ 'blog.sort_by_' ~ sort ~ '_desc'|trans }}</a>
                                     </li>
                                 {% endfor %}
                             </ul>
