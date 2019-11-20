@@ -50,6 +50,26 @@
         <source>blog.share_on</source>
         <target xml:lang="fr" state="translated">Partager sur :</target>
       </trans-unit>
+      <trans-unit id="blog.sort_by" xml:space="preserve">
+        <source>blog.sort_by</source>
+        <target xml:lang="fr" state="translated">Trier par</target>
+      </trans-unit>
+      <trans-unit id="blog.sort_by_publishedAt_asc" xml:space="preserve">
+        <source>blog.sort_by_publishedAt_asc</source>
+        <target xml:lang="fr" state="translated">Ordre chronologique</target>
+      </trans-unit>
+      <trans-unit id="blog.sort_by_publishedAt_desc" xml:space="preserve">
+        <source>blog.sort_by_publishedAt_desc</source>
+        <target xml:lang="fr" state="translated">Ordre antéchronologique</target>
+      </trans-unit>
+      <trans-unit id="blog.sort_by_title_asc" xml:space="preserve">
+        <source>blog.sort_by_title_asc</source>
+        <target xml:lang="fr" state="translated">Ordre alphabétique</target>
+      </trans-unit>
+      <trans-unit id="blog.sort_by_title_desc" xml:space="preserve">
+        <source>blog.sort_by_title_desc</source>
+        <target xml:lang="fr" state="translated">Ordre alphabétique inverse</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
