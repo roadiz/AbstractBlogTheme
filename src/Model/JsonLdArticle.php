@@ -222,9 +222,8 @@ class JsonLdArticle
     public function getArticleSection()
     {
         return array_map(function (Tag $tag) {
-            return $tag->getTranslatedTagsByTranslation($this->nodeSource->getTranslation())
-                ->first()
-                ->getName();
+            $tagTranslation = $tag->getTranslatedTagsByTranslation($this->nodeSource->getTranslation())->first();
+            return $tagTranslation ? $tagTranslation->getName() : $tag->getTagName();
         }, $this->nodeSource->getNode()->getTags()->toArray());
     }
 
