@@ -17,7 +17,7 @@
                         <p><em>{{ post.location }}</em></p>
                     {% endif %}
                     {{ post.excerpt|markdown }}
-                    <p><a href="{{ url(post) }}">{% trans %}read_more{% endtrans %}</a></p>
+                    <p><a href="{{ url(post) }}">{% trans %}blog.read_more{% endtrans %}</a></p>
                     {% if thumb %}
                         <img src="{{ thumb|url({absolute:true, width:600}) }}">
                     {% endif %}

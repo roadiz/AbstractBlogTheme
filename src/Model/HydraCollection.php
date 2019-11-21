@@ -4,12 +4,7 @@ declare(strict_types=1);
 namespace Themes\AbstractBlogTheme\Model;
 
 use JMS\Serializer\Annotation as JMS;
-use RZ\Roadiz\Core\Bags\Settings;
-use RZ\Roadiz\Core\Entities\Document;
 use RZ\Roadiz\Core\Entities\NodesSources;
-use RZ\Roadiz\Core\Entities\Tag;
-use RZ\Roadiz\Utils\UrlGenerators\DocumentUrlGenerator;
-use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class HydraCollection

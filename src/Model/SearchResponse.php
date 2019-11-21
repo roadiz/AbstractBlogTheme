@@ -1,10 +1,5 @@
 <?php
-/**
- * thehopegallery.com - SearchResponse.php
- *
- * Initial version by: ambroisemaupate
- * Initial version created on: 25/10/2018
- */
+declare(strict_types=1);
 
 namespace Themes\AbstractBlogTheme\Model;
 

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Themes\AbstractBlogTheme\Controllers;
 
 use JMS\Serializer\Serializer;
@@ -121,7 +123,7 @@ trait SearchControllerTrait
 
         if ($_format === 'json') {
             /** @var Serializer $serializer */
-            $serializer = $this->get('searchResults.serializer');
+            $serializer = $this->get('serializer');
             $response = new Response($serializer->serialize($searchResponseModel, 'json'));
         } else {
             $response = $this->render($this->getTemplate(), $this->assignation, null, '/');

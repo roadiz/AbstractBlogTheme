@@ -28,8 +28,25 @@
             <nav class="blogpost-group-nav">
                 <ul>
                     <li {% if not currentTagNames|length %}class="active"{% endif %}>
-                        <a {% if not currentTagNames|length %}class="active"{% endif %} href="{{ path(nodeSource) }}">{% trans %}all{% endtrans %}</a>
+                        <a {% if not currentTagNames|length %}class="active"{% endif %} href="{{ path(nodeSource) }}">{% trans %}blog.all{% endtrans %}</a>
                     </li>
+                    {% if sorts|length %}
+                        <li class="hidden-xs hidden-sm">
+                            <span class="sort-label">{% trans %}blog.sort_by{% endtrans %}</span>
+                            <ul class="sub-menu">
+                                {% for sort in sorts %}
+                                    <li class="{% if currentSort == sort and currentSortDirection == 'ASC' %}active{% endif %}">
+                                        <a class="{% if currentSort == sort and currentSortDirection == 'ASC' %}active{% endif %}"
+                                           href="{{ path(nodeSource, {'sort': sort, 'sortDirection': 'ASC'}) }}">{{ ('blog.sort_by_' ~ sort ~ '_asc')|trans }}</a>
+                                    </li>
+                                    <li class="{% if currentSort == sort and currentSortDirection == 'DESC' %}active{% endif %}">
+                                        <a class="{% if currentSort == sort and currentSortDirection == 'DESC' %}active{% endif %}"
+                                           href="{{ path(nodeSource, {'sort': sort, 'sortDirection': 'DESC'}) }}">{{ ('blog.sort_by_' ~ sort ~ '_desc')|trans }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endif %}
                     {% for tag in tags %}
                         <li {% if tag.tagName in currentTagNames %}class="active"{% endif %}>
                             <a {% if tag.tagName in currentTagNames %}class="active"{% endif %}
@@ -42,7 +59,7 @@
                         </li>
                     {% endfor %}
                     <li class="hidden-xs hidden-sm">
-                        <span class="archives-label">{% trans %}archives{% endtrans %}</span>
+                        <span class="archives-label">{% trans %}blog.archives{% endtrans %}</span>
                         <ul class="sub-menu">
                             {% for year, months in archives %}
                                 {#<a href="{{ path(nodeSource, {archive: year}) }}">{{ year }}</a>#}
@@ -83,7 +100,9 @@
             'currentFilters': {
                 page: filters.currentPage,
                 tag: currentTag.tagName,
-                archive: currentArchive
+                archive: currentArchive,
+                sort: currentSort,
+                sortDirection: currentSortDirection
             },
             'currentPage': filters.currentPage,
             'paginationPath': nodeSource,

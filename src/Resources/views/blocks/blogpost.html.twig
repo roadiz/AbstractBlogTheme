@@ -5,7 +5,7 @@
     blockClassPrefix
 ] %}
 
-<article class="row blogpost" itemscope itemtype="http://schema.org/Article">
+<article class="{{ blockClasses|join(' ') }}" itemscope itemtype="http://schema.org/Article">
     <a class="blogpost-element" href="{{ path(nodeSource) }}">
         <meta itemprop="url" content="{{ url(nodeSource) }}">
         <meta itemprop="headline" content="{{ nodeSource.title }}">
@@ -17,7 +17,7 @@
         </div>
         <div class="{{ blockClassPrefix }}-element-excerpt" itemprop="description">
             {{ nodeSource.excerpt|markdown }}
-            <p class="ellipsis">{% trans %}read_more{% endtrans %}</p>
+            <p class="ellipsis">{% trans %}blog.read_more{% endtrans %}</p>
         </div>
         <div class="{{ blockClassPrefix }}-element-image">
             {% if nodeSource.image[0] %}

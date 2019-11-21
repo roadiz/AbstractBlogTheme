@@ -1,10 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace Themes\AbstractBlogTheme\Controllers;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use GeneratedNodeSources\NSCompany;
 use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializationContext;
 use RZ\Roadiz\Core\Entities\Node;
@@ -17,10 +17,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Themes\AbstractBlogTheme\Model\HydraCollection;
+use Twig\Error\RuntimeError;
 
 trait PostContainerControllerTrait
 {
     use JsonLdSupportTrait;
+
+    protected static $availableSortFields = [
+        'title',
+        'publishedAt'
+    ];
 
     /**
      * @var Tag[]
@@ -71,6 +77,9 @@ trait PostContainerControllerTrait
      * And filter all these against current Request.
      *
      * @param Request $request
+     *
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     protected function prepareListingAssignation(Request $request): void
     {
@@ -123,13 +132,18 @@ trait PostContainerControllerTrait
         $this->assignation['filters'] = $elm->getAssignation();
         $this->assignation['tags'] = $this->availableTags;
         $this->assignation['archives'] = $this->archives;
+        $this->assignation['sorts'] = static::$availableSortFields;
     }
 
     /**
-     * @param  Request          $request
-     * @param  Node|null        $node
-     * @param  Translation|null $translation
+     * @param Request          $request
+     * @param Node|null        $node
+     * @param Translation|null $translation
+     *
      * @return Response
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws RuntimeError
      */
     public function indexAction(
         Request $request,
@@ -193,6 +207,11 @@ trait PostContainerControllerTrait
         );
     }
 
+    /**
+     * @param array $parameters
+     *
+     * @return HydraCollection
+     */
     protected function getHydraCollection(array $parameters = []): HydraCollection
     {
         $articles = [];
@@ -226,7 +245,7 @@ trait PostContainerControllerTrait
      * @param string   $namespace  Twig loader namespace
      *
      * @return Response
-     * @throws \Twig_Error_Runtime
+     * @throws RuntimeError
      */
     public function renderRss($view, array $parameters = [], Response $response = null, $namespace = "")
     {
@@ -245,7 +264,7 @@ trait PostContainerControllerTrait
             $response->setContent($this->renderView($this->getNamespacedView($view, $namespace), $parameters));
 
             return $response;
-        } catch (\Twig_Error_Runtime $e) {
+        } catch (RuntimeError $e) {
             if ($e->getPrevious() instanceof ForceResponseException) {
                 return $e->getPrevious()->getResponse();
             } else {
@@ -255,7 +274,12 @@ trait PostContainerControllerTrait
     }
 
     /**
-     * @param array<Tag> $tags
+     * @param array<Tag>  $tags
+     * @param Translation $translation
+     *
+     * @return array
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     protected function getPostCountForTags(array $tags, Translation $translation): array
     {
@@ -268,9 +292,12 @@ trait PostContainerControllerTrait
     }
 
     /**
-     * @param Tag $tag
+     * @param Tag         $tag
+     * @param Translation $translation
      *
      * @return int
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function getPostCountForTag(Tag $tag, Translation $translation): int
     {
@@ -363,6 +390,7 @@ trait PostContainerControllerTrait
      * @param Request     $request
      *
      * @return array
+     * @throws \Exception
      */
     protected function getDefaultCriteria(Translation $translation, Request $request)
     {
@@ -473,7 +501,6 @@ trait PostContainerControllerTrait
                     $this->assignation['currentRelations'] = [];
                     $this->assignation['currentRelationsSources'] = [];
                     $this->assignation['currentRelationsNames'] = [];
-
                 }
             }
         } else {
@@ -641,6 +668,26 @@ trait PostContainerControllerTrait
      */
     protected function getDefaultOrder()
     {
+        /** @var Request $request */
+        $request = $this->get('requestStack')->getCurrentRequest();
+        $sort = $request->get('sort', null);
+        $sortDirection = 'ASC';
+        $requestSortDirection = $request->get('sortDirection', null);
+        if (null !== $requestSortDirection && in_array($requestSortDirection, ['ASC', 'DESC'])) {
+            $sortDirection = $requestSortDirection;
+        }
+
+        if (null !== $sort && in_array($sort, static::$availableSortFields)) {
+            $this->assignation['currentSort'] = $sort;
+            $this->assignation['currentSortDirection'] = $sortDirection;
+            return [
+                $sort => $sortDirection
+            ];
+        }
+
+        $this->assignation['currentSort'] = $this->getPublicationField();
+        $this->assignation['currentSortDirection'] = 'DESC';
+
         return [
             $this->getPublicationField() => 'DESC',
         ];
@@ -658,6 +705,7 @@ trait PostContainerControllerTrait
      * @param Translation $translation
      *
      * @return array
+     * @throws \Exception
      */
     protected function getPostPublicationDates(Translation $translation)
     {
@@ -697,6 +745,7 @@ trait PostContainerControllerTrait
      * @param Translation $translation
      *
      * @return array
+     * @throws \Exception
      */
     protected function getArchives(Translation $translation)
     {

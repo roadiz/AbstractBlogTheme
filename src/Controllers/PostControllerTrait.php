@@ -1,14 +1,13 @@
 <?php
+declare(strict_types=1);
 
 namespace Themes\AbstractBlogTheme\Controllers;
 
+use JMS\Serializer\Serializer;
 use RZ\Roadiz\Core\Entities\Node;
-use RZ\Roadiz\Core\Entities\NodesSources;
 use RZ\Roadiz\Core\Entities\Translation;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Themes\AbstractBlogTheme\Model\JsonLdArticle;
-use JMS\Serializer\Serializer;
 
 trait PostControllerTrait
 {
@@ -32,7 +31,7 @@ trait PostControllerTrait
         }
 
         /** @var Serializer $serializer */
-        $serializer = $this->get('searchResults.serializer');
+        $serializer = $this->get('serializer');
         $ampArticle = $this->getJsonLdArticle($this->nodeSource);
         $this->assignation['jsonLdPost'] = $serializer->serialize($ampArticle, 'json');
 

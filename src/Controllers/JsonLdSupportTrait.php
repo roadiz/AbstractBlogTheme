@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace Themes\AbstractBlogTheme\Controllers;
 
 use RZ\Roadiz\Core\Entities\NodesSources;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Themes\AbstractBlogTheme\Model\HydraCollection;
 use Themes\AbstractBlogTheme\Model\JsonLdArticle;
 
 trait JsonLdSupportTrait
