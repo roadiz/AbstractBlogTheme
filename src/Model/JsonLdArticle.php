@@ -219,14 +219,16 @@ class JsonLdArticle
 
     /**
      * @JMS\VirtualProperty()
-     * @return array|null
+     * @return array
      */
     public function getArticleSection()
     {
-        return array_map(function (Tag $tag) {
-            $tagTranslation = $tag->getTranslatedTagsByTranslation($this->nodeSource->getTranslation())->first();
-            return $tagTranslation ? $tagTranslation->getName() : $tag->getTagName();
-        }, $this->nodeSource->getNode()->getTags()->toArray());
+        return $this->nodeSource->getNode()->getTags()->filter(function (Tag $tag) {
+            return $tag->isVisible();
+        })->map(function (Tag $tag) {
+            $translatedTag = $tag->getTranslatedTagsByTranslation($this->nodeSource->getTranslation())->first();
+            return $translatedTag ? $translatedTag->getName() : $tag->getTagName();
+        })->toArray();
     }
 
     /**
