@@ -37,14 +37,13 @@ trait PostControllerTrait
 
         if ($this->allowAmpFormat() &&
            ($request->get('amp', 0) == 1 || $request->getRequestFormat('html') === 'amp')) {
-            return $this->render($this->getAmpTemplate(), $this->assignation, null, '/');
-        }
-        if ($this->allowJsonFormat() &&
+            $response = $this->render($this->getAmpTemplate(), $this->assignation, null, '/');
+        } elseif ($this->allowJsonFormat() &&
             ($request->get('json', 0) == 1 || $request->getRequestFormat('html') === 'json')) {
-            return new Response($this->assignation['jsonLdPost'], Response::HTTP_OK, ['content-type' => 'application/ld+json']);
+            $response = new Response($this->assignation['jsonLdPost'], Response::HTTP_OK, ['content-type' => 'application/ld+json']);
+        } else {
+            $response = $this->render($this->getTemplate(), $this->assignation, null, '/');
         }
-
-        $response = $this->render($this->getTemplate(), $this->assignation, null, '/');
 
         if ($this->getResponseTtl() > 0) {
             /*
