@@ -170,6 +170,12 @@ trait PostContainerControllerTrait
             $response = $this->render($this->getTemplate(), $this->assignation, null, '/');
         }
 
+        $response->headers->add([
+            'Access-Control-Allow-Origin' => '*',
+            'Access-Control-Allow-Methods' => 'GET, OPTIONS',
+            'Access-Control-Request-Headers' => '*'
+        ]);
+
         if ($this->getResponseTtl() > 0) {
             /*
              * Set http cache for current request

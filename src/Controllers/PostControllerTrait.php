@@ -56,6 +56,12 @@ trait PostControllerTrait
             return $this->makeResponseCachable($request, $response, $this->getResponseTtl());
         }
 
+        $response->headers->add([
+            'Access-Control-Allow-Origin' => '*',
+            'Access-Control-Allow-Methods' => 'GET, OPTIONS',
+            'Access-Control-Request-Headers' => '*'
+        ]);
+
         return $response;
     }
 
