@@ -177,7 +177,11 @@ class JsonLdArticle
             $methodName = 'getDescription';
         }
         if (null !== $methodName && $this->nodeSource->$methodName() != '') {
-            return strip_tags(\Parsedown::instance()->text($this->nodeSource->$methodName()));
+            if (class_exists('\Parsedown')) {
+                return strip_tags(\Parsedown::instance()->text($this->nodeSource->$methodName()));
+            } else {
+                return strip_tags($this->nodeSource->$methodName());
+            }
         }
         return null;
     }
