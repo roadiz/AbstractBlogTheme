@@ -53,10 +53,12 @@ class JsonLdArticle extends JsonLdObject
      */
     protected $imageOptions;
     /**
+     * @JMS\Exclude
      * @var MarkdownInterface|null
      */
     protected $markdown;
     /**
+     * @JMS\Exclude
      * @var JsonLdFactory
      */
     protected $jsonLdFactory;

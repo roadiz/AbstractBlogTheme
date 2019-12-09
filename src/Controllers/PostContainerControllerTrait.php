@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Themes\AbstractBlogTheme\Exception\FilteringEntityNotFound;
+use Themes\AbstractBlogTheme\Factory\JsonLdFactory;
 use Themes\AbstractBlogTheme\Model\HydraCollection;
 use Twig\Error\RuntimeError;
 
@@ -236,13 +237,11 @@ trait PostContainerControllerTrait
 
         /** @var Request $request */
         $request = $this->get('requestStack')->getMasterRequest();
-
-        return new HydraCollection(
+        return $this->get(JsonLdFactory::class)->createHydraCollection(
             $articles,
             $parameters['filters']['itemCount'],
             $parameters['filters']['currentPage'],
             $parameters['filters']['pageCount'],
-            $this->get('router'),
             $this->nodeSource ?: $request->attributes->get('_route'),
             $request->attributes->get('_route_params')
         );
