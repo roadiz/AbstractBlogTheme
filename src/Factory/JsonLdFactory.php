@@ -21,23 +21,23 @@ class JsonLdFactory
     /**
      * @var DocumentUrlGenerator
      */
-    private $documentUrlGenerator;
+    protected $documentUrlGenerator;
     /**
      * @var UrlGeneratorInterface
      */
-    private $urlGenerator;
+    protected $urlGenerator;
     /**
      * @var Settings
      */
-    private $settingsBag;
+    protected $settingsBag;
     /**
      * @var array
      */
-    private $imageOptions;
+    protected $imageOptions;
     /**
      * @var MarkdownInterface
      */
-    private $markdown;
+    protected $markdown;
 
     /**
      * JsonLdFactory constructor.
