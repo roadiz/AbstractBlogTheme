@@ -5,14 +5,39 @@ namespace Themes\AbstractBlogTheme\Services;
 
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
+use RZ\Roadiz\Markdown\MarkdownInterface;
 use RZ\SocialLinks\Twig\SocialLinksExtension;
 use Symfony\Component\Translation\Translator;
+use Themes\AbstractBlogTheme\Factory\JsonLdFactory;
 use Themes\AbstractBlogTheme\Twig\BlogExtension;
 
 class BlogServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $container)
     {
+        $container['jsonld.defaultImageOptions'] = function () {
+            return [
+                'width' => 800,
+            ];
+        };
+
+        /**
+         * @param Container $c
+         *
+         * TODO: Implement and override with your own JsonLdFactory
+         *
+         * @return JsonLdFactory
+         */
+        $container[JsonLdFactory::class] = function (Container $c) {
+            return new JsonLdFactory(
+                $c['document.url_generator'],
+                $c['router'],
+                $c['settingsBag'],
+                $c['jsonld.defaultImageOptions'],
+                $c[MarkdownInterface::class]
+            );
+        };
+
         $container->extend('twig.extensions', function ($extensions, $c) {
             $extensions->add(new BlogExtension($c['em'], $c['blog_theme.post_entity']));
             $extensions->add(new SocialLinksExtension());

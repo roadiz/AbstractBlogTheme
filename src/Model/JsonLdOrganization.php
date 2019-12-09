@@ -5,14 +5,8 @@ namespace Themes\AbstractBlogTheme\Model;
 
 use JMS\Serializer\Annotation as JMS;
 
-class JsonLdOrganization
+class JsonLdOrganization extends JsonLdObject
 {
-    /**
-     * @JMS\SerializedName("@context")
-     * @var string
-     */
-    public static $context = "http://schema.org";
-
     /**
      * @var string
      * @JMS\SerializedName("@type")

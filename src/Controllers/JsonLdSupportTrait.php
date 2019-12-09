@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Themes\AbstractBlogTheme\Controllers;
 
 use RZ\Roadiz\Core\Entities\NodesSources;
+use Themes\AbstractBlogTheme\Factory\JsonLdFactory;
 use Themes\AbstractBlogTheme\Model\JsonLdArticle;
 
 trait JsonLdSupportTrait
@@ -12,22 +13,19 @@ trait JsonLdSupportTrait
      * @param NodesSources $nodeSource
      *
      * @return JsonLdArticle
+     * @deprecated Use JsonLdFactory service
      */
     protected function getJsonLdArticle(NodesSources $nodeSource)
     {
-        return new JsonLdArticle(
-            $nodeSource,
-            $this->get('document.url_generator'),
-            $this->get('router'),
-            $this->get('settingsBag'),
-            $this->getJsonLdImageOptions()
-        );
+        return $this->get(JsonLdFactory::class)->createArticle($nodeSource);
     }
 
+    /**
+     * @return array
+     * @deprecated Use jsonld.defaultImageOptions Container service
+     */
     protected function getJsonLdImageOptions(): array
     {
-        return [
-            'width' => 800,
-        ];
+        return $this->get('jsonld.defaultImageOptions');
     }
 }

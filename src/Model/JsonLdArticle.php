@@ -9,18 +9,14 @@ use RZ\Roadiz\Core\Entities\Document;
 use RZ\Roadiz\Core\Entities\NodesSources;
 use RZ\Roadiz\Core\Entities\Tag;
 use RZ\Roadiz\Core\Entities\TagTranslation;
+use RZ\Roadiz\Markdown\MarkdownInterface;
 use RZ\Roadiz\Utils\UrlGenerators\DocumentUrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Themes\AbstractBlogTheme\Factory\JsonLdFactory;
 
-class JsonLdArticle
+class JsonLdArticle extends JsonLdObject
 {
-    /**
-     * @JMS\SerializedName("@context")
-     * @var string
-     */
-    public static $context = "http://schema.org";
-
     /**
      * @var string
      * @JMS\SerializedName("@type")
@@ -56,27 +52,40 @@ class JsonLdArticle
      * @var array
      */
     protected $imageOptions;
+    /**
+     * @var MarkdownInterface|null
+     */
+    protected $markdown;
+    /**
+     * @var JsonLdFactory
+     */
+    protected $jsonLdFactory;
 
     /**
      * JsonLdArticle constructor.
      *
-     * @param NodesSources          $nodeSource
-     * @param DocumentUrlGenerator  $documentUrlGenerator
-     * @param UrlGeneratorInterface $urlGenerator
-     * @param Settings              $settingsBag
-     * @param array|null            $imageOptions
+     * @param NodesSources           $nodeSource
+     * @param DocumentUrlGenerator   $documentUrlGenerator
+     * @param UrlGeneratorInterface  $urlGenerator
+     * @param Settings               $settingsBag
+     * @param JsonLdFactory          $jsonLdFactory
+     * @param array|null             $imageOptions
+     * @param MarkdownInterface|null $markdown
      */
     public function __construct(
         NodesSources $nodeSource,
         DocumentUrlGenerator $documentUrlGenerator,
         UrlGeneratorInterface $urlGenerator,
         Settings $settingsBag,
-        array $imageOptions = null
+        JsonLdFactory $jsonLdFactory,
+        array $imageOptions = null,
+        ?MarkdownInterface $markdown = null
     ) {
         $this->nodeSource = $nodeSource;
         $this->documentUrlGenerator = $documentUrlGenerator;
         $this->urlGenerator = $urlGenerator;
         $this->settingsBag = $settingsBag;
+        $this->markdown = $markdown;
 
         if (null !== $imageOptions) {
             $this->imageOptions = $imageOptions;
@@ -85,6 +94,7 @@ class JsonLdArticle
                 'width' => 800,
             ];
         }
+        $this->jsonLdFactory = $jsonLdFactory;
     }
 
     /**
@@ -160,7 +170,7 @@ class JsonLdArticle
             $this->nodeSource->getAuthor() != '') {
             return new JsonLdPerson($this->nodeSource->getAuthor());
         }
-        return $this->getDefaultOrganization();
+        return $this->jsonLdFactory->createOrganization($this->nodeSource);
     }
 
     /**
@@ -178,8 +188,8 @@ class JsonLdArticle
             $methodName = 'getDescription';
         }
         if (null !== $methodName && $this->nodeSource->$methodName() != '') {
-            if (class_exists('\Parsedown')) {
-                return strip_tags(\Parsedown::instance()->text($this->nodeSource->$methodName()));
+            if (null !== $this->markdown) {
+                return strip_tags($this->markdown->text($this->nodeSource->$methodName()));
             } else {
                 return strip_tags($this->nodeSource->$methodName());
             }
@@ -197,7 +207,7 @@ class JsonLdArticle
             $this->nodeSource->getCopyrightHolder() != '') {
             return new JsonLdOrganization($this->nodeSource->getCopyrightHolder());
         }
-        return $this->getDefaultOrganization();
+        return $this->jsonLdFactory->createOrganization($this->nodeSource);
     }
 
     /**
@@ -210,7 +220,7 @@ class JsonLdArticle
             $this->nodeSource->getCopyrightHolder() != '') {
             return new JsonLdOrganization($this->nodeSource->getCopyrightHolder());
         }
-        return $this->getDefaultOrganization();
+        return $this->jsonLdFactory->createOrganization($this->nodeSource);
     }
 
     /**
@@ -242,35 +252,7 @@ class JsonLdArticle
      */
     public function getContentLocation()
     {
-        if (method_exists($this->nodeSource, 'getLocation') &&
-            $this->nodeSource->getLocation() != '') {
-            return new JsonLdPlace($this->nodeSource->getLocation());
-        }
-
-        return null;
-    }
-
-    /**
-     * @return JsonLdOrganization Create a default Organization using Roadiz site_name and admin_image settings.
-     */
-    protected function getDefaultOrganization()
-    {
-        /** @var Document|null $logoDocument */
-        $logoDocument = $this->getDefaultOrganizationLogo();
-        if (null !== $logoDocument) {
-            $this->documentUrlGenerator->setDocument($logoDocument);
-            $this->documentUrlGenerator->setOptions([
-                'noProcess' => true,
-            ]);
-            $logoDocumentUrl = $this->documentUrlGenerator->getUrl(true);
-        } else {
-            $logoDocumentUrl = '';
-        }
-
-        return new JsonLdOrganization(
-            $this->settingsBag->get('site_name'),
-            $logoDocumentUrl
-        );
+        return $this->jsonLdFactory->createPlace($this->nodeSource);
     }
 
     /**
