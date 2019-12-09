@@ -86,7 +86,7 @@ class SearchResult
 
     /**
      * @JMS\VirtualProperty()
-     * @return string
+     * @return \DateTime
      */
     public function getPublishedAt()
     {

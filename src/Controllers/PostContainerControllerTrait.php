@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Themes\AbstractBlogTheme\Exception\FilteringEntityNotFound;
 use Themes\AbstractBlogTheme\Model\HydraCollection;
 use Twig\Error\RuntimeError;
 
@@ -48,7 +49,7 @@ trait PostContainerControllerTrait
      */
     protected function throwExceptionOnEmptyResult()
     {
-        return true;
+        return false;
     }
     /**
      * Override this method if you want to fetch blog-posts only
@@ -84,7 +85,9 @@ trait PostContainerControllerTrait
     protected function prepareListingAssignation(Request $request): void
     {
         if ($this->getPostEntity() === false) {
-            throw new \RuntimeException('blog_theme.post_entity must be configured with your own BlogPost node-type class');
+            throw new \RuntimeException(
+                'blog_theme.post_entity must be configured with your own BlogPost node-type class'
+            );
         }
 
         if (null === $this->translation) {
@@ -104,32 +107,37 @@ trait PostContainerControllerTrait
         /**
          * @var EntityListManager $elm
          */
-        $elm = $this->createEntityListManager(
-            $this->getPostEntity(),
-            array_merge(
-                $this->getDefaultCriteria(
-                    $this->translation,
-                    $request
+        try {
+            $elm = $this->createEntityListManager(
+                $this->getPostEntity(),
+                array_merge(
+                    $this->getDefaultCriteria(
+                        $this->translation,
+                        $request
+                    ),
+                    $this->getCriteria(
+                        $this->translation,
+                        $request
+                    )
                 ),
-                $this->getCriteria(
-                    $this->translation,
-                    $request
-                )
-            ),
-            $this->getDefaultOrder()
-        );
-        $elm->setItemPerPage($this->getItemsPerPage());
-        $elm->handle();
-        $elm->setPage($request->get('page', 1));
+                $this->getDefaultOrder()
+            );
+            $elm->setItemPerPage($this->getItemsPerPage());
+            $elm->handle();
+            $elm->setPage($request->get('page', 1));
+            $posts = $elm->getEntities();
 
-        $posts = $elm->getEntities();
+            if (count($posts) === 0 && $this->throwExceptionOnEmptyResult()) {
+                throw $this->createNotFoundException('No post found for given criteria.');
+            }
 
-        if (count($posts) === 0 && $this->throwExceptionOnEmptyResult()) {
-            throw $this->createNotFoundException('No post found for given criteria.');
+            $this->assignation['posts'] = $posts;
+            $this->assignation['filters'] = $elm->getAssignation();
+        } catch (FilteringEntityNotFound $entityNotFound) {
+            $this->assignation['posts'] = [];
+            $this->assignation['filters'] = [];
         }
 
-        $this->assignation['posts'] = $posts;
-        $this->assignation['filters'] = $elm->getAssignation();
         $this->assignation['tags'] = $this->availableTags;
         $this->assignation['archives'] = $this->archives;
         $this->assignation['sorts'] = static::$availableSortFields;
@@ -396,7 +404,7 @@ trait PostContainerControllerTrait
      * @param Request     $request
      *
      * @return array
-     * @throws \Exception
+     * @throws \Exception|FilteringEntityNotFound
      */
     protected function getDefaultCriteria(Translation $translation, Request $request)
     {
@@ -412,7 +420,7 @@ trait PostContainerControllerTrait
                     function (string $name) {
                         $tag = $this->getTag($name);
                         if (null === $tag) {
-                            throw $this->createNotFoundException('Tag does not exist.');
+                            throw new FilteringEntityNotFound('Tag does not exist.');
                         }
                         return $tag;
                     },
@@ -430,7 +438,7 @@ trait PostContainerControllerTrait
             } else {
                 $tag = $this->getTag($tagName);
                 if (null === $tag) {
-                    throw $this->createNotFoundException('Tag does not exist.');
+                    throw new FilteringEntityNotFound('Tag does not exist.');
                 }
                 $criteria['tags'] = $tag;
                 $criteria['tagExclusive'] = $this->isTagExclusive();
@@ -472,7 +480,7 @@ trait PostContainerControllerTrait
                     function (string $name) {
                         $relatedNode = $this->findNodeByName($name);
                         if (null === $relatedNode) {
-                            throw $this->createNotFoundException('Node does not exist.');
+                            throw new FilteringEntityNotFound('Node does not exist.');
                         }
                         return $relatedNode;
                     },
@@ -484,7 +492,8 @@ trait PostContainerControllerTrait
                 }, $relatedNodes);
                 $this->assignation['currentRelationsNames'] = array_map(function (Node $node) {
                     return $node->getNodeName();
-                }, $relatedNodes);;
+                }, $relatedNodes);
+                ;
                 /*
                  * Use bNode from NodesToNodes without field specification.
                  */

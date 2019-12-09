@@ -8,6 +8,7 @@ use RZ\Roadiz\Core\Bags\Settings;
 use RZ\Roadiz\Core\Entities\Document;
 use RZ\Roadiz\Core\Entities\NodesSources;
 use RZ\Roadiz\Core\Entities\Tag;
+use RZ\Roadiz\Core\Entities\TagTranslation;
 use RZ\Roadiz\Utils\UrlGenerators\DocumentUrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -223,7 +224,7 @@ class JsonLdArticle
 
     /**
      * @JMS\VirtualProperty()
-     * @return array
+     * @return array<TagTranslation>
      */
     public function getArticleSection()
     {
