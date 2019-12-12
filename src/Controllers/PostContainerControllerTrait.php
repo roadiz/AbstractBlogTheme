@@ -9,6 +9,7 @@ use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializationContext;
 use RZ\Roadiz\Core\Entities\Node;
 use RZ\Roadiz\Core\Entities\NodesSources;
+use RZ\Roadiz\Core\Entities\NodeType;
 use RZ\Roadiz\Core\Entities\Tag;
 use RZ\Roadiz\Core\Entities\Translation;
 use RZ\Roadiz\Core\ListManagers\EntityListManager;
@@ -85,6 +86,7 @@ trait PostContainerControllerTrait
      */
     protected function prepareListingAssignation(Request $request): void
     {
+        $this->get('stopwatch')->start(static::class.'::prepareListingAssignation');
         if ($this->getPostEntity() === false) {
             throw new \RuntimeException(
                 'blog_theme.post_entity must be configured with your own BlogPost node-type class'
@@ -94,8 +96,9 @@ trait PostContainerControllerTrait
         if (null === $this->translation) {
             throw new BadRequestHttpException('Translation cannot be found');
         }
-
+        $this->get('stopwatch')->start(static::class.'::getAvailableTags');
         $this->availableTags = $this->getAvailableTags($this->translation);
+        $this->get('stopwatch')->stop(static::class.'::getAvailableTags');
         /*
          * When you want to display post count numbers on each available tags.
          */
@@ -142,6 +145,7 @@ trait PostContainerControllerTrait
         $this->assignation['tags'] = $this->availableTags;
         $this->assignation['archives'] = $this->archives;
         $this->assignation['sorts'] = static::$availableSortFields;
+        $this->get('stopwatch')->stop(static::class.'::prepareListingAssignation');
     }
 
     /**
@@ -533,6 +537,18 @@ trait PostContainerControllerTrait
     }
 
     /**
+     * @return NodeType|null
+     */
+    protected function getNodeTypeFromEntity(): ?NodeType
+    {
+        $entityClass = $this->getPostEntity();
+        if (false !== $entityClass && preg_match('#NS([a-zA-Z]+)$#', $entityClass, $matches) > 0) {
+            return $this->get('nodeTypesBag')->get($matches[1]);
+        }
+        return null;
+    }
+
+    /**
      * @param Translation $translation
      * @param Tag         $parentTag   Parent tag
      *
@@ -547,18 +563,13 @@ trait PostContainerControllerTrait
             ->getRepository(Tag::class)
             ->createQueryBuilder('t');
 
-        /**
-         * @var QueryBuilder $subQb
-         */
-        $subQb = $this->getPostRepository()->createQueryBuilder('p');
-
-        $qb->select('t')
+        $qb->select('t, tt')
             ->leftJoin('t.translatedTags', 'tt')
             ->innerJoin('t.nodes', 'n')
-            ->innerJoin('n.nodeSources', 'ns')
-            ->andWhere($qb->expr()->in('ns.id', $subQb->select('p.id')->getDQL()))
+            ->andWhere($qb->expr()->eq('n.nodeType', ':nodeType'))
             ->andWhere($qb->expr()->eq('t.visible', true))
             ->andWhere($qb->expr()->eq('tt.translation', ':translation'))
+            ->setParameter(':nodeType', $this->getNodeTypeFromEntity())
             ->setParameter(':translation', $translation);
 
         if (null !== $parentTag) {
@@ -598,16 +609,12 @@ trait PostContainerControllerTrait
          */
         $qb = $this->getRelatedNodesSourcesQueryBuilder();
 
-        /**
-         * @var QueryBuilder $subQb
-         */
-        $subQb = $this->getPostRepository()->createQueryBuilder('p');
-
         $qb->select('ns, n')
             ->innerJoin('ns.node', 'n')
             ->leftJoin('n.aNodes', 'an')
             ->leftJoin('an.nodeA', 'nodeA')
-            ->andWhere($qb->expr()->in('nodeA.id', $subQb->select('pn.id')->innerJoin('p.node', 'pn')->getDQL()))
+            ->andWhere($qb->expr()->eq('nodeA.nodeType', ':nodeType'))
+            ->setParameter(':nodeType', $this->getNodeTypeFromEntity())
             ->andWhere($qb->expr()->eq('n.visible', true))
             ->andWhere($qb->expr()->eq('ns.translation', ':translation'))
             ->addOrderBy('ns.title', 'ASC')
@@ -638,6 +645,7 @@ trait PostContainerControllerTrait
      */
     protected function getAvailableValuesForField(Translation $translation, $prefixedFieldName, $sorting = 'ASC')
     {
+        $this->get('stopwatch')->start(static::class.'::getAvailableValuesForField');
         /**
          * @var QueryBuilder $qb
          */
@@ -649,6 +657,7 @@ trait PostContainerControllerTrait
             ->addOrderBy($prefixedFieldName, $sorting)
             ->andWhere($qb->expr()->eq('n.visible', true))
             ->andWhere($qb->expr()->eq('p.translation', ':translation'))
+            ->groupBy($prefixedFieldName)
             ->setParameter(':translation', $translation);
         /*
          * Enforce tags nodes status not to display Tags which are linked to draft posts.
@@ -664,7 +673,9 @@ trait PostContainerControllerTrait
                 ->setParameter(':parentNode', $this->node);
         }
 
-        return array_filter(array_map('current', $qb->getQuery()->getArrayResult()));
+        $result = array_filter(array_map('current', $qb->getQuery()->getArrayResult()));
+        $this->get('stopwatch')->stop(static::class.'::getAvailableValuesForField');
+        return $result;
     }
 
     /**
@@ -763,6 +774,7 @@ trait PostContainerControllerTrait
      */
     protected function getArchives(Translation $translation)
     {
+        $this->get('stopwatch')->start(static::class.'::getArchives');
         $array = [];
         $datetimes = $this->getPostPublicationDates($translation);
 
@@ -777,7 +789,7 @@ trait PostContainerControllerTrait
                 $array[$year][$month] = new \DateTime($datetime[$this->getPublicationField()]->format('Y-m-01'));
             }
         }
-
+        $this->get('stopwatch')->stop(static::class.'::getArchives');
         return $array;
     }
 
