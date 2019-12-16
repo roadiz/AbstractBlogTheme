@@ -542,6 +542,9 @@ trait PostContainerControllerTrait
     protected function getNodeTypeFromEntity(): ?NodeType
     {
         $entityClass = $this->getPostEntity();
+        if ($this->getPostEntity() === NodesSources::class) {
+            return null;
+        }
         if (false !== $entityClass && preg_match('#NS([a-zA-Z]+)$#', $entityClass, $matches) > 0) {
             return $this->get('nodeTypesBag')->get($matches[1]);
         }
@@ -566,11 +569,14 @@ trait PostContainerControllerTrait
         $qb->select('t, tt')
             ->leftJoin('t.translatedTags', 'tt')
             ->innerJoin('t.nodes', 'n')
-            ->andWhere($qb->expr()->eq('n.nodeType', ':nodeType'))
             ->andWhere($qb->expr()->eq('t.visible', true))
             ->andWhere($qb->expr()->eq('tt.translation', ':translation'))
-            ->setParameter(':nodeType', $this->getNodeTypeFromEntity())
             ->setParameter(':translation', $translation);
+
+        if (null !== $nodeType = $this->getNodeTypeFromEntity()) {
+            $qb->andWhere($qb->expr()->eq('n.nodeType', ':nodeType'))
+                ->setParameter(':nodeType', $nodeType);
+        }
 
         if (null !== $parentTag) {
             $parentTagId = $parentTag->getId();
@@ -613,12 +619,15 @@ trait PostContainerControllerTrait
             ->innerJoin('ns.node', 'n')
             ->leftJoin('n.aNodes', 'an')
             ->leftJoin('an.nodeA', 'nodeA')
-            ->andWhere($qb->expr()->eq('nodeA.nodeType', ':nodeType'))
-            ->setParameter(':nodeType', $this->getNodeTypeFromEntity())
             ->andWhere($qb->expr()->eq('n.visible', true))
             ->andWhere($qb->expr()->eq('ns.translation', ':translation'))
             ->addOrderBy('ns.title', 'ASC')
             ->setParameter(':translation', $translation);
+
+        if (null !== $nodeType = $this->getNodeTypeFromEntity()) {
+            $qb->andWhere($qb->expr()->eq('nodeA.nodeType', ':nodeType'))
+                ->setParameter(':nodeType', $nodeType);
+        }
 
         return $qb->getQuery()->getResult();
     }
