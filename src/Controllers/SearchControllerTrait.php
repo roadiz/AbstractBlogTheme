@@ -67,20 +67,20 @@ trait SearchControllerTrait
             'nodeType' => $this->getSearchableTypes(),
         ];
         $numResults = $searchHandler->count(
-                $query, # Use ?q query parameter to search with
-                $criteria, # a simple criteria array to filter search results
-                $this->getItemsPerPage(), # result count
-                true
-            )
+            $query, # Use ?q query parameter to search with
+            $criteria, # a simple criteria array to filter search results
+            $this->getItemsPerPage(), # result count
+            true
+        )
         ;
         $results = $searchHandler->searchWithHighlight(
-                $query, # Use ?q query parameter to search with
-                $criteria, # a simple criteria array to filter search results
-                $this->getItemsPerPage(), # result count
-                true, # Search in tags too,
-                10000000,
-                $page
-            )
+            $query, # Use ?q query parameter to search with
+            $criteria, # a simple criteria array to filter search results
+            $this->getItemsPerPage(), # result count
+            true, # Search in tags too,
+            10000000,
+            $page
+        )
         ;
 
         $pageCount = ceil($numResults/$this->getItemsPerPage());
