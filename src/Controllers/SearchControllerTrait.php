@@ -14,7 +14,6 @@ use Themes\AbstractBlogTheme\Model\SearchResult;
 
 trait SearchControllerTrait
 {
-
     /**
      * @param Request $request
      *
@@ -22,7 +21,7 @@ trait SearchControllerTrait
      */
     protected function getQuery(Request $request)
     {
-        return strip_tags($request->get($this->getSearchParamName()));
+        return strip_tags($request->get($this->getSearchParamName(), ''));
     }
 
     /**
