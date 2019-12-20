@@ -55,28 +55,30 @@ class BlogExtension extends AbstractExtension
     }
 
     /**
-     * @param string $content
+     * @param string|null $content
      *
-     * @return string
+     * @return string|null
      */
     public function getAmpifizedContent($content)
     {
-        $content = strip_tags(
-            $content,
-            '<h1><h2><h3><h4><h5><h6><br><hr><table><th><tr><td><p><span><ol><ul><li><div><em><strong><iframe><blockquote><a>'
-        );
+        if (null !== $content) {
+            $content = strip_tags(
+                $content,
+                '<h1><h2><h3><h4><h5><h6><br><hr><table><th><tr><td><p><span><ol><ul><li><div><em><strong><iframe><blockquote><a>'
+            );
 
-        $replacements = [
-            '<iframe' => '<amp-iframe layout="responsive" sandbox="allow-scripts allow-same-origin allow-presentation"',
-            '</iframe' => '</amp-iframe',
-            '<img' => '<amp-img layout="responsive"',
-            '</img' => '</amp-img',
-            'gesture="media"' => '',
-            'frameborder="0"' => '',
-            'style="text-align: justify;"' => ''
-        ];
+            $replacements = [
+                '<iframe' => '<amp-iframe layout="responsive" sandbox="allow-scripts allow-same-origin allow-presentation"',
+                '</iframe' => '</amp-iframe',
+                '<img' => '<amp-img layout="responsive"',
+                '</img' => '</amp-img',
+                'gesture="media"' => '',
+                'frameborder="0"' => '',
+                'style="text-align: justify;"' => ''
+            ];
 
-        $content = str_replace(array_keys($replacements), array_values($replacements), $content);
+            $content = str_replace(array_keys($replacements), array_values($replacements), $content);
+        }
 
         return $content;
     }
@@ -223,10 +225,11 @@ class BlogExtension extends AbstractExtension
 
     /**
      * @param Translation $translation
-     * @param int $count
-     * @param array $criteria
+     * @param int         $count
+     * @param array       $criteria
      *
      * @return array
+     * @throws \Exception
      */
     public function getLatestPosts(Translation $translation, $count = 4, array $criteria = [])
     {
@@ -244,11 +247,12 @@ class BlogExtension extends AbstractExtension
     }
 
     /**
-     * @param Tag $tag
+     * @param Tag         $tag
      * @param Translation $translation
-     * @param int $count
+     * @param int         $count
      *
      * @return array
+     * @throws \Exception
      */
     public function getLatestPostsForTag(Tag $tag, Translation $translation, $count = 4)
     {

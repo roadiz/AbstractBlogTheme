@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Themes\AbstractBlogTheme\Exception\FilteringEntityNotFound;
 use Themes\AbstractBlogTheme\Factory\JsonLdFactory;
+use Themes\AbstractBlogTheme\AbstractBlogThemeApp;
 use Themes\AbstractBlogTheme\Model\HydraCollection;
 use Twig\Error\RuntimeError;
 
@@ -824,7 +825,7 @@ trait PostContainerControllerTrait
      */
     public function getItemsPerPage()
     {
-        return 15;
+        return AbstractBlogThemeApp::ITEM_PER_PAGE;
     }
 
     /**

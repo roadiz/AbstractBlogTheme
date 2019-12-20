@@ -27,7 +27,9 @@ trait PostControllerTrait
         $this->prepareThemeAssignation($node, $translation);
 
         if ($this->get('blog_theme.post_entity') === false) {
-            throw new \RuntimeException('blog_theme.post_entity must be configured with your own BlogPost node-type class');
+            throw new \RuntimeException(
+                'blog_theme.post_entity must be configured with your own BlogPost node-type class'
+            );
         }
 
         /** @var Serializer $serializer */
@@ -40,7 +42,11 @@ trait PostControllerTrait
             $response = $this->render($this->getAmpTemplate(), $this->assignation, null, '/');
         } elseif ($this->allowJsonFormat() &&
             ($request->get('json', 0) == 1 || $request->getRequestFormat('html') === 'json')) {
-            $response = new Response($this->assignation['jsonLdPost'], Response::HTTP_OK, ['content-type' => 'application/ld+json']);
+            $response = new Response(
+                $this->assignation['jsonLdPost'],
+                Response::HTTP_OK,
+                ['content-type' => 'application/ld+json']
+            );
         } else {
             $response = $this->render($this->getTemplate(), $this->assignation, null, '/');
         }
