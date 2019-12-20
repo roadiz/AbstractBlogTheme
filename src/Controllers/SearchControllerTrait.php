@@ -46,7 +46,7 @@ trait SearchControllerTrait
      * @param int     $page
      * @param string  $_format
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function searchAction(Request $request, $_locale, $page = 1, $_format = 'html')
     {

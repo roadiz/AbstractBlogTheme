@@ -8,6 +8,7 @@ use Pimple\ServiceProviderInterface;
 use RZ\SocialLinks\Twig\SocialLinksExtension;
 use Symfony\Component\Translation\Translator;
 use Themes\AbstractBlogTheme\Twig\BlogExtension;
+use Twig\Loader\FilesystemLoader;
 
 class BlogServiceProvider implements ServiceProviderInterface
 {
@@ -20,7 +21,7 @@ class BlogServiceProvider implements ServiceProviderInterface
             return $extensions;
         });
 
-        $container->extend('twig.loaderFileSystem', function (\Twig_Loader_Filesystem $loader, $c) {
+        $container->extend('twig.loaderFileSystem', function (FilesystemLoader $loader, $c) {
             $loader->prependPath(dirname(__DIR__) . '/Resources/views', 'AbstractBlogTheme');
             $loader->prependPath(dirname(__DIR__) . '/Resources/views');
 

@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Themes\AbstractBlogTheme\AbstractBlogThemeApp;
 use Themes\AbstractBlogTheme\Model\HydraCollection;
 use Twig\Error\RuntimeError;
 
@@ -86,7 +87,9 @@ trait PostContainerControllerTrait
     {
         $this->get('stopwatch')->start(static::class.'::prepareListingAssignation');
         if ($this->getPostEntity() === false) {
-            throw new \RuntimeException('blog_theme.post_entity must be configured with your own BlogPost node-type class');
+            throw new \RuntimeException(
+                'blog_theme.post_entity must be configured with your own BlogPost node-type class'
+            );
         }
 
         if (null === $this->translation) {
@@ -817,7 +820,7 @@ trait PostContainerControllerTrait
      */
     public function getItemsPerPage()
     {
-        return 15;
+        return AbstractBlogThemeApp::ITEM_PER_PAGE;
     }
 
     /**
