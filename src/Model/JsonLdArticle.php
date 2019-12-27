@@ -20,6 +20,7 @@ class JsonLdArticle extends JsonLdObject
     /**
      * @var string
      * @JMS\SerializedName("@type")
+     * @JMS\Groups({"collection"})
      */
     public static $type = "NewsArticle";
 
@@ -101,6 +102,7 @@ class JsonLdArticle extends JsonLdObject
 
     /**
      * @JMS\VirtualProperty()
+     * @JMS\Groups({"collection"})
      * @return string|null
      */
     public function getHeadline()
@@ -111,6 +113,7 @@ class JsonLdArticle extends JsonLdObject
     /**
      * @JMS\VirtualProperty()
      * @JMS\Type("DateTime<'c'>")
+     * @JMS\Groups({"collection"})
      * @return \DateTime|null
      */
     public function getDatePublished()
@@ -121,6 +124,7 @@ class JsonLdArticle extends JsonLdObject
     /**
      * @JMS\VirtualProperty()
      * @JMS\Type("DateTime<'Y'>")
+     * @JMS\Groups({"collection"})
      * @return \DateTime|null
      */
     public function getCopyrightYear()
@@ -138,6 +142,7 @@ class JsonLdArticle extends JsonLdObject
 
     /**
      * @JMS\VirtualProperty()
+     * @JMS\Groups({"collection"})
      * @return array|null
      */
     public function getImage()
@@ -164,6 +169,7 @@ class JsonLdArticle extends JsonLdObject
 
     /**
      * @JMS\VirtualProperty()
+     * @JMS\Groups({"collection"})
      * @return JsonLdPerson|JsonLdOrganization|null
      */
     public function getAuthor()
@@ -177,6 +183,7 @@ class JsonLdArticle extends JsonLdObject
 
     /**
      * @JMS\VirtualProperty()
+     * @JMS\Groups({"collection"})
      * @return null|string
      */
     public function getDescription()
@@ -201,6 +208,7 @@ class JsonLdArticle extends JsonLdObject
 
     /**
      * @JMS\VirtualProperty()
+     * @JMS\Groups({"collection"})
      * @return null|JsonLdOrganization
      */
     public function getCopyrightHolder()
@@ -214,6 +222,7 @@ class JsonLdArticle extends JsonLdObject
 
     /**
      * @JMS\VirtualProperty()
+     * @JMS\Groups({"collection"})
      * @return null|JsonLdOrganization
      */
     public function getPublisher()
@@ -227,6 +236,7 @@ class JsonLdArticle extends JsonLdObject
 
     /**
      * @JMS\VirtualProperty()
+     * @JMS\Groups({"collection"})
      * @return string|null
      */
     public function getUrl()
@@ -236,6 +246,7 @@ class JsonLdArticle extends JsonLdObject
 
     /**
      * @JMS\VirtualProperty()
+     * @JMS\Groups({"collection"})
      * @return array<TagTranslation>
      */
     public function getArticleSection()
@@ -250,6 +261,7 @@ class JsonLdArticle extends JsonLdObject
 
     /**
      * @JMS\VirtualProperty()
+     * @JMS\Groups({"collection"})
      * @return null|JsonLdPlace
      */
     public function getContentLocation()

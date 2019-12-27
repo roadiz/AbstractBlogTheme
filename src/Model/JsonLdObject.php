@@ -9,6 +9,7 @@ class JsonLdObject
 {
     /**
      * @JMS\SerializedName("@context")
+     * @JMS\Groups({"collection"})
      * @var string
      */
     public static $context = "http://schema.org";
@@ -16,6 +17,7 @@ class JsonLdObject
     /**
      * @var string
      * @JMS\SerializedName("@type")
+     * @JMS\Groups({"collection"})
      */
     public static $type = "NewsArticle";
 }

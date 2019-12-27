@@ -10,16 +10,19 @@ class JsonLdOrganization extends JsonLdObject
     /**
      * @var string
      * @JMS\SerializedName("@type")
+     * @JMS\Groups({"collection"})
      */
     public static $type = "Organization";
 
     /**
      * @var string
+     * @JMS\Groups({"collection"})
      */
     public $name;
 
     /**
      * @var string
+     * @JMS\Groups({"collection"})
      */
     public $logo;
 

@@ -10,11 +10,13 @@ class JsonLdPlace extends JsonLdObject
     /**
      * @var string
      * @JMS\SerializedName("@type")
+     * @JMS\Groups({"collection"})
      */
     public static $type = "Place";
 
     /**
      * @var string
+     * @JMS\Groups({"collection"})
      */
     public $name;
 

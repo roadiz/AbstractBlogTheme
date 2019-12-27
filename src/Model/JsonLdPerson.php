@@ -10,11 +10,13 @@ class JsonLdPerson extends JsonLdObject
     /**
      * @var string
      * @JMS\SerializedName("@type")
+     * @JMS\Groups({"collection"})
      */
     public static $type = "Person";
 
     /**
      * @var string
+     * @JMS\Groups({"collection"})
      */
     public $name;
 
