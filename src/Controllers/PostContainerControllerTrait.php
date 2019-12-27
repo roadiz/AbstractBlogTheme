@@ -205,6 +205,27 @@ trait PostContainerControllerTrait
     }
 
     /**
+     * @return array
+     */
+    protected function getSerializationGroups(): array
+    {
+        return ['collection'];
+    }
+
+    /**
+     * @return SerializationContext
+     */
+    protected function getSerializationContext(): SerializationContext
+    {
+        $context = SerializationContext::create()->enableMaxDepthChecks();
+        if (count($this->getSerializationGroups()) > 0) {
+            $context->setGroups($this->getSerializationGroups());
+        }
+
+        return $context;
+    }
+
+    /**
      * @param array $parameters
      *
      * @return Response
@@ -218,8 +239,7 @@ trait PostContainerControllerTrait
             $serializer->serialize(
                 $this->getHydraCollection($parameters),
                 'json',
-                SerializationContext::create()
-                    ->enableMaxDepthChecks()
+                $this->getSerializationContext()
             ),
             Response::HTTP_OK,
             [],

@@ -12,18 +12,21 @@ class HydraCollection
     /**
      * @var string
      * @JMS\SerializedName("@type")
+     * @JMS\Groups({"collection"})
      */
     public static $type = "hydra:Collection";
 
     /**
      * @var array
      * @JMS\SerializedName("hydra:member")
+     * @JMS\Groups({"collection"})
      */
     protected $member = [];
 
     /**
      * @var int
      * @JMS\SerializedName("hydra:totalItems")
+     * @JMS\Groups({"collection"})
      */
     protected $totalItems;
 
@@ -99,6 +102,7 @@ class HydraCollection
     /**
      * @JMS\VirtualProperty()
      * @JMS\SerializedName("@id")
+     * @JMS\Groups({"collection"})
      */
     public function getIdentifier()
     {
@@ -110,6 +114,7 @@ class HydraCollection
     /**
      * @JMS\VirtualProperty()
      * @JMS\SerializedName("hydra:view")
+     * @JMS\Groups({"collection"})
      */
     public function getHydraView()
     {
