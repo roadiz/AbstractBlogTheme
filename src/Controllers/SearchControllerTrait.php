@@ -4,12 +4,15 @@ declare(strict_types=1);
 namespace Themes\AbstractBlogTheme\Controllers;
 
 use JMS\Serializer\Serializer;
+use RZ\Roadiz\Core\Entities\Translation;
 use RZ\Roadiz\Core\SearchEngine\NodeSourceSearchHandler;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Themes\AbstractBlogTheme\Model\SearchMeta;
+use Themes\AbstractBlogTheme\Model\SearchMetaInterface;
 use Themes\AbstractBlogTheme\Model\SearchResponse;
+use Themes\AbstractBlogTheme\Model\SearchResponseInterface;
 use Themes\AbstractBlogTheme\Model\SearchResult;
 
 trait SearchControllerTrait
@@ -41,6 +44,18 @@ trait SearchControllerTrait
     }
 
     /**
+     * @return array
+     */
+    protected function getDefaultCriteria(Translation $translation): array
+    {
+        return [
+            'visible' => true,
+            'translation' => $translation,
+            'nodeType' => $this->getSearchableTypes(),
+        ];
+    }
+
+    /**
      * @param Request $request
      * @param string  $_locale
      * @param int     $page
@@ -60,11 +75,7 @@ trait SearchControllerTrait
             throw new HttpException(Response::HTTP_SERVICE_UNAVAILABLE, 'Search engine does not respond.');
         }
         $searchHandler->boostByPublicationDate();
-        $criteria = [
-            'visible' => true,
-            'translation' => $translation,
-            'nodeType' => $this->getSearchableTypes(),
-        ];
+        $criteria = $this->getDefaultCriteria($translation);
         $numResults = $searchHandler->count(
             $query, # Use ?q query parameter to search with
             $criteria, # a simple criteria array to filter search results
@@ -84,7 +95,7 @@ trait SearchControllerTrait
 
         $pageCount = ceil($numResults/$this->getItemsPerPage());
         $this->assignation['results'] = $results;
-        $searchMeta = new SearchMeta();
+        $searchMeta = $this->createSearchMetaInstance();
         $searchMeta->setSearch($query);
         $searchMeta->setCurrentPage($page);
         $searchMeta->setPageCount($pageCount);
@@ -117,7 +128,10 @@ trait SearchControllerTrait
         $results = array_map(function ($item) {
             return $this->createSearchResultModel($item);
         }, $results);
-        $searchResponseModel = new SearchResponse($results, $searchMeta);
+
+        $searchResponseModel = $this->createSearchResponseInstance();
+        $searchResponseModel->setMeta($searchMeta);
+        $searchResponseModel->setResults($results);
         $this->assignation['resultModels'] = $searchResponseModel->getResults();
 
         if ($_format === 'json') {
@@ -143,7 +157,15 @@ trait SearchControllerTrait
         return $response;
     }
 
+    protected function createSearchMetaInstance(): SearchMetaInterface
+    {
+        return new SearchMeta();
+    }
 
+    protected function createSearchResponseInstance(): SearchResponseInterface
+    {
+        return new SearchResponse();
+    }
 
     /**
      * @return int

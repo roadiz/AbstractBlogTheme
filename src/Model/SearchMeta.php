@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Themes\AbstractBlogTheme\Model;
 
-class SearchMeta
+class SearchMeta implements SearchMetaInterface
 {
     /**
      * @var string

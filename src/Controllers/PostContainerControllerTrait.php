@@ -108,23 +108,23 @@ trait PostContainerControllerTrait
             $this->assignation['postsCountForTagId'] = $this->countPerAvailableTags;
         }
         $this->archives = $this->getArchives($this->translation);
-
+        $criteria = array_merge(
+            $this->getDefaultCriteria(
+                $this->translation,
+                $request
+            ),
+            $this->getCriteria(
+                $this->translation,
+                $request
+            )
+        );
         /**
          * @var EntityListManager $elm
          */
         try {
             $elm = $this->createEntityListManager(
                 $this->getPostEntity(),
-                array_merge(
-                    $this->getDefaultCriteria(
-                        $this->translation,
-                        $request
-                    ),
-                    $this->getCriteria(
-                        $this->translation,
-                        $request
-                    )
-                ),
+                $criteria,
                 $this->getDefaultOrder()
             );
             $elm->setItemPerPage($this->getItemsPerPage());
