@@ -100,4 +100,40 @@ interface SearchMetaInterface
      * @return SearchMeta
      */
     public function setPreviousPageQuery($previousPageQuery): SearchMetaInterface;
+
+    /**
+     * @return string
+     */
+    public function getFirstPageQuery();
+
+    /**
+     * @param string $firstPageQuery
+     *
+     * @return SearchMeta
+     */
+    public function setFirstPageQuery($firstPageQuery): SearchMetaInterface;
+
+    /**
+     * @return string
+     */
+    public function getLastPageQuery();
+
+    /**
+     * @param string $lastPageQuery
+     *
+     * @return SearchMeta
+     */
+    public function setLastPageQuery($lastPageQuery): SearchMetaInterface;
+
+    /**
+     * @return string
+     */
+    public function getCurrentPageQuery();
+
+    /**
+     * @param string $currentPageQuery
+     *
+     * @return SearchMeta
+     */
+    public function setCurrentPageQuery($currentPageQuery): SearchMetaInterface;
 }

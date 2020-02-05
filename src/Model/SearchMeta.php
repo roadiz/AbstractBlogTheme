@@ -46,6 +46,21 @@ class SearchMeta implements SearchMetaInterface
     public $previousPageQuery;
 
     /**
+     * @var string
+     */
+    public $firstPageQuery;
+
+    /**
+     * @var string
+     */
+    public $lastPageQuery;
+
+    /**
+     * @var string
+     */
+    public $currentPageQuery;
+
+    /**
      * @return string
      */
     public function getDescription()
@@ -56,9 +71,9 @@ class SearchMeta implements SearchMetaInterface
     /**
      * @param string $description
      *
-     * @return SearchMeta
+     * @return SearchMetaInterface
      */
-    public function setDescription($description): SearchMeta
+    public function setDescription($description): SearchMetaInterface
     {
         $this->description = $description;
 
@@ -76,9 +91,9 @@ class SearchMeta implements SearchMetaInterface
     /**
      * @param string $search
      *
-     * @return SearchMeta
+     * @return SearchMetaInterface
      */
-    public function setSearch($search): SearchMeta
+    public function setSearch($search): SearchMetaInterface
     {
         $this->search = $search;
 
@@ -96,9 +111,9 @@ class SearchMeta implements SearchMetaInterface
     /**
      * @param int $currentPage
      *
-     * @return SearchMeta
+     * @return SearchMetaInterface
      */
-    public function setCurrentPage($currentPage): SearchMeta
+    public function setCurrentPage($currentPage): SearchMetaInterface
     {
         $this->currentPage = $currentPage;
 
@@ -116,9 +131,9 @@ class SearchMeta implements SearchMetaInterface
     /**
      * @param int $pageCount
      *
-     * @return SearchMeta
+     * @return SearchMetaInterface
      */
-    public function setPageCount($pageCount): SearchMeta
+    public function setPageCount($pageCount): SearchMetaInterface
     {
         $this->pageCount = $pageCount;
 
@@ -136,9 +151,9 @@ class SearchMeta implements SearchMetaInterface
     /**
      * @param int $itemPerPage
      *
-     * @return SearchMeta
+     * @return SearchMetaInterface
      */
-    public function setItemPerPage($itemPerPage): SearchMeta
+    public function setItemPerPage($itemPerPage): SearchMetaInterface
     {
         $this->itemPerPage = $itemPerPage;
 
@@ -156,9 +171,9 @@ class SearchMeta implements SearchMetaInterface
     /**
      * @param int $itemCount
      *
-     * @return SearchMeta
+     * @return SearchMetaInterface
      */
-    public function setItemCount($itemCount): SearchMeta
+    public function setItemCount($itemCount): SearchMetaInterface
     {
         $this->itemCount = $itemCount;
 
@@ -176,9 +191,9 @@ class SearchMeta implements SearchMetaInterface
     /**
      * @param string $nextPageQuery
      *
-     * @return SearchMeta
+     * @return SearchMetaInterface
      */
-    public function setNextPageQuery($nextPageQuery): SearchMeta
+    public function setNextPageQuery($nextPageQuery): SearchMetaInterface
     {
         $this->nextPageQuery = $nextPageQuery;
 
@@ -196,11 +211,71 @@ class SearchMeta implements SearchMetaInterface
     /**
      * @param string $previousPageQuery
      *
-     * @return SearchMeta
+     * @return SearchMetaInterface
      */
-    public function setPreviousPageQuery($previousPageQuery): SearchMeta
+    public function setPreviousPageQuery($previousPageQuery): SearchMetaInterface
     {
         $this->previousPageQuery = $previousPageQuery;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFirstPageQuery()
+    {
+        return $this->firstPageQuery;
+    }
+
+    /**
+     * @param string $firstPageQuery
+     *
+     * @return SearchMeta
+     */
+    public function setFirstPageQuery($firstPageQuery): SearchMetaInterface
+    {
+        $this->firstPageQuery = $firstPageQuery;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLastPageQuery()
+    {
+        return $this->lastPageQuery;
+    }
+
+    /**
+     * @param string $lastPageQuery
+     *
+     * @return SearchMeta
+     */
+    public function setLastPageQuery($lastPageQuery): SearchMetaInterface
+    {
+        $this->lastPageQuery = $lastPageQuery;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrentPageQuery()
+    {
+        return $this->currentPageQuery;
+    }
+
+    /**
+     * @param string $currentPageQuery
+     *
+     * @return SearchMeta
+     */
+    public function setCurrentPageQuery($currentPageQuery): SearchMetaInterface
+    {
+        $this->currentPageQuery = $currentPageQuery;
 
         return $this;
     }

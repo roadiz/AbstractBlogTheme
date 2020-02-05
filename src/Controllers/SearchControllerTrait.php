@@ -55,16 +55,25 @@ trait SearchControllerTrait
         ];
     }
 
+    protected function getDefaultPaginationParams(Request $request): array
+    {
+        return [
+            '_locale' => $request->get('_locale', 'en'),
+            '_format' => $request->get('_format', 'html'),
+            $this->getSearchParamName() => $this->getQuery($request),
+        ];
+    }
+
     /**
      * @param Request $request
-     * @param string  $_locale
-     * @param int     $page
      * @param string  $_format
      *
      * @return Response
      */
-    public function searchAction(Request $request, $_locale, $page = 1, $_format = 'html')
+    public function searchAction(Request $request, $_format = 'html')
     {
+        $_locale = $request->get('_locale', 'en');
+        $page = $request->get('page', 1);
         $translation = $this->bindLocaleFromRoute($request, $_locale);
         $this->prepareThemeAssignation(null, $translation);
         $query = $this->getQuery($request);
@@ -81,8 +90,7 @@ trait SearchControllerTrait
             $criteria, # a simple criteria array to filter search results
             $this->getItemsPerPage(), # result count
             true
-        )
-        ;
+        );
         $results = $searchHandler->searchWithHighlight(
             $query, # Use ?q query parameter to search with
             $criteria, # a simple criteria array to filter search results
@@ -90,8 +98,7 @@ trait SearchControllerTrait
             true, # Search in tags too,
             10000000,
             $page
-        )
-        ;
+        );
 
         $pageCount = ceil($numResults/$this->getItemsPerPage());
         $this->assignation['results'] = $results;
@@ -102,21 +109,40 @@ trait SearchControllerTrait
         $searchMeta->setItemPerPage($this->getItemsPerPage());
         $searchMeta->setItemCount($numResults);
 
+        $searchMeta->setCurrentPageQuery($this->generateUrl(
+            $request->attributes->get('_route'),
+            array_merge($this->getDefaultPaginationParams($request), [
+                'page' => $page,
+            ])
+        ));
+
         if ($pageCount > $page) {
-            $searchMeta->setNextPageQuery($this->generateUrl($request->attributes->get('_route'), [
-                '_locale' => $_locale,
-                'page' => $page + 1,
-                '_format' => $_format,
-                $this->getSearchParamName() => $query,
-            ]));
+            $searchMeta->setLastPageQuery($this->generateUrl(
+                $request->attributes->get('_route'),
+                array_merge($this->getDefaultPaginationParams($request), [
+                    'page' => $pageCount,
+                ])
+            ));
+            $searchMeta->setNextPageQuery($this->generateUrl(
+                $request->attributes->get('_route'),
+                array_merge($this->getDefaultPaginationParams($request), [
+                    'page' => $page + 1,
+                ])
+            ));
         }
         if ($page > 1) {
-            $searchMeta->setPreviousPageQuery($this->generateUrl($request->attributes->get('_route'), [
-                '_locale' => $_locale,
-                'page' => $page - 1,
-                '_format' => $_format,
-                $this->getSearchParamName() => $query,
-            ]));
+            $searchMeta->setFirstPageQuery($this->generateUrl(
+                $request->attributes->get('_route'),
+                array_merge($this->getDefaultPaginationParams($request), [
+                    'page' => 1,
+                ])
+            ));
+            $searchMeta->setPreviousPageQuery($this->generateUrl(
+                $request->attributes->get('_route'),
+                array_merge($this->getDefaultPaginationParams($request), [
+                    'page' => $page - 1,
+                ])
+            ));
         }
 
         $this->assignation['query'] = $query;

@@ -11,7 +11,7 @@ class SearchResponse implements SearchResponseInterface
     protected $results;
 
     /**
-     * @var SearchMeta
+     * @var SearchMetaInterface
      */
     protected $meta;
 
@@ -19,9 +19,9 @@ class SearchResponse implements SearchResponseInterface
      * SearchResponse constructor.
      *
      * @param array      $results
-     * @param SearchMeta $meta
+     * @param SearchMetaInterface $meta
      */
-    public function __construct(array $results = [], SearchMeta $meta = null)
+    public function __construct(array $results = [], SearchMetaInterface $meta = null)
     {
         $this->results = $results;
         $this->meta = $meta;
@@ -36,9 +36,9 @@ class SearchResponse implements SearchResponseInterface
     }
 
     /**
-     * @return SearchMeta
+     * @return SearchMetaInterface
      */
-    public function getMeta(): SearchMeta
+    public function getMeta(): SearchMetaInterface
     {
         return $this->meta;
     }
