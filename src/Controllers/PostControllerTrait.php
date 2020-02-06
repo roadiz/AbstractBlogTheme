@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Themes\AbstractBlogTheme\Controllers;
 
+use JMS\Serializer\SerializationContext;
 use JMS\Serializer\Serializer;
 use RZ\Roadiz\Core\Entities\Node;
 use RZ\Roadiz\Core\Entities\Translation;
@@ -35,7 +36,12 @@ trait PostControllerTrait
         /** @var Serializer $serializer */
         $serializer = $this->get('serializer');
         $ampArticle = $this->getJsonLdArticle($this->nodeSource);
-        $this->assignation['jsonLdPost'] = $serializer->serialize($ampArticle, 'json');
+        $this->assignation['jsonLdPost'] = $serializer->serialize(
+            $ampArticle,
+            'json',
+            SerializationContext::create()
+                ->setAttribute('translation', $translation)
+        );
 
         if ($this->allowAmpFormat() &&
            ($request->get('amp', 0) == 1 || $request->getRequestFormat('html') === 'amp')) {

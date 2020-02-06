@@ -217,7 +217,9 @@ trait PostContainerControllerTrait
      */
     protected function getSerializationContext(): SerializationContext
     {
-        $context = SerializationContext::create()->enableMaxDepthChecks();
+        $context = SerializationContext::create()
+            ->setAttribute('translation', $this->getTranslation())
+            ->enableMaxDepthChecks();
         if (count($this->getSerializationGroups()) > 0) {
             $context->setGroups($this->getSerializationGroups());
         }

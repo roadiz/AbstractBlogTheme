@@ -71,6 +71,21 @@ trait SearchControllerTrait
     }
 
     /**
+     * @return SerializationContext
+     */
+    protected function getSerializationContext(): SerializationContext
+    {
+        $context = SerializationContext::create()
+            ->setAttribute('translation', $this->getTranslation())
+            ->enableMaxDepthChecks();
+        if (count($this->getSerializationGroups()) > 0) {
+            $context->setGroups($this->getSerializationGroups());
+        }
+
+        return $context;
+    }
+
+    /**
      * @param Request $request
      * @param string  $_format
      *
@@ -166,7 +181,7 @@ trait SearchControllerTrait
             $response = new Response($serializer->serialize(
                 $searchResponseModel,
                 'json',
-                SerializationContext::create()->setGroups($this->getSerializationGroups())
+                $this->getSerializationContext()
             ));
         } else {
             $this->assignation['results'] = $results->getResultItems();
