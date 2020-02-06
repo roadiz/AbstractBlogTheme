@@ -85,12 +85,7 @@ trait SearchControllerTrait
         }
         $searchHandler->boostByPublicationDate();
         $criteria = $this->getDefaultCriteria($translation);
-        $numResults = $searchHandler->count(
-            $query, # Use ?q query parameter to search with
-            $criteria, # a simple criteria array to filter search results
-            $this->getItemsPerPage(), # result count
-            true
-        );
+
         $results = $searchHandler->searchWithHighlight(
             $query, # Use ?q query parameter to search with
             $criteria, # a simple criteria array to filter search results
@@ -100,14 +95,13 @@ trait SearchControllerTrait
             $page
         );
 
-        $pageCount = ceil($numResults/$this->getItemsPerPage());
-        $this->assignation['results'] = $results;
+        $pageCount = ceil($results->getResultCount()/$this->getItemsPerPage());
         $searchMeta = $this->createSearchMetaInstance();
         $searchMeta->setSearch($query);
         $searchMeta->setCurrentPage($page);
         $searchMeta->setPageCount($pageCount);
         $searchMeta->setItemPerPage($this->getItemsPerPage());
-        $searchMeta->setItemCount($numResults);
+        $searchMeta->setItemCount($results->getResultCount());
 
         $searchMeta->setCurrentPageQuery($this->generateUrl(
             $request->attributes->get('_route'),
@@ -151,13 +145,13 @@ trait SearchControllerTrait
             'title' => $this->getTranslator()->trans('search'). ' – ' . $this->get('settingsBag')->get('site_name'),
             'description' => $this->getTranslator()->trans('search'),
         ];
-        $results = array_map(function ($item) {
+        $resultModels = $results->map(function ($item) {
             return $this->createSearchResultModel($item);
-        }, $results);
+        });
 
         $searchResponseModel = $this->createSearchResponseInstance();
         $searchResponseModel->setMeta($searchMeta);
-        $searchResponseModel->setResults($results);
+        $searchResponseModel->setResults($resultModels);
         $this->assignation['resultModels'] = $searchResponseModel->getResults();
 
         if ($_format === 'json') {
@@ -165,6 +159,7 @@ trait SearchControllerTrait
             $serializer = $this->get('serializer');
             $response = new Response($serializer->serialize($searchResponseModel, 'json'));
         } else {
+            $this->assignation['results'] = $results->getResultItems();
             $response = $this->render($this->getTemplate(), $this->assignation, null, '/');
         }
 
