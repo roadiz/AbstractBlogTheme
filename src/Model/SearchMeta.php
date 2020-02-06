@@ -3,60 +3,73 @@ declare(strict_types=1);
 
 namespace Themes\AbstractBlogTheme\Model;
 
+use JMS\Serializer\Annotation as JMS;
+
 class SearchMeta implements SearchMetaInterface
 {
     /**
      * @var string
+     * @JMS\Groups({"collection"})
      */
     public $description;
 
     /**
      * @var string
+     * @JMS\Groups({"collection"})
      */
     public $search;
 
     /**
      * @var int
+     * @JMS\Groups({"collection"})
      */
     public $currentPage;
 
     /**
      * @var int
+     * @JMS\Groups({"collection"})
      */
     public $pageCount;
 
     /**
      * @var int
+     * @JMS\Groups({"collection"})
      */
     public $itemPerPage;
 
     /**
      * @var int
+     * @JMS\Groups({"collection"})
      */
     public $itemCount;
 
     /**
      * @var string
+     * @JMS\Groups({"collection"})
      */
     public $nextPageQuery;
 
     /**
      * @var string
+     * @JMS\Groups({"collection"})
      */
     public $previousPageQuery;
 
     /**
      * @var string
+     * @JMS\Groups({"collection"})
      */
     public $firstPageQuery;
 
     /**
      * @var string
+     * @JMS\Groups({"collection"})
      */
     public $lastPageQuery;
 
     /**
      * @var string
+     * @JMS\Groups({"collection"})
      */
     public $currentPageQuery;
 

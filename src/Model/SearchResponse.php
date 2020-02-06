@@ -3,15 +3,19 @@ declare(strict_types=1);
 
 namespace Themes\AbstractBlogTheme\Model;
 
+use JMS\Serializer\Annotation as JMS;
+
 class SearchResponse implements SearchResponseInterface
 {
     /**
      * @var array
+     * @JMS\Groups({"collection"})
      */
     protected $results;
 
     /**
      * @var SearchMetaInterface
+     * @JMS\Groups({"collection"})
      */
     protected $meta;
 

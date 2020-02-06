@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Themes\AbstractBlogTheme\Controllers;
 
+use JMS\Serializer\SerializationContext;
 use JMS\Serializer\Serializer;
 use RZ\Roadiz\Core\Entities\Translation;
 use RZ\Roadiz\Core\SearchEngine\NodeSourceSearchHandler;
@@ -62,6 +63,11 @@ trait SearchControllerTrait
             '_format' => $request->get('_format', 'html'),
             $this->getSearchParamName() => $this->getQuery($request),
         ];
+    }
+
+    protected function getSerializationGroups(): array
+    {
+        return ['search_result', 'tag', 'collection', 'urls', 'highlighting'];
     }
 
     /**
@@ -157,7 +163,11 @@ trait SearchControllerTrait
         if ($_format === 'json') {
             /** @var Serializer $serializer */
             $serializer = $this->get('serializer');
-            $response = new Response($serializer->serialize($searchResponseModel, 'json'));
+            $response = new Response($serializer->serialize(
+                $searchResponseModel,
+                'json',
+                SerializationContext::create()->setGroups($this->getSerializationGroups())
+            ));
         } else {
             $this->assignation['results'] = $results->getResultItems();
             $response = $this->render($this->getTemplate(), $this->assignation, null, '/');

@@ -16,6 +16,7 @@ class SearchResult
 {
     /**
      * @var array
+     * @JMS\Groups({"highlighting"})
      */
     protected $highlighting;
 
@@ -68,6 +69,7 @@ class SearchResult
 
     /**
      * @JMS\VirtualProperty()
+     * @JMS\Groups({"search_result"})
      * @return string
      */
     public function getName()
@@ -77,6 +79,7 @@ class SearchResult
 
     /**
      * @JMS\VirtualProperty()
+     * @JMS\Groups({"search_result"})
      * @return string
      */
     public function getNodeName()
@@ -86,6 +89,7 @@ class SearchResult
 
     /**
      * @JMS\VirtualProperty()
+     * @JMS\Groups({"search_result"})
      * @return \DateTime
      */
     public function getPublishedAt()
@@ -95,6 +99,7 @@ class SearchResult
 
     /**
      * @JMS\VirtualProperty()
+     * @JMS\Groups({"search_result"})
      * @return string
      */
     public function getType()
@@ -104,6 +109,7 @@ class SearchResult
 
     /**
      * @JMS\VirtualProperty()
+     * @JMS\Groups({"search_result"})
      * @return string
      */
     public function getUrl()
@@ -113,6 +119,7 @@ class SearchResult
 
     /**
      * @JMS\VirtualProperty()
+     * @JMS\Groups({"search_result"})
      * @return null|string
      */
     public function getImage()
