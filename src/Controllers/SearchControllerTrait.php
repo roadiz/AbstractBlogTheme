@@ -67,7 +67,7 @@ trait SearchControllerTrait
 
     protected function getSerializationGroups(): array
     {
-        return ['search_result', 'tag', 'collection', 'urls', 'highlighting'];
+        return ['search_result', 'tag_base', 'collection', 'urls', 'highlighting'];
     }
 
     /**
