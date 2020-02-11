@@ -7,6 +7,7 @@ use JMS\Serializer\SerializationContext;
 use JMS\Serializer\Serializer;
 use RZ\Roadiz\Core\Entities\Translation;
 use RZ\Roadiz\Core\SearchEngine\NodeSourceSearchHandler;
+use RZ\Roadiz\Core\SearchEngine\SolrSearchResults;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -18,6 +19,14 @@ use Themes\AbstractBlogTheme\Model\SearchResult;
 
 trait SearchControllerTrait
 {
+    /**
+     * @return int
+     */
+    protected function getHighlightingFragmentSize(): int
+    {
+        return 150;
+    }
+
     /**
      * @param Request $request
      *
@@ -105,8 +114,12 @@ trait SearchControllerTrait
             throw new HttpException(Response::HTTP_SERVICE_UNAVAILABLE, 'Search engine does not respond.');
         }
         $searchHandler->boostByPublicationDate();
+        if ($this->getHighlightingFragmentSize() > 0) {
+            $searchHandler->setHighlightingFragmentSize($this->getHighlightingFragmentSize());
+        }
         $criteria = $this->getDefaultCriteria($translation);
 
+        /** @var SolrSearchResults $results */
         $results = $searchHandler->searchWithHighlight(
             $query, # Use ?q query parameter to search with
             $criteria, # a simple criteria array to filter search results
