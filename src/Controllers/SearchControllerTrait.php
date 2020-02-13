@@ -144,13 +144,22 @@ trait SearchControllerTrait
             ])
         ));
 
-        if ($pageCount > $page) {
+        if ($pageCount > 1) {
             $searchMeta->setLastPageQuery($this->generateUrl(
                 $request->attributes->get('_route'),
                 array_merge($this->getDefaultPaginationParams($request), [
                     'page' => $pageCount,
                 ])
             ));
+            $searchMeta->setFirstPageQuery($this->generateUrl(
+                $request->attributes->get('_route'),
+                array_merge($this->getDefaultPaginationParams($request), [
+                    'page' => 1,
+                ])
+            ));
+        }
+
+        if ($pageCount > $page) {
             $searchMeta->setNextPageQuery($this->generateUrl(
                 $request->attributes->get('_route'),
                 array_merge($this->getDefaultPaginationParams($request), [
@@ -159,12 +168,6 @@ trait SearchControllerTrait
             ));
         }
         if ($page > 1) {
-            $searchMeta->setFirstPageQuery($this->generateUrl(
-                $request->attributes->get('_route'),
-                array_merge($this->getDefaultPaginationParams($request), [
-                    'page' => 1,
-                ])
-            ));
             $searchMeta->setPreviousPageQuery($this->generateUrl(
                 $request->attributes->get('_route'),
                 array_merge($this->getDefaultPaginationParams($request), [
