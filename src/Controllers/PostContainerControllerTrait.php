@@ -429,16 +429,27 @@ trait PostContainerControllerTrait
      * @param Translation $translation
      * @param Request     $request
      *
+     * @return array Mandatory parameters which should be use in every requests
+     */
+    protected function getBaseCriteria(Translation $translation, Request $request): array
+    {
+        return [
+            'node.visible' => true,
+            'translation' => $translation,
+            $this->getPublicationField() => ['<=', new \DateTime()],
+        ];
+    }
+
+    /**
+     * @param Translation $translation
+     * @param Request     $request
+     *
      * @return array
      * @throws \Exception|FilteringEntityNotFound
      */
     protected function getDefaultCriteria(Translation $translation, Request $request)
     {
-        $criteria = [
-            'node.visible' => true,
-            'translation' => $translation,
-            $this->getPublicationField() => ['<=', new \DateTime()],
-        ];
+        $criteria = $this->getBaseCriteria($translation, $request);
 
         if ('' != $tagName = $request->get('tag', '')) {
             if (is_array($tagName)) {
@@ -721,6 +732,16 @@ trait PostContainerControllerTrait
     }
 
     /**
+     * @return array Base order if no request or any filter is chosen.
+     */
+    protected function getBaseOrder(): array
+    {
+        return [
+            $this->getPublicationField() => 'DESC',
+        ];
+    }
+
+    /**
      * @return array
      */
     protected function getDefaultOrder()
@@ -745,9 +766,7 @@ trait PostContainerControllerTrait
         $this->assignation['currentSort'] = $this->getPublicationField();
         $this->assignation['currentSortDirection'] = 'DESC';
 
-        return [
-            $this->getPublicationField() => 'DESC',
-        ];
+        return $this->getBaseOrder();
     }
 
     /**
