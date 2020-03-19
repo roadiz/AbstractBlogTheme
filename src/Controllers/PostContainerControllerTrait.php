@@ -487,7 +487,7 @@ trait PostContainerControllerTrait
         }
 
         if ('' != $archive = $request->get('archive', '')) {
-            if (preg_match('#[0-9]{4}\-[0-9]{2}#', $archive) > 0) {
+            if (preg_match('#^[0-9]{4}\-[0-9]{2}$#', $archive) > 0) {
                 $startDate = new \DateTime($archive . '-01 00:00:00');
                 $endDate = clone $startDate;
                 $endDate->add(new \DateInterval('P1M'));
@@ -495,7 +495,7 @@ trait PostContainerControllerTrait
                 $criteria[$this->getPublicationField()] = ['BETWEEN', $startDate, $endDate];
                 $this->assignation['currentArchive'] = $archive;
                 $this->assignation['currentArchiveDateTime'] = $startDate;
-            } elseif (preg_match('#[0-9]{4}#', $archive) > 0) {
+            } elseif (preg_match('#^[0-9]{4}$#', $archive) > 0) {
                 $startDate = new \DateTime($archive . '-01-01 00:00:00');
                 $endDate = clone $startDate;
                 $endDate->add(new \DateInterval('P1Y'));
