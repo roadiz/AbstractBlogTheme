@@ -5,8 +5,8 @@ namespace Themes\AbstractBlogTheme\Controllers;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializationContext;
+use JMS\Serializer\Serializer;
 use RZ\Roadiz\Core\Entities\Node;
 use RZ\Roadiz\Core\Entities\NodesSources;
 use RZ\Roadiz\Core\Entities\NodeType;
@@ -17,9 +17,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Themes\AbstractBlogTheme\AbstractBlogThemeApp;
 use Themes\AbstractBlogTheme\Exception\FilteringEntityNotFound;
 use Themes\AbstractBlogTheme\Factory\JsonLdFactory;
-use Themes\AbstractBlogTheme\AbstractBlogThemeApp;
 use Themes\AbstractBlogTheme\Model\HydraCollection;
 use Twig\Error\RuntimeError;
 
@@ -31,6 +31,11 @@ trait PostContainerControllerTrait
         'title',
         'publishedAt'
     ];
+
+    /**
+     * @var Tag[] Pre-filled tags to alter every requests with
+     */
+    protected $implicitTags;
 
     /**
      * @var Tag[]
@@ -362,6 +367,12 @@ trait PostContainerControllerTrait
             $qb->andWhere($qb->expr()->eq('n.status', Node::PUBLISHED));
         }
 
+        if (null !== $this->getImplicitTags() && count($this->getImplicitTags())) {
+            $qb->innerJoin('n.tags', 'implicitTags')
+                ->andWhere($qb->expr()->in('implicitTags.id', ':implicitTags'))
+                ->setParameter(':implicitTags', $this->getImplicitTags());
+        }
+
         if ($this->isScopedToCurrentContainer()) {
             $qb->andWhere($qb->expr()->eq('n.parent', ':parentNode'))
                 ->setParameter(':parentNode', $this->node);
@@ -433,11 +444,18 @@ trait PostContainerControllerTrait
      */
     protected function getBaseCriteria(Translation $translation, Request $request): array
     {
-        return [
+        $base = [
             'node.visible' => true,
             'translation' => $translation,
             $this->getPublicationField() => ['<=', new \DateTime()],
         ];
+
+        if (null !== $this->getImplicitTags() && count($this->getImplicitTags())) {
+            $base['tags'] = $this->getImplicitTags();
+            $base['tagExclusive'] = true;
+        }
+
+        return $base;
     }
 
     /**
@@ -463,8 +481,14 @@ trait PostContainerControllerTrait
                     },
                     $tagName
                 );
-                $criteria['tags'] = $tags;
-                $criteria['tagExclusive'] = $this->isTagExclusive();
+
+                if (null !== $this->getImplicitTags()) {
+                    $criteria['tags'] = array_merge($this->getImplicitTags(), $tags);
+                    $criteria['tagExclusive'] = true;
+                } else {
+                    $criteria['tags'] = $tags;
+                    $criteria['tagExclusive'] = $this->isTagExclusive();
+                }
                 $this->assignation['currentTag'] = $tags;
                 $this->assignation['currentTagNames'] = array_map(
                     function (Tag $tag) {
@@ -477,8 +501,13 @@ trait PostContainerControllerTrait
                 if (null === $tag) {
                     throw new FilteringEntityNotFound('Tag does not exist.');
                 }
-                $criteria['tags'] = $tag;
-                $criteria['tagExclusive'] = $this->isTagExclusive();
+                if (null !== $this->getImplicitTags()) {
+                    $criteria['tags'] = array_merge($this->getImplicitTags(), [$tag]);
+                    $criteria['tagExclusive'] = true;
+                } else {
+                    $criteria['tags'] = $tag;
+                    $criteria['tagExclusive'] = $this->isTagExclusive();
+                }
                 $this->assignation['currentTag'] = $tag;
                 $this->assignation['currentTagNames'] = [$tag->getTagName()];
             }
@@ -612,6 +641,12 @@ trait PostContainerControllerTrait
                 ->setParameter(':nodeType', $nodeType);
         }
 
+        if (null !== $this->getImplicitTags() && count($this->getImplicitTags())) {
+            $qb->innerJoin('n.tags', 'implicitTags')
+                ->andWhere($qb->expr()->in('implicitTags.id', ':implicitTags'))
+                ->setParameter(':implicitTags', $this->getImplicitTags());
+        }
+
         if (null !== $parentTag) {
             $parentTagId = $parentTag->getId();
             $qb->innerJoin('t.parent', 'pt')
@@ -661,6 +696,12 @@ trait PostContainerControllerTrait
         if (null !== $nodeType = $this->getNodeTypeFromEntity()) {
             $qb->andWhere($qb->expr()->eq('nodeA.nodeType', ':nodeType'))
                 ->setParameter(':nodeType', $nodeType);
+        }
+
+        if (null !== $this->getImplicitTags() && count($this->getImplicitTags())) {
+            $qb->innerJoin('nodeA.tags', 'implicitTags')
+                ->andWhere($qb->expr()->in('implicitTags.id', ':implicitTags'))
+                ->setParameter(':implicitTags', $this->getImplicitTags());
         }
 
         return $qb->getQuery()->getResult();
@@ -714,6 +755,12 @@ trait PostContainerControllerTrait
         if ($this->isScopedToCurrentContainer()) {
             $qb->andWhere($qb->expr()->eq('n.parent', ':parentNode'))
                 ->setParameter(':parentNode', $this->node);
+        }
+
+        if (null !== $this->getImplicitTags() && count($this->getImplicitTags())) {
+            $qb->innerJoin('n.tags', 'implicitTags')
+                ->andWhere($qb->expr()->in('implicitTags.id', ':implicitTags'))
+                ->setParameter(':implicitTags', $this->getImplicitTags());
         }
 
         $result = array_filter(array_map('current', $qb->getQuery()->getArrayResult()));
@@ -809,6 +856,12 @@ trait PostContainerControllerTrait
             $qb->andWhere($qb->expr()->eq('n.status', Node::PUBLISHED));
         }
 
+        if (null !== $this->getImplicitTags() && count($this->getImplicitTags())) {
+            $qb->innerJoin('n.tags', 'implicitTags')
+                ->andWhere($qb->expr()->in('implicitTags.id', ':implicitTags'))
+                ->setParameter(':implicitTags', $this->getImplicitTags());
+        }
+
         if ($this->isScopedToCurrentContainer()) {
             $qb->andWhere($qb->expr()->eq('n.parent', ':parentNode'))
                 ->setParameter(':parentNode', $this->node);
@@ -894,5 +947,13 @@ trait PostContainerControllerTrait
     protected function selectPostCounts(): bool
     {
         return false;
+    }
+
+    /**
+     * @return Tag[]|null
+     */
+    protected function getImplicitTags(): ?array
+    {
+        return $this->implicitTags;
     }
 }
