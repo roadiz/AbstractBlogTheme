@@ -6,6 +6,7 @@ namespace Themes\AbstractBlogTheme\Model;
 use JMS\Serializer\Annotation as JMS;
 use RZ\Roadiz\Core\Entities\NodesSources;
 use RZ\Roadiz\Utils\UrlGenerators\DocumentUrlGenerator;
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\Translator;
 
@@ -114,7 +115,12 @@ class SearchResult
      */
     public function getUrl()
     {
-        return $this->urlGenerator->generate($this->nodeSource);
+        return $this->urlGenerator->generate(
+            RouteObjectInterface::OBJECT_BASED_ROUTE_NAME,
+            [
+                RouteObjectInterface::ROUTE_OBJECT => $this->nodeSource,
+            ]
+        );
     }
 
     /**

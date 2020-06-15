@@ -50,7 +50,7 @@ class HydraCollection
 
     /**
      * @JMS\Exclude
-     * @var string|object
+     * @var string
      */
     protected $route;
 
@@ -68,7 +68,7 @@ class HydraCollection
      * @param int $page
      * @param int $totalPages
      * @param UrlGeneratorInterface $urlGenerator
-     * @param NodesSources|string $route
+     * @param string $route
      * @param array $currentParams
      */
     public function __construct(
@@ -106,9 +106,9 @@ class HydraCollection
      */
     public function getIdentifier()
     {
-        return $this->urlGenerator->generate($this->route, [
+        return $this->urlGenerator->generate($this->route, array_merge($this->currentParams, [
             '_format' => 'json'
-        ]);
+        ]));
     }
 
     /**

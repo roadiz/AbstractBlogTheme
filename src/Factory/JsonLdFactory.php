@@ -118,7 +118,7 @@ class JsonLdFactory
      * @param int   $totalItems
      * @param int   $page
      * @param int   $totalPages
-     * @param mixed $route
+     * @param string $route
      * @param array $currentParams
      *
      * @return HydraCollection|null

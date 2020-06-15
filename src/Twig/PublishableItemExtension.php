@@ -82,7 +82,8 @@ trait PublishableItemExtension
         if ($scopedToParent) {
             $criteria['node.parent'] = $item->getParent();
         }
-        $items = $this->getItems($criteria, $count, 'DESC');;
+        $items = $this->getItems($criteria, $count, 'DESC');
+        ;
 
         if ($count === 1 && count($items) > 0) {
             return $items[0];
