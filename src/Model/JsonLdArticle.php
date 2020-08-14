@@ -258,12 +258,15 @@ class JsonLdArticle extends JsonLdObject
      */
     public function getArticleSection()
     {
-        return $this->nodeSource->getNode()->getTags()->filter(function (Tag $tag) {
-            return $tag->isVisible();
-        })->map(function (Tag $tag) {
-            $translatedTag = $tag->getTranslatedTagsByTranslation($this->nodeSource->getTranslation())->first();
-            return $translatedTag ? $translatedTag->getName() : $tag->getTagName();
-        })->toArray();
+        if (null !== $this->nodeSource->getNode()) {
+            return $this->nodeSource->getNode()->getTags()->filter(function (Tag $tag) {
+                return $tag->isVisible();
+            })->map(function (Tag $tag) {
+                $translatedTag = $tag->getTranslatedTagsByTranslation($this->nodeSource->getTranslation())->first();
+                return $translatedTag ? $translatedTag->getName() : $tag->getTagName();
+            })->toArray();
+        }
+        return [];
     }
 
     /**

@@ -14,6 +14,10 @@ use Twig\Loader\FilesystemLoader;
 
 class BlogServiceProvider implements ServiceProviderInterface
 {
+    /**
+     * @param Container $container
+     * @return void
+     */
     public function register(Container $container)
     {
         $container['jsonld.defaultImageOptions'] = function () {

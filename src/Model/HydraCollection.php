@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Themes\AbstractBlogTheme\Model;
 
 use JMS\Serializer\Annotation as JMS;
-use RZ\Roadiz\Core\Entities\NodesSources;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class HydraCollection
@@ -103,6 +102,7 @@ class HydraCollection
      * @JMS\VirtualProperty()
      * @JMS\SerializedName("@id")
      * @JMS\Groups({"collection"})
+     * @return string
      */
     public function getIdentifier()
     {
@@ -115,6 +115,7 @@ class HydraCollection
      * @JMS\VirtualProperty()
      * @JMS\SerializedName("hydra:view")
      * @JMS\Groups({"collection"})
+     * @return array
      */
     public function getHydraView()
     {

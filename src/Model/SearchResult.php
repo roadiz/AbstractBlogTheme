@@ -81,17 +81,20 @@ class SearchResult
     /**
      * @JMS\VirtualProperty()
      * @JMS\Groups({"search_result"})
-     * @return string
+     * @return string|null
      */
     public function getNodeName()
     {
-        return $this->nodeSource->getNode()->getNodeName();
+        if (null !== $this->nodeSource->getNode()) {
+            return $this->nodeSource->getNode()->getNodeName();
+        }
+        return null;
     }
 
     /**
      * @JMS\VirtualProperty()
      * @JMS\Groups({"search_result"})
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getPublishedAt()
     {
@@ -101,11 +104,14 @@ class SearchResult
     /**
      * @JMS\VirtualProperty()
      * @JMS\Groups({"search_result"})
-     * @return string
+     * @return string|null
      */
     public function getType()
     {
-        return $this->translator->trans($this->nodeSource->getNode()->getNodeType()->getName());
+        if (null !== $this->nodeSource->getNode()) {
+            return $this->translator->trans($this->nodeSource->getNode()->getNodeType()->getName());
+        }
+        return null;
     }
 
     /**

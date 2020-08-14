@@ -11,9 +11,9 @@ interface SearchResponseInterface
     public function getResults(): array;
 
     /**
-     * @return SearchMetaInterface
+     * @return SearchMetaInterface|null
      */
-    public function getMeta(): SearchMetaInterface;
+    public function getMeta(): ?SearchMetaInterface;
 
     /**
      * @param array $results
