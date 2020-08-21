@@ -11,10 +11,7 @@
     ],
     "require": {
         "php": "^7.2",
-        "roadiz/roadiz": "^1.5.0 || dev-develop",
-        "roadiz/documents": "^1.5.0 || dev-develop",
-        "roadiz/models": "^1.5.0 || dev-develop",
-        "roadiz/markdown": "^1.5.0 || dev-develop",
+        "roadiz/roadiz": "^1.5.0",
         "rezozero/social-links": "^1.1.0",
         "twig/twig": "2.*",
         "jms/serializer": "^2.3.0 || ^3.1.1"
