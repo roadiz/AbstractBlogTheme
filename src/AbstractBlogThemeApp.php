@@ -27,6 +27,7 @@ class AbstractBlogThemeApp extends FrontendController
 
     /**
      * @param Container $container
+     * @return void
      */
     public static function setupDependencyInjection(Container $container)
     {

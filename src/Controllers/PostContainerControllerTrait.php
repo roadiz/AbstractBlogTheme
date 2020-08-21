@@ -13,6 +13,7 @@ use RZ\Roadiz\Core\Entities\NodeType;
 use RZ\Roadiz\Core\Entities\Tag;
 use RZ\Roadiz\Core\Entities\Translation;
 use RZ\Roadiz\Core\ListManagers\EntityListManager;
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -262,20 +263,27 @@ trait PostContainerControllerTrait
     protected function getHydraCollection(array $parameters = []): HydraCollection
     {
         $articles = [];
+        /** @var JsonLdFactory $factory */
+        $factory = $this->get(JsonLdFactory::class);
+        
         /** @var NodesSources $post */
         foreach ($parameters['posts'] as $post) {
-            $articles[] = $this->getJsonLdArticle($post);
+            $articles[] = $factory->createArticle($post);
         }
 
         /** @var Request $request */
         $request = $this->get('requestStack')->getMasterRequest();
-        return $this->get(JsonLdFactory::class)->createHydraCollection(
+        return $factory->createHydraCollection(
             $articles,
             $parameters['filters']['itemCount'],
             $parameters['filters']['currentPage'],
             $parameters['filters']['pageCount'],
-            $this->nodeSource ?: $request->attributes->get('_route'),
-            $request->attributes->get('_route_params')
+            $this->nodeSource ? RouteObjectInterface::OBJECT_BASED_ROUTE_NAME : $request->attributes->get('_route'),
+            $this->nodeSource ?
+                array_merge([
+                    RouteObjectInterface::ROUTE_OBJECT => $this->nodeSource,
+                ], $request->attributes->get('_route_params')) :
+                $request->attributes->get('_route_params')
         );
     }
 

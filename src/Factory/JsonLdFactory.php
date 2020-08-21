@@ -6,6 +6,7 @@ namespace Themes\AbstractBlogTheme\Factory;
 use RZ\Roadiz\Core\Bags\Settings;
 use RZ\Roadiz\Core\Entities\Document;
 use RZ\Roadiz\Core\Entities\NodesSources;
+use RZ\Roadiz\Core\Models\DocumentInterface;
 use RZ\Roadiz\Markdown\MarkdownInterface;
 use RZ\Roadiz\Utils\UrlGenerators\DocumentUrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -35,7 +36,7 @@ class JsonLdFactory
      */
     protected $imageOptions;
     /**
-     * @var MarkdownInterface
+     * @var MarkdownInterface|null
      */
     protected $markdown;
 
@@ -46,7 +47,7 @@ class JsonLdFactory
      * @param UrlGeneratorInterface $urlGenerator
      * @param Settings $settingsBag
      * @param array $imageOptions
-     * @param MarkdownInterface $markdown
+     * @param MarkdownInterface|null $markdown
      */
     public function __construct(
         DocumentUrlGenerator $documentUrlGenerator,
@@ -75,6 +76,11 @@ class JsonLdFactory
         );
     }
 
+    /**
+     * @param NodesSources $nodeSource
+     *
+     * @return JsonLdOrganization|null
+     */
     public function createOrganization(NodesSources $nodeSource): ?JsonLdObject
     {
         /** @var Document|null $logoDocument */
@@ -95,6 +101,11 @@ class JsonLdFactory
         );
     }
 
+    /**
+     * @param NodesSources $nodeSource
+     *
+     * @return JsonLdPlace|null
+     */
     public function createPlace(NodesSources $nodeSource): ?JsonLdObject
     {
         if (method_exists($nodeSource, 'getLocation') &&
@@ -118,7 +129,7 @@ class JsonLdFactory
      * @param int   $totalItems
      * @param int   $page
      * @param int   $totalPages
-     * @param mixed $route
+     * @param string $route
      * @param array $currentParams
      *
      * @return HydraCollection|null
@@ -142,6 +153,9 @@ class JsonLdFactory
         );
     }
 
+    /**
+     * @return DocumentInterface|null
+     */
     protected function getDefaultOrganizationLogo()
     {
         return $this->settingsBag->getDocument('admin_image');

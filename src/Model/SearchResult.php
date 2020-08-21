@@ -6,6 +6,7 @@ namespace Themes\AbstractBlogTheme\Model;
 use JMS\Serializer\Annotation as JMS;
 use RZ\Roadiz\Core\Entities\NodesSources;
 use RZ\Roadiz\Utils\UrlGenerators\DocumentUrlGenerator;
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\Translator;
 
@@ -80,17 +81,20 @@ class SearchResult
     /**
      * @JMS\VirtualProperty()
      * @JMS\Groups({"search_result"})
-     * @return string
+     * @return string|null
      */
     public function getNodeName()
     {
-        return $this->nodeSource->getNode()->getNodeName();
+        if (null !== $this->nodeSource->getNode()) {
+            return $this->nodeSource->getNode()->getNodeName();
+        }
+        return null;
     }
 
     /**
      * @JMS\VirtualProperty()
      * @JMS\Groups({"search_result"})
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getPublishedAt()
     {
@@ -100,11 +104,14 @@ class SearchResult
     /**
      * @JMS\VirtualProperty()
      * @JMS\Groups({"search_result"})
-     * @return string
+     * @return string|null
      */
     public function getType()
     {
-        return $this->translator->trans($this->nodeSource->getNode()->getNodeType()->getName());
+        if (null !== $this->nodeSource->getNode() && null !== $this->nodeSource->getNode()->getNodeType()) {
+            return $this->translator->trans($this->nodeSource->getNode()->getNodeType()->getName());
+        }
+        return null;
     }
 
     /**
@@ -114,7 +121,12 @@ class SearchResult
      */
     public function getUrl()
     {
-        return $this->urlGenerator->generate($this->nodeSource);
+        return $this->urlGenerator->generate(
+            RouteObjectInterface::OBJECT_BASED_ROUTE_NAME,
+            [
+                RouteObjectInterface::ROUTE_OBJECT => $this->nodeSource,
+            ]
+        );
     }
 
     /**

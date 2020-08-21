@@ -95,6 +95,14 @@ trait SearchControllerTrait
     }
 
     /**
+     * @return NodeSourceSearchHandler|null
+     */
+    protected function getSearchHandler(): ?NodeSourceSearchHandler
+    {
+        return $this->get('solr.search.nodeSource');
+    }
+
+    /**
      * @param Request $request
      * @param string  $_format
      *
@@ -108,8 +116,7 @@ trait SearchControllerTrait
         $this->prepareThemeAssignation(null, $translation);
         $query = $this->getQuery($request);
 
-        /** @var NodeSourceSearchHandler|null $searchHandler */
-        $searchHandler = $this->get('solr.search.nodeSource');
+        $searchHandler = $this->getSearchHandler();
         if (null === $searchHandler) {
             throw new HttpException(Response::HTTP_SERVICE_UNAVAILABLE, 'Search engine does not respond.');
         }

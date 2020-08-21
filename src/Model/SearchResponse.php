@@ -14,7 +14,7 @@ class SearchResponse implements SearchResponseInterface
     protected $results;
 
     /**
-     * @var SearchMetaInterface
+     * @var SearchMetaInterface|null
      * @JMS\Groups({"collection"})
      */
     protected $meta;
@@ -23,7 +23,7 @@ class SearchResponse implements SearchResponseInterface
      * SearchResponse constructor.
      *
      * @param array      $results
-     * @param SearchMetaInterface $meta
+     * @param SearchMetaInterface|null $meta
      */
     public function __construct(array $results = [], SearchMetaInterface $meta = null)
     {
@@ -40,9 +40,9 @@ class SearchResponse implements SearchResponseInterface
     }
 
     /**
-     * @return SearchMetaInterface
+     * @return SearchMetaInterface|null
      */
-    public function getMeta(): SearchMetaInterface
+    public function getMeta(): ?SearchMetaInterface
     {
         return $this->meta;
     }
