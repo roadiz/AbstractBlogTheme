@@ -108,7 +108,7 @@ class SearchResult
      */
     public function getType()
     {
-        if (null !== $this->nodeSource->getNode()) {
+        if (null !== $this->nodeSource->getNode() && null !== $this->nodeSource->getNode()->getNodeType()) {
             return $this->translator->trans($this->nodeSource->getNode()->getNodeType()->getName());
         }
         return null;
