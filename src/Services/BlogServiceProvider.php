@@ -43,8 +43,11 @@ class BlogServiceProvider implements ServiceProviderInterface
             );
         };
 
-        $container->extend('twig.extensions', function ($extensions, $c) {
-            $extensions->add(new BlogExtension($c['em'], $c['blog_theme.post_entity']));
+        $container->extend('twig.extensions', function ($extensions, Container $c) {
+            if ($c->offsetExists('blog_theme.post_entity')) {
+                // Add Blog extension only if post entity is registered.
+                $extensions->add(new BlogExtension($c['em'], $c['blog_theme.post_entity']));
+            }
             $extensions->add(new SocialLinksExtension());
 
             return $extensions;
