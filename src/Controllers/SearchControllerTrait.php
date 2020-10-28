@@ -34,7 +34,7 @@ trait SearchControllerTrait
      */
     protected function getQuery(Request $request)
     {
-        return strip_tags($request->get($this->getSearchParamName(), ''));
+        return strip_tags((string) $request->get($this->getSearchParamName(), ''));
     }
 
     /**
@@ -103,6 +103,43 @@ trait SearchControllerTrait
     }
 
     /**
+     * @param NodeSourceSearchHandler $searchHandler
+     * @param string $query
+     * @param array $criteria
+     * @param int $page
+     * @return SolrSearchResults
+     */
+    protected function doSearch(
+        NodeSourceSearchHandler $searchHandler,
+        string $query,
+        array $criteria = [],
+        int $page = 1
+    ): SolrSearchResults {
+        /*
+         * Query must be longer than 3 chars or Solr might crash
+         * on highlighting fields.
+         */
+        if (strlen($query) > 3) {
+            return $searchHandler->searchWithHighlight(
+                $query, # Use ?q query parameter to search with
+                $criteria, # a simple criteria array to filter search results
+                $this->getItemsPerPage(), # result count
+                true, # Search in tags too,
+                10000000,
+                $page
+            );
+        }
+        return $searchHandler->search(
+            $query, # Use ?q query parameter to search with
+            $criteria, # a simple criteria array to filter search results
+            $this->getItemsPerPage(), # result count
+            true, # Search in tags too,
+            10000000,
+            $page
+        );
+    }
+
+    /**
      * @param Request $request
      * @param string  $_format
      *
@@ -124,15 +161,11 @@ trait SearchControllerTrait
         if ($this->getHighlightingFragmentSize() > 0) {
             $searchHandler->setHighlightingFragmentSize($this->getHighlightingFragmentSize());
         }
-        $criteria = $this->getDefaultCriteria($translation);
 
-        /** @var SolrSearchResults $results */
-        $results = $searchHandler->searchWithHighlight(
-            $query, # Use ?q query parameter to search with
-            $criteria, # a simple criteria array to filter search results
-            $this->getItemsPerPage(), # result count
-            true, # Search in tags too,
-            10000000,
+        $results = $this->doSearch(
+            $searchHandler,
+            $query,
+            $this->getDefaultCriteria($translation),
             $page
         );
 
