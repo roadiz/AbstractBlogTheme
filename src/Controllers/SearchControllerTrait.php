@@ -148,7 +148,7 @@ trait SearchControllerTrait
     public function searchAction(Request $request, $_format = 'html')
     {
         $_locale = $request->get('_locale', 'en');
-        $page = $request->get('page', 1);
+        $page = (int) $request->get('page', 1);
         $translation = $this->bindLocaleFromRoute($request, $_locale);
         $this->prepareThemeAssignation(null, $translation);
         $query = $this->getQuery($request);
