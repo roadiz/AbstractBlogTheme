@@ -72,7 +72,7 @@ trait PostContainerControllerTrait
     }
 
     /**
-     * @return string|boolean
+     * @return class-string|false
      */
     protected function getPostEntity()
     {
@@ -265,7 +265,7 @@ trait PostContainerControllerTrait
         $articles = [];
         /** @var JsonLdFactory $factory */
         $factory = $this->get(JsonLdFactory::class);
-        
+
         /** @var NodesSources $post */
         foreach ($parameters['posts'] as $post) {
             $articles[] = $factory->createArticle($post);

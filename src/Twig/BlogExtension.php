@@ -4,9 +4,6 @@ declare(strict_types=1);
 namespace Themes\AbstractBlogTheme\Twig;
 
 use Doctrine\ORM\EntityManagerInterface;
-use RZ\Roadiz\Core\Entities\NodesSources;
-use RZ\Roadiz\Core\Entities\Tag;
-use RZ\Roadiz\Core\Entities\Translation;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
