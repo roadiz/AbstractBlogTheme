@@ -4,13 +4,21 @@ declare(strict_types=1);
 namespace Themes\AbstractBlogTheme\Twig;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use RZ\Roadiz\Core\Entities\NodesSources;
 use RZ\Roadiz\Core\Entities\Tag;
 use RZ\Roadiz\Core\Entities\Translation;
 
 trait PublishableItemExtension
 {
+    /**
+     * @return class-string
+     */
     abstract protected function getEntity(): string;
+
+    /**
+     * @return EntityManagerInterface
+     */
     abstract protected function getEntityManager(): EntityManagerInterface;
 
     /**
@@ -27,9 +35,17 @@ trait PublishableItemExtension
         ];
     }
 
+    /**
+     * @param array $criteria
+     * @param int $count
+     * @param string $direction
+     * @return array<NodesSources>
+     */
     protected function getItems(array $criteria, int $count, string $direction = 'ASC'): array
     {
-        return $this->getEntityManager()->getRepository($this->getEntity())->findBy($criteria, [
+        /** @var EntityRepository<NodesSources> $repository */
+        $repository = $this->getEntityManager()->getRepository($this->getEntity());
+        return $repository->findBy($criteria, [
             'publishedAt' => $direction
         ], $count);
     }
