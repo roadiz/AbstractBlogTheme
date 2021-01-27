@@ -624,7 +624,7 @@ trait PostContainerControllerTrait
 
     /**
      * @param Translation $translation
-     * @param Tag         $parentTag   Parent tag
+     * @param Tag|null    $parentTag   Parent tag
      *
      * @return array
      */
