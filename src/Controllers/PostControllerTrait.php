@@ -9,6 +9,7 @@ use RZ\Roadiz\Core\Entities\Node;
 use RZ\Roadiz\Core\Entities\Translation;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Themes\AbstractBlogTheme\Factory\JsonLdFactory;
 
 trait PostControllerTrait
 {
@@ -35,7 +36,7 @@ trait PostControllerTrait
 
         /** @var Serializer $serializer */
         $serializer = $this->get('serializer');
-        $ampArticle = $this->getJsonLdArticle($this->nodeSource);
+        $ampArticle = $this->get(JsonLdFactory::class)->createArticle($this->nodeSource);
         $this->assignation['jsonLdPost'] = $serializer->serialize(
             $ampArticle,
             'json',

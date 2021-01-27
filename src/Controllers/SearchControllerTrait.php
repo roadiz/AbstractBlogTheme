@@ -7,6 +7,8 @@ use JMS\Serializer\SerializationContext;
 use JMS\Serializer\Serializer;
 use RZ\Roadiz\Core\Entities\Translation;
 use RZ\Roadiz\Core\SearchEngine\NodeSourceSearchHandler;
+use RZ\Roadiz\Core\SearchEngine\NodeSourceSearchHandlerInterface;
+use RZ\Roadiz\Core\SearchEngine\SearchResultsInterface;
 use RZ\Roadiz\Core\SearchEngine\SolrSearchResults;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -95,26 +97,26 @@ trait SearchControllerTrait
     }
 
     /**
-     * @return NodeSourceSearchHandler|null
+     * @return NodeSourceSearchHandlerInterface|null
      */
-    protected function getSearchHandler(): ?NodeSourceSearchHandler
+    protected function getSearchHandler(): ?NodeSourceSearchHandlerInterface
     {
-        return $this->get('solr.search.nodeSource');
+        return $this->get(NodeSourceSearchHandlerInterface::class);
     }
 
     /**
-     * @param NodeSourceSearchHandler $searchHandler
+     * @param NodeSourceSearchHandlerInterface $searchHandler
      * @param string $query
      * @param array $criteria
      * @param int $page
-     * @return SolrSearchResults
+     * @return SearchResultsInterface
      */
     protected function doSearch(
-        NodeSourceSearchHandler $searchHandler,
+        NodeSourceSearchHandlerInterface $searchHandler,
         string $query,
         array $criteria = [],
         int $page = 1
-    ): SolrSearchResults {
+    ): SearchResultsInterface {
         /*
          * Query must be longer than 3 chars or Solr might crash
          * on highlighting fields.

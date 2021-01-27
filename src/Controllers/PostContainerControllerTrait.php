@@ -294,7 +294,7 @@ trait PostContainerControllerTrait
      *
      * @param string   $view       Template file path
      * @param array    $parameters Twig assignation array
-     * @param Response $response   Optional Response object to customize response parameters
+     * @param Response|null $response   Optional Response object to customize response parameters
      * @param string   $namespace  Twig loader namespace
      *
      * @return Response
