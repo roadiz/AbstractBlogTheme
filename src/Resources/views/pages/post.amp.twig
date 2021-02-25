@@ -21,7 +21,7 @@
     <div class="article-content">
         {% block article_content_head %}
             <time datetime="{{ nodeSource.publishedAt|date('Y-m-d H:i:s') }}"
-                  class="{{ blockClassPrefix }}-over-title">{{ nodeSource.publishedAt|localizeddate('medium','none') }}</time>
+                  class="{{ blockClassPrefix }}-over-title">{{ nodeSource.publishedAt|format_date('medium', locale=app.request.locale) }}</time>
             <h1 class="{{ blockClassPrefix }}-title" >{{ nodeSource.title }}</h1>
             {% if nodeSource.location %}
                 <p><strong itemprop="location">{{ nodeSource.location|striptags }}</strong></p>

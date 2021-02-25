@@ -12,7 +12,7 @@
         <meta itemprop="author" content="{{ head.siteName }}">
         <meta itemprop="publisher" content="{{ head.siteName }}">
         <div class="{{ blockClassPrefix }}-element-titles {{ blockClassPrefix }}-element-type">
-            <time class="text" datetime="{{ nodeSource.publishedAt|date('Y-m-d H:i:s') }}" itemprop="datePublished">{{ nodeSource.publishedAt|localizeddate('medium', 'none') }}</time>
+            <time class="text" datetime="{{ nodeSource.publishedAt|date('Y-m-d H:i:s') }}" itemprop="datePublished">{{ nodeSource.publishedAt|format_date('medium', locale=app.request.locale) }}</time>
             <h3 class="text" itemprop="name">{{ nodeSource.title }}</h3>
         </div>
         <div class="{{ blockClassPrefix }}-element-excerpt" itemprop="description">
