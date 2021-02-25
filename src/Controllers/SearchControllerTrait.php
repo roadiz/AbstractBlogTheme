@@ -5,7 +5,7 @@ namespace Themes\AbstractBlogTheme\Controllers;
 
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\Serializer;
-use RZ\Roadiz\Core\Entities\Translation;
+use RZ\Roadiz\Core\AbstractEntities\TranslationInterface;
 use RZ\Roadiz\Core\SearchEngine\NodeSourceSearchHandlerInterface;
 use RZ\Roadiz\Core\SearchEngine\SearchResultsInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -54,9 +54,10 @@ trait SearchControllerTrait
     }
 
     /**
+     * @param TranslationInterface $translation
      * @return array
      */
-    protected function getDefaultCriteria(Translation $translation): array
+    protected function getDefaultCriteria(TranslationInterface $translation): array
     {
         return [
             'visible' => true,

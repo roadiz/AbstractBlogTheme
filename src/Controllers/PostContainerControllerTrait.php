@@ -7,11 +7,11 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\Serializer;
+use RZ\Roadiz\Core\AbstractEntities\TranslationInterface;
 use RZ\Roadiz\Core\Entities\Node;
 use RZ\Roadiz\Core\Entities\NodesSources;
 use RZ\Roadiz\Core\Entities\NodeType;
 use RZ\Roadiz\Core\Entities\Tag;
-use RZ\Roadiz\Core\Entities\Translation;
 use RZ\Roadiz\Core\ListManagers\EntityListManager;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -158,7 +158,7 @@ trait PostContainerControllerTrait
     /**
      * @param Request          $request
      * @param Node|null        $node
-     * @param Translation|null $translation
+     * @param TranslationInterface|null $translation
      *
      * @return Response
      * @throws \Doctrine\ORM\NoResultException
@@ -168,7 +168,7 @@ trait PostContainerControllerTrait
     public function indexAction(
         Request $request,
         Node $node = null,
-        Translation $translation = null
+        TranslationInterface $translation = null
     ) {
         $this->prepareThemeAssignation($node, $translation);
         /*
@@ -328,13 +328,13 @@ trait PostContainerControllerTrait
 
     /**
      * @param array<Tag>  $tags
-     * @param Translation $translation
+     * @param TranslationInterface $translation
      *
      * @return array
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    protected function getPostCountForTags(array $tags, Translation $translation): array
+    protected function getPostCountForTags(array $tags, TranslationInterface $translation): array
     {
         $counts = [];
         /** @var Tag $tag */
@@ -346,13 +346,13 @@ trait PostContainerControllerTrait
 
     /**
      * @param Tag         $tag
-     * @param Translation $translation
+     * @param TranslationInterface $translation
      *
      * @return int
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getPostCountForTag(Tag $tag, Translation $translation): int
+    public function getPostCountForTag(Tag $tag, TranslationInterface $translation): int
     {
         /**
          * @var QueryBuilder $qb
@@ -390,12 +390,12 @@ trait PostContainerControllerTrait
     }
 
     /**
-     * @param Translation $translation
+     * @param TranslationInterface $translation
      * @param Request     $request
      *
      * @return array
      */
-    protected function getCriteria(Translation $translation, Request $request)
+    protected function getCriteria(TranslationInterface $translation, Request $request)
     {
         return [];
     }
@@ -445,12 +445,12 @@ trait PostContainerControllerTrait
     }
 
     /**
-     * @param Translation $translation
+     * @param TranslationInterface $translation
      * @param Request     $request
      *
      * @return array Mandatory parameters which should be use in every requests
      */
-    protected function getBaseCriteria(Translation $translation, Request $request): array
+    protected function getBaseCriteria(TranslationInterface $translation, Request $request): array
     {
         $base = [
             'node.visible' => true,
@@ -467,13 +467,13 @@ trait PostContainerControllerTrait
     }
 
     /**
-     * @param Translation $translation
+     * @param TranslationInterface $translation
      * @param Request     $request
      *
      * @return array
      * @throws \Exception|FilteringEntityNotFound
      */
-    protected function getDefaultCriteria(Translation $translation, Request $request)
+    protected function getDefaultCriteria(TranslationInterface $translation, Request $request)
     {
         $criteria = $this->getBaseCriteria($translation, $request);
 
@@ -623,12 +623,12 @@ trait PostContainerControllerTrait
     }
 
     /**
-     * @param Translation $translation
+     * @param TranslationInterface $translation
      * @param Tag|null    $parentTag   Parent tag
      *
      * @return array
      */
-    protected function getAvailableTags(Translation $translation, Tag $parentTag = null)
+    protected function getAvailableTags(TranslationInterface $translation, Tag $parentTag = null)
     {
         /**
          * @var QueryBuilder $qb
@@ -681,11 +681,11 @@ trait PostContainerControllerTrait
     }
 
     /**
-     * @param Translation $translation
+     * @param TranslationInterface $translation
      *
      * @return NodesSources[]
      */
-    protected function getAvailableRelatedNodesSources(Translation $translation): array
+    protected function getAvailableRelatedNodesSources(TranslationInterface $translation): array
     {
         /**
          * @var QueryBuilder $qb
@@ -728,14 +728,14 @@ trait PostContainerControllerTrait
     /**
      * Return all post values for given field.
      *
-     * @param Translation $translation
-     * @param string      $prefixedFieldName DQL field (prefix with p. for post source, n. for post node or t. for post
+     * @param TranslationInterface $translation
+     * @param string $prefixedFieldName DQL field (prefix with p. for post source, n. for post node or t. for post
      *     translation)
-     * @param string      $sorting           ASC or DESC
+     * @param string $sorting ASC or DESC
      *
      * @return array
      */
-    protected function getAvailableValuesForField(Translation $translation, $prefixedFieldName, $sorting = 'ASC')
+    protected function getAvailableValuesForField(TranslationInterface $translation, $prefixedFieldName, $sorting = 'ASC')
     {
         $this->get('stopwatch')->start(static::class.'::getAvailableValuesForField');
         /**
@@ -833,12 +833,12 @@ trait PostContainerControllerTrait
     }
 
     /**
-     * @param Translation $translation
+     * @param TranslationInterface $translation
      *
      * @return array
      * @throws \Exception
      */
-    protected function getPostPublicationDates(Translation $translation)
+    protected function getPostPublicationDates(TranslationInterface $translation)
     {
         $qb = $this->getPostRepository()->createQueryBuilder('p');
         $publicationField = 'p.' . $this->getPublicationField();
@@ -879,12 +879,12 @@ trait PostContainerControllerTrait
     }
 
     /**
-     * @param Translation $translation
+     * @param TranslationInterface $translation
      *
      * @return array
      * @throws \Exception
      */
-    protected function getArchives(Translation $translation)
+    protected function getArchives(TranslationInterface $translation)
     {
         $this->get('stopwatch')->start(static::class.'::getArchives');
         $array = [];
