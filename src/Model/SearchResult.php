@@ -46,8 +46,6 @@ class SearchResult
     protected $translator;
 
     /**
-     * SearchResult constructor.
-     *
      * @param NodesSources $nodeSource
      * @param array $highlighting Highlighting from Apache Solr search
      * @param DocumentUrlGenerator $documentUrlGenerator

@@ -20,8 +20,6 @@ class SearchResponse implements SearchResponseInterface
     protected $meta;
 
     /**
-     * SearchResponse constructor.
-     *
      * @param array      $results
      * @param SearchMetaInterface|null $meta
      */
