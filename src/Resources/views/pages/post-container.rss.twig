@@ -11,7 +11,7 @@
                     {% if post.textDate %}
                         <p><strong>{{ post.textDate }}</strong></p>
                     {% elseif date(post.publishedAt) > date('now') %}
-                        <p><strong>{{ post.publishedAt|localizeddate('long', 'none') }}</strong></p>
+                        <p><strong>{{ post.publishedAt|format_date('long', locale=app.request.locale) }}</strong></p>
                     {% endif %}
                     {% if post.location %}
                         <p><em>{{ post.location }}</em></p>
