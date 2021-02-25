@@ -5,10 +5,11 @@ namespace Themes\AbstractBlogTheme\Controllers;
 
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\Serializer;
+use RZ\Roadiz\Core\AbstractEntities\TranslationInterface;
 use RZ\Roadiz\Core\Entities\Node;
-use RZ\Roadiz\Core\Entities\Translation;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Themes\AbstractBlogTheme\Factory\JsonLdFactory;
 
 trait PostControllerTrait
 {
@@ -17,13 +18,13 @@ trait PostControllerTrait
     /**
      * @param Request $request
      * @param Node|null $node
-     * @param Translation|null $translation
+     * @param TranslationInterface|null $translation
      * @return Response
      */
     public function indexAction(
         Request $request,
         Node $node = null,
-        Translation $translation = null
+        TranslationInterface $translation = null
     ) {
         $this->prepareThemeAssignation($node, $translation);
 
@@ -35,7 +36,7 @@ trait PostControllerTrait
 
         /** @var Serializer $serializer */
         $serializer = $this->get('serializer');
-        $ampArticle = $this->getJsonLdArticle($this->nodeSource);
+        $ampArticle = $this->get(JsonLdFactory::class)->createArticle($this->nodeSource);
         $this->assignation['jsonLdPost'] = $serializer->serialize(
             $ampArticle,
             'json',

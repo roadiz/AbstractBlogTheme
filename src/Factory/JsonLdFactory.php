@@ -41,8 +41,6 @@ class JsonLdFactory
     protected $markdown;
 
     /**
-     * JsonLdFactory constructor.
-     *
      * @param DocumentUrlGenerator $documentUrlGenerator
      * @param UrlGeneratorInterface $urlGenerator
      * @param Settings $settingsBag

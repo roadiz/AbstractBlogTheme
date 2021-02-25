@@ -65,7 +65,7 @@
             <div class="{{ titlesClasses }} block-titles-content">
                 <time itemprop="datePublished"
                     datetime="{{ nodeSource.publishedAt|date('Y-m-d H:i:s') }}"
-                    class="{{ blockClassPrefix }}-over-title">{{ nodeSource.publishedAt|localizeddate('medium','none') }}</time>
+                    class="{{ blockClassPrefix }}-over-title">{{ nodeSource.publishedAt|format_date('medium', locale=app.request.locale) }}</time>
                 <h2 class="{{ blockClassPrefix }}-title" itemprop="name">{{ nodeSource.title }}</h2>
                 {% if nodeSource.location %}
                     <p><strong itemprop="location">{{ nodeSource.location|striptags }}</strong></p>

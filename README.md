@@ -300,7 +300,7 @@ Then create `pages/search.html.twig` template.
 ### Search result model
 
 For JSON search responses, `SearchControllerTrait` uses JMS Serializer with a custom model to decorate your
-node-sources and its highlighted text. By default `SearchControllerTrait` intanciates a `Themes\AbstractBlogTheme\Model\SearchResult`
+node-sources and its highlighted text. By default `SearchControllerTrait` instantiates a `Themes\AbstractBlogTheme\Model\SearchResult`
 object that will be serialized. You can override this model if you want to add custom fields according to your 
 node-sources data.
 
@@ -318,29 +318,13 @@ protected function createSearchResultModel($searchResult)
         $searchResult['nodeSource'],
         $searchResult['highlighting'],
         $this->get('document.url_generator'),
-        $this->get('router')
+        $this->get('router'),
+        $this->get('translator')
     );
 }
 ```
 
-You’ll be able to add new virtual properties in your child `SearchResult` model such as:
-
-```php
-/**
- * Example property to display a blogpost excerpt already parsed
- * with Markdown syntax.
- *
- * @JMS\VirtualProperty()
- * @return string
- */
-public function getExcerpt()
-{
-    if ($this->nodeSource instanceof NSBlogPost) {
-        return \Parsedown::instance()->text($this->nodeSource->getExcerpt());
-    }
-    return null;
-}
-```
+You’ll be able to add new virtual properties in your child `SearchResult` model.
 
 ## AMP mobile page support
 

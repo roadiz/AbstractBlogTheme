@@ -6,12 +6,9 @@ namespace Themes\AbstractBlogTheme;
 use Pimple\Container;
 use RZ\Roadiz\CMS\Controllers\FrontendController;
 
-/**
- * AbstractBlogThemeApp class
- */
 class AbstractBlogThemeApp extends FrontendController
 {
-    const VERSION = '1.9.3';
+    const VERSION = '1.10.0';
     const ITEM_PER_PAGE = 15;
 
     protected static $themeName = 'Blog Theme';

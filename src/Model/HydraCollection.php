@@ -60,8 +60,6 @@ class HydraCollection
     protected $currentParams = [];
 
     /**
-     * HydraCollection constructor.
-     *
      * @param array $member
      * @param int $totalItems
      * @param int $page

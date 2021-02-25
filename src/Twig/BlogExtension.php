@@ -4,9 +4,6 @@ declare(strict_types=1);
 namespace Themes\AbstractBlogTheme\Twig;
 
 use Doctrine\ORM\EntityManagerInterface;
-use RZ\Roadiz\Core\Entities\NodesSources;
-use RZ\Roadiz\Core\Entities\Tag;
-use RZ\Roadiz\Core\Entities\Translation;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -21,17 +18,15 @@ class BlogExtension extends AbstractExtension
     private $entityManager;
 
     /**
-     * @var string
+     * @var class-string
      */
     private $postEntityClass;
 
     /**
-     * BlogExtension constructor.
-     *
      * @param EntityManagerInterface $entityManager
-     * @param string $postEntityClass
+     * @param class-string $postEntityClass
      */
-    public function __construct(EntityManagerInterface $entityManager, $postEntityClass)
+    public function __construct(EntityManagerInterface $entityManager, string $postEntityClass)
     {
         $this->entityManager = $entityManager;
         $this->postEntityClass = $postEntityClass;
@@ -56,6 +51,9 @@ class BlogExtension extends AbstractExtension
         ];
     }
 
+    /**
+     * @return class-string
+     */
     protected function getEntity(): string
     {
         return $this->postEntityClass;
