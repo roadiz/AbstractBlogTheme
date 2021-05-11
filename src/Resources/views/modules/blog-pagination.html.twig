@@ -13,7 +13,7 @@
     {% set themePrefix = '' %}
 {% endif %}
 
-{% spaceless %}
+{% apply spaceless %}
     {% if lastPage > 1 %}
 
         {# the number of first and last pages to be displayed #}
@@ -78,4 +78,4 @@
             {% endif %}
         </nav>
     {% endif %}
-{% endspaceless %}
+{% endapply %}
