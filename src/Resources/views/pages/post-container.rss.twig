@@ -1,7 +1,7 @@
 {% extends 'base.rss.twig' %}
 
 {% block items %}
-    {% spaceless %}
+    {% apply spaceless %}
         {% for post in posts %}
             {% set thumb = post.image[0]|default(post.imagePortrait[0]) %}
             <item>
@@ -35,5 +35,5 @@
                 <guid isPermaLink="true">{{ url(post) }}</guid>
             </item>
         {% endfor %}
-    {% endspaceless %}
+    {% endapply %}
 {% endblock %}
