@@ -8,19 +8,19 @@ use RZ\Roadiz\CMS\Controllers\FrontendController;
 
 class AbstractBlogThemeApp extends FrontendController
 {
-    const VERSION = '1.10.1';
+    const VERSION = '2.0.0';
     const ITEM_PER_PAGE = 15;
 
-    protected static $themeName = 'Blog Theme';
-    protected static $themeAuthor = 'REZO ZERO';
-    protected static $themeCopyright = 'REZO ZERO';
-    protected static $themeDir = 'AbstractBlogTheme';
-    protected static $backendTheme = false;
+    protected static string $themeName = 'Blog Theme';
+    protected static string $themeAuthor = 'REZO ZERO';
+    protected static string $themeCopyright = 'REZO ZERO';
+    protected static string $themeDir = 'AbstractBlogTheme';
+    protected static bool $backendTheme = false;
 
     /**
      * {@inheritdoc}
      */
-    public static $priority = 5;
+    public static int $priority = 5;
 
     /**
      * @param Container $container

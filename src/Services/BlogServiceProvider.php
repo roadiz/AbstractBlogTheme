@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Themes\AbstractBlogTheme\Services;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use RZ\Roadiz\Markdown\MarkdownInterface;
@@ -46,7 +47,7 @@ class BlogServiceProvider implements ServiceProviderInterface
         $container->extend('twig.extensions', function ($extensions, Container $c) {
             if ($c->offsetExists('blog_theme.post_entity')) {
                 // Add Blog extension only if post entity is registered.
-                $extensions->add(new BlogExtension($c['em'], $c['blog_theme.post_entity']));
+                $extensions->add(new BlogExtension($c[ManagerRegistry::class], $c['blog_theme.post_entity']));
             }
             $extensions->add(new SocialLinksExtension());
 

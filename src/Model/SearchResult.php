@@ -25,25 +25,25 @@ class SearchResult
      * @JMS\Exclude
      * @var NodesSources
      */
-    protected $nodeSource;
+    protected NodesSources $nodeSource;
 
     /**
      * @JMS\Exclude
      * @var DocumentUrlGenerator
      */
-    protected $documentUrlGenerator;
+    protected DocumentUrlGenerator $documentUrlGenerator;
 
     /**
      * @JMS\Exclude
      * @var UrlGeneratorInterface
      */
-    protected $urlGenerator;
+    protected UrlGeneratorInterface $urlGenerator;
 
     /**
      * @JMS\Exclude
      * @var Translator
      */
-    protected $translator;
+    protected Translator $translator;
 
     /**
      * @param NodesSources $nodeSource

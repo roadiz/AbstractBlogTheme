@@ -11,13 +11,13 @@ class SearchResponse implements SearchResponseInterface
      * @var array
      * @JMS\Groups({"collection"})
      */
-    protected $results;
+    protected array $results;
 
     /**
      * @var SearchMetaInterface|null
      * @JMS\Groups({"collection"})
      */
-    protected $meta;
+    protected ?SearchMetaInterface $meta;
 
     /**
      * @param array      $results

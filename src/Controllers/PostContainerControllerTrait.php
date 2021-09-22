@@ -13,6 +13,7 @@ use RZ\Roadiz\Core\Entities\NodesSources;
 use RZ\Roadiz\Core\Entities\NodeType;
 use RZ\Roadiz\Core\Entities\Tag;
 use RZ\Roadiz\Core\ListManagers\EntityListManager;
+use RZ\Roadiz\Preview\PreviewResolverInterface;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -416,7 +417,7 @@ trait PostContainerControllerTrait
     protected function getTag($tagName = '')
     {
         if ($tagName !== '') {
-            return $this->get('em')->getRepository(Tag::class)->findOneBy(
+            return $this->em()->getRepository(Tag::class)->findOneBy(
                 [
                 'tagName' => $tagName,
                 'translation' => $this->translation,
@@ -633,7 +634,7 @@ trait PostContainerControllerTrait
         /**
          * @var QueryBuilder $qb
          */
-        $qb = $this->get('em')
+        $qb = $this->em()
             ->getRepository(Tag::class)
             ->createQueryBuilder('t');
 
@@ -666,7 +667,7 @@ trait PostContainerControllerTrait
         /*
          * Enforce tags nodes status not to display Tags which are linked to draft posts.
          */
-        if ($this->get('kernel')->isPreview()) {
+        if ($this->get(PreviewResolverInterface::class)->isPreview()) {
             $qb->andWhere($qb->expr()->lte('n.status', Node::PUBLISHED));
         } else {
             $qb->andWhere($qb->expr()->eq('n.status', Node::PUBLISHED));
@@ -720,7 +721,7 @@ trait PostContainerControllerTrait
      */
     protected function getRelatedNodesSourcesQueryBuilder(): QueryBuilder
     {
-        return $this->get('em')
+        return $this->em()
             ->getRepository(NodesSources::class)
             ->createQueryBuilder('ns');
     }
@@ -829,7 +830,7 @@ trait PostContainerControllerTrait
      */
     protected function getPostRepository()
     {
-        return $this->get('em')->getRepository($this->getPostEntity());
+        return $this->em()->getRepository($this->getPostEntity());
     }
 
     /**
