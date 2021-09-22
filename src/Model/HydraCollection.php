@@ -121,7 +121,7 @@ class HydraCollection
             '@id' => $this->urlGenerator->generate($this->route, array_merge($this->currentParams, [
                 '_format' => 'json',
                 'page' => $this->page
-            ])),
+            ]), UrlGeneratorInterface::ABSOLUTE_URL),
             '@type' => $this->totalPages > 1 ? 'hydra:PartialCollectionView' : 'hydra:CollectionView',
             'hydra:first' => $this->urlGenerator->generate($this->route, array_merge($this->currentParams, [
                 '_format' => 'json',
@@ -134,11 +134,11 @@ class HydraCollection
             'hydra:previous' => $this->page > 1 ? $this->urlGenerator->generate($this->route, array_merge($this->currentParams, [
                 '_format' => 'json',
                 'page' => $this->page - 1
-            ])) : null,
+            ]), UrlGeneratorInterface::ABSOLUTE_URL) : null,
             'hydra:next' => $this->page < $this->totalPages ? $this->urlGenerator->generate($this->route, array_merge($this->currentParams, [
                 '_format' => 'json',
                 'page' => $this->page + 1
-            ])) : null,
+            ]), UrlGeneratorInterface::ABSOLUTE_URL) : null,
         ];
     }
 }

@@ -19,26 +19,11 @@ use Themes\AbstractBlogTheme\Model\JsonLdPlace;
 
 class JsonLdFactory
 {
-    /**
-     * @var DocumentUrlGenerator
-     */
-    protected $documentUrlGenerator;
-    /**
-     * @var UrlGeneratorInterface
-     */
-    protected $urlGenerator;
-    /**
-     * @var Settings
-     */
-    protected $settingsBag;
-    /**
-     * @var array
-     */
-    protected $imageOptions;
-    /**
-     * @var MarkdownInterface|null
-     */
-    protected $markdown;
+    protected DocumentUrlGenerator $documentUrlGenerator;
+    protected UrlGeneratorInterface $urlGenerator;
+    protected Settings $settingsBag;
+    protected array $imageOptions;
+    protected ?MarkdownInterface $markdown;
 
     /**
      * @param DocumentUrlGenerator $documentUrlGenerator

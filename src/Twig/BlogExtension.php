@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Themes\AbstractBlogTheme\Twig;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -12,24 +12,20 @@ class BlogExtension extends AbstractExtension
 {
     use PublishableItemExtension;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
+    private ManagerRegistry $managerRegistry;
     /**
      * @var class-string
      */
-    private $postEntityClass;
+    private string $postEntityClass;
 
     /**
-     * @param EntityManagerInterface $entityManager
+     * @param ManagerRegistry $managerRegistry
      * @param class-string $postEntityClass
      */
-    public function __construct(EntityManagerInterface $entityManager, string $postEntityClass)
+    public function __construct(ManagerRegistry $managerRegistry, string $postEntityClass)
     {
-        $this->entityManager = $entityManager;
         $this->postEntityClass = $postEntityClass;
+        $this->managerRegistry = $managerRegistry;
     }
 
     public function getFunctions()
@@ -59,9 +55,12 @@ class BlogExtension extends AbstractExtension
         return $this->postEntityClass;
     }
 
-    protected function getEntityManager(): EntityManagerInterface
+    /**
+     * @return ManagerRegistry
+     */
+    public function getManagerRegistry(): ManagerRegistry
     {
-        return $this->entityManager;
+        return $this->managerRegistry;
     }
 
     /**

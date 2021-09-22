@@ -220,7 +220,7 @@ trait SearchControllerTrait
         $this->assignation['query'] = $query;
         $this->assignation['filters'] = $searchMeta;
         $this->assignation['pageMeta'] = [
-            'title' => $this->getTranslator()->trans('search'). ' – ' . $this->get('settingsBag')->get('site_name'),
+            'title' => $this->getTranslator()->trans('search'). ' – ' . $this->getSettingsBag()->get('site_name'),
             'description' => $this->getTranslator()->trans('search'),
         ];
         $resultModels = $results->map(function ($item) {

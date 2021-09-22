@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Themes\AbstractBlogTheme\Twig;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use RZ\Roadiz\Core\AbstractEntities\TranslationInterface;
 use RZ\Roadiz\Core\Entities\NodesSources;
 use RZ\Roadiz\Core\Entities\Tag;
@@ -17,9 +17,9 @@ trait PublishableItemExtension
     abstract protected function getEntity(): string;
 
     /**
-     * @return EntityManagerInterface
+     * @return ManagerRegistry
      */
-    abstract protected function getEntityManager(): EntityManagerInterface;
+    abstract protected function getManagerRegistry(): ManagerRegistry;
 
     /**
      * @param NodesSources $item
@@ -44,7 +44,7 @@ trait PublishableItemExtension
     protected function getItems(array $criteria, int $count, string $direction = 'ASC'): array
     {
         /** @var EntityRepository<NodesSources> $repository */
-        $repository = $this->getEntityManager()->getRepository($this->getEntity());
+        $repository = $this->getManagerRegistry()->getRepository($this->getEntity());
         return $repository->findBy($criteria, [
             'publishedAt' => $direction
         ], $count);
@@ -58,7 +58,7 @@ trait PublishableItemExtension
      *
      * @return null|NodesSources|array
      */
-    public function getPreviousItem(NodesSources $item, $count = 1, $scopedToParent = false, array $criteria = [])
+    public function getPreviousItem(NodesSources $item, int $count = 1, bool $scopedToParent = false, array $criteria = [])
     {
         $criteria = array_merge(
             $this->getDefaultPrevNextCriteria($item),
@@ -89,7 +89,7 @@ trait PublishableItemExtension
      *
      * @return null|NodesSources|array
      */
-    public function getPreviousItemForTag(NodesSources $item, Tag $tag, $count = 1, $scopedToParent = false)
+    public function getPreviousItemForTag(NodesSources $item, Tag $tag, int $count = 1, bool $scopedToParent = false)
     {
         $criteria = array_merge($this->getDefaultPrevNextCriteria($item), [
             'publishedAt' => ['<', $item->getPublishedAt()],
@@ -118,7 +118,7 @@ trait PublishableItemExtension
      *
      * @return null|NodesSources|array
      */
-    public function getNextItem(NodesSources $item, $count = 1, $scopedToParent = false, array $criteria = [])
+    public function getNextItem(NodesSources $item, int $count = 1, bool $scopedToParent = false, array $criteria = [])
     {
         $criteria = array_merge(
             $this->getDefaultPrevNextCriteria($item),
@@ -149,7 +149,7 @@ trait PublishableItemExtension
      *
      * @return null|NodesSources|array
      */
-    public function getNextItemForTag(NodesSources $item, Tag $tag, $count = 1, $scopedToParent = false)
+    public function getNextItemForTag(NodesSources $item, Tag $tag, int $count = 1, bool $scopedToParent = false)
     {
         $criteria = array_merge($this->getDefaultPrevNextCriteria($item), [
             'publishedAt' => ['>', $item->getPublishedAt()],
@@ -177,7 +177,7 @@ trait PublishableItemExtension
      * @return array
      * @throws \Exception
      */
-    public function getLatestItems(TranslationInterface $translation, $count = 4, array $criteria = [])
+    public function getLatestItems(TranslationInterface $translation, int $count = 4, array $criteria = [])
     {
         $criteria = array_merge($criteria, [
             'publishedAt' => ['<=', new \DateTime()],
@@ -197,7 +197,7 @@ trait PublishableItemExtension
     public function getLatestItemsForTag(
         Tag $tag,
         TranslationInterface $translation,
-        $count = 4,
+        int $count = 4,
         array $criteria = []
     ) {
         $criteria = array_merge($criteria, [
