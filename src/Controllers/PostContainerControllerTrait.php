@@ -136,7 +136,7 @@ trait PostContainerControllerTrait
             );
             $elm->setItemPerPage($this->getItemsPerPage());
             $elm->handle();
-            $elm->setPage($request->get('page', 1));
+            $elm->setPage((int) $request->get('page', 1));
             $posts = $elm->getEntities();
 
             if (count($posts) === 0 && $this->throwExceptionOnEmptyResult()) {
@@ -370,7 +370,7 @@ trait PostContainerControllerTrait
         /*
          * Enforce tags nodes status not to display Tags which are linked to draft posts.
          */
-        if ($this->get('kernel')->isPreview()) {
+        if ($this->get(PreviewResolverInterface::class)->isPreview()) {
             $qb->andWhere($qb->expr()->lte('n.status', Node::PUBLISHED));
         } else {
             $qb->andWhere($qb->expr()->eq('n.status', Node::PUBLISHED));
@@ -755,7 +755,7 @@ trait PostContainerControllerTrait
         /*
          * Enforce tags nodes status not to display Tags which are linked to draft posts.
          */
-        if ($this->get('kernel')->isPreview()) {
+        if ($this->get(PreviewResolverInterface::class)->isPreview()) {
             $qb->andWhere($qb->expr()->lte('n.status', Node::PUBLISHED));
         } else {
             $qb->andWhere($qb->expr()->eq('n.status', Node::PUBLISHED));
@@ -859,7 +859,7 @@ trait PostContainerControllerTrait
         /*
          * Enforce post nodes status not to display Archives which are linked to draft posts.
          */
-        if ($this->get('kernel')->isPreview()) {
+        if ($this->get(PreviewResolverInterface::class)->isPreview()) {
             $qb->andWhere($qb->expr()->lte('n.status', Node::PUBLISHED));
         } else {
             $qb->andWhere($qb->expr()->eq('n.status', Node::PUBLISHED));
