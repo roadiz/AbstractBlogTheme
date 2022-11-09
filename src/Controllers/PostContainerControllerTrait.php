@@ -141,7 +141,7 @@ trait PostContainerControllerTrait
             $elm->setPage((int) $request->get('page', 1));
             $posts = $elm->getEntities();
 
-            if (count($posts) === 0 && $this->throwExceptionOnEmptyResult()) {
+            if ($elm->getItemCount() === 0 && $this->throwExceptionOnEmptyResult()) {
                 throw $this->createNotFoundException('No post found for given criteria.');
             }
 
