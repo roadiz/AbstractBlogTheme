@@ -134,6 +134,8 @@ trait PostContainerControllerTrait
                 $criteria,
                 $this->getDefaultOrder()
             );
+            $elm->setAllowRequestSearching(false);
+            $elm->setAllowRequestSorting(false);
             $elm->setItemPerPage($this->getItemsPerPage());
             $elm->handle();
             $elm->setPage((int) $request->get('page', 1));
