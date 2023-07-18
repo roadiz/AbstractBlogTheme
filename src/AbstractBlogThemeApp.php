@@ -8,8 +8,8 @@ use RZ\Roadiz\CMS\Controllers\FrontendController;
 
 class AbstractBlogThemeApp extends FrontendController
 {
-    const VERSION = '2.0.4';
-    const ITEM_PER_PAGE = 15;
+    public const VERSION = '2.1.0';
+    public const ITEM_PER_PAGE = 15;
 
     protected static string $themeName = 'Blog Theme';
     protected static string $themeAuthor = 'REZO ZERO';
