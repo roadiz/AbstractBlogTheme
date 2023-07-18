@@ -23,6 +23,7 @@ use Themes\AbstractBlogTheme\AbstractBlogThemeApp;
 use Themes\AbstractBlogTheme\Exception\FilteringEntityNotFound;
 use Themes\AbstractBlogTheme\Factory\JsonLdFactory;
 use Themes\AbstractBlogTheme\Model\HydraCollection;
+use Themes\AbstractBlogTheme\Model\LazyTraversable;
 use Twig\Error\RuntimeError;
 
 trait PostContainerControllerTrait
@@ -40,17 +41,17 @@ trait PostContainerControllerTrait
     protected $implicitTags;
 
     /**
-     * @var Tag[]
+     * @var LazyTraversable<Tag>
      */
     protected $availableTags;
 
     /**
-     * @var array
+     * @var LazyTraversable
      */
     protected $countPerAvailableTags;
 
     /**
-     * @var array
+     * @var LazyTraversable
      */
     protected $archives;
 
@@ -104,17 +105,32 @@ trait PostContainerControllerTrait
         if (null === $this->translation) {
             throw new BadRequestHttpException('Translation cannot be found');
         }
-        $this->get('stopwatch')->start(static::class.'::getAvailableTags');
-        $this->availableTags = $this->getAvailableTags($this->translation);
-        $this->get('stopwatch')->stop(static::class.'::getAvailableTags');
+
+        $this->availableTags = new LazyTraversable(function () {
+            $this->get('stopwatch')->start(static::class.'::getAvailableTags');
+            $availableTags = $this->getAvailableTags($this->translation);
+            $this->get('stopwatch')->stop(static::class.'::getAvailableTags');
+            return $availableTags;
+        });
+
         /*
          * When you want to display post count numbers on each available tags.
          */
         if ($this->selectPostCounts()) {
-            $this->countPerAvailableTags = $this->getPostCountForTags($this->availableTags, $this->translation);
+            $this->countPerAvailableTags = new LazyTraversable(function () {
+                $this->get('stopwatch')->start(static::class.'::getPostCountForTags');
+                $countPerAvailableTags = $this->getPostCountForTags($this->availableTags, $this->translation);
+                $this->get('stopwatch')->stop(static::class.'::getPostCountForTags');
+                return $countPerAvailableTags;
+            });
             $this->assignation['postsCountForTagId'] = $this->countPerAvailableTags;
         }
-        $this->archives = $this->getArchives($this->translation);
+        $this->archives = new LazyTraversable(function () {
+            $this->get('stopwatch')->start(static::class.'::getArchives');
+            $archives = $this->getArchives($this->translation);
+            $this->get('stopwatch')->stop(static::class.'::getArchives');
+            return $archives;
+        });
         $criteria = array_merge(
             $this->getDefaultCriteria(
                 $this->translation,
@@ -330,14 +346,14 @@ trait PostContainerControllerTrait
     }
 
     /**
-     * @param array<Tag>  $tags
+     * @param \Traversable<Tag>  $tags
      * @param TranslationInterface $translation
      *
      * @return array
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    protected function getPostCountForTags(array $tags, TranslationInterface $translation): array
+    protected function getPostCountForTags(\Traversable $tags, TranslationInterface $translation): array
     {
         $counts = [];
         /** @var Tag $tag */
@@ -357,9 +373,6 @@ trait PostContainerControllerTrait
      */
     public function getPostCountForTag(Tag $tag, TranslationInterface $translation): int
     {
-        /**
-         * @var QueryBuilder $qb
-         */
         $qb = $this->getPostRepository()->createQueryBuilder('p');
         $qb->select($qb->expr()->countDistinct('p'))
             ->innerJoin('p.node', 'n')
@@ -421,8 +434,8 @@ trait PostContainerControllerTrait
         if ($tagName !== '') {
             return $this->em()->getRepository(Tag::class)->findOneBy(
                 [
-                'tagName' => $tagName,
-                'translation' => $this->translation,
+                    'tagName' => $tagName,
+                    'translation' => $this->translation,
                 ]
             );
         }
@@ -854,8 +867,8 @@ trait PostContainerControllerTrait
             ->orderBy($publicationField, 'DESC')
             ->setParameters(
                 [
-                'translation' => $translation,
-                'datetime' => new \Datetime('now'),
+                    'translation' => $translation,
+                    'datetime' => new \Datetime('now'),
                 ]
             );
         /*

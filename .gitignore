@@ -82,6 +82,9 @@ bower_components
 # sftp configuration file
 sftp-config.json
 
+## Intellij
+.idea
+
 ## Network files
 .smbdelete*
 .nfs.*
