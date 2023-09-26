@@ -8,7 +8,7 @@ use RZ\Roadiz\CMS\Controllers\FrontendController;
 
 class AbstractBlogThemeApp extends FrontendController
 {
-    public const VERSION = '2.1.0';
+    public const VERSION = '2.1.1';
     public const ITEM_PER_PAGE = 15;
 
     protected static string $themeName = 'Blog Theme';
