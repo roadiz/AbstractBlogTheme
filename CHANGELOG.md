@@ -1,3 +1,10 @@
+## [2.1.1 (2023-09-26)](https://github.com/roadiz/AbstractBlogTheme/compare/2.1.0...2.1.1)
+
+
+### Features
+
+* Allow `rezozero/social-links` v2 ([a6682db](https://github.com/roadiz/AbstractBlogTheme/commit/a6682db20056f2a2df53ff58430fb544e538ebc3))
+
 ## [2.1.0 (2023-07-18)](https://github.com/roadiz/AbstractBlogTheme/compare/2.0.4...2.1.0)
 
 
